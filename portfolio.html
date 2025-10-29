@@ -1,854 +1,1184 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Lance Dimandal - Web Developer Portfolio</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Lance Dimandal — Web Developer Portfolio</title>
+
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Feather Icons -->
+    <script src="https://unpkg.com/feather-icons"></script>
+
+    <!-- AOS (Animate On Scroll) -->
+    <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet" />
+    <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+
     <style>
+      :root {
+        --accent: #0ea5ff; /* blue accent */
+        --card-bg: rgba(255, 255, 255, 0.03);
+        --muted: #9ca3af;
+        --glass: rgba(255, 255, 255, 0.03);
+      }
+
+      html {
+        scroll-behavior: smooth; /* smooth page scroll for nav anchors */
+      }
+
       body {
-        box-sizing: border-box;
+        background: #0b0b0d;
+        color: #e5e7eb;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+          Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji",
+          "Segoe UI Emoji", "Segoe UI Symbol";
       }
-      .developer-img {
-      overflow: hidden;
+
+      /* subtle glass card */
+      .glass {
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.02),
+          rgba(255, 255, 255, 0.015)
+        );
+        border: 1px solid rgba(255, 255, 255, 0.04);
+        backdrop-filter: blur(6px);
       }
-      .gradient-bg {
-        background: linear-gradient(135deg, #111 0%, #1d1d1d 100%);
+
+      /* image container */
+      .avatar {
+        width: 110px;
+        height: 110px;
+        border-radius: 9999px;
+        overflow: hidden;
+        border: 2px solid rgba(255, 255, 255, 0.06);
+        box-shadow: 0 6px 20px rgba(2, 6, 23, 0.6);
       }
-      .card-hover {
-        transition: all 0.3s ease;
-        background: #1f1f1f;
-        border: 1px solid #333;
+
+      /* hover lift for project cards */
+      .lift {
+        transition: all 0.28s cubic-bezier(0.2, 0.9, 0.2, 1);
       }
-      .card-hover:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 10px 30px rgba(255, 255, 255, 0.05);
-        border-color: #444;
+      .lift:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 20px 40px rgba(2, 6, 23, 0.6);
       }
-      .tech-tag {
-        transition: all 0.2s ease;
-        background: #2a2a2a !important;
-        color: #e5e5e5 !important;
-        border: 1px solid #404040;
+
+      /* tech tag */
+      .tech-pill {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.04);
       }
-      .tech-tag:hover {
-        transform: translateY(-1px);
-        background: #333 !important;
-        border-color: #555;
+
+      /* highlight accent text */
+      .accent {
+        color: var(--accent);
+      }
+
+      /* responsive container max width */
+      .max-w-site {
+        max-width: 1180px;
+      }
+
+      /* small utility for divider */
+      .divider {
+        height: 1px;
+        background: linear-gradient(
+          90deg,
+          rgba(255, 255, 255, 0.02),
+          rgba(14, 165, 255, 0.05),
+          rgba(255, 255, 255, 0.02)
+        );
+        border-radius: 2px;
+      }
+
+      /* AOS default small tweak for smoother feel */
+      [data-aos] {
+        will-change: transform, opacity;
+      }
+
+      /* mobile menu link style (for appended menu) */
+      .mobile-menu a {
+        display: block;
+        padding: 0.5rem 0;
+        color: #e5e7eb;
       }
     </style>
   </head>
-  <body class="bg-black text-gray-100 font-sans">
-    <!-- Header -->
-    <header class="gradient-bg text-center py-16 px-4">
-      <div class="max-w-3xl mx-auto" data-aos="fade-up">
-        <div
-          class="inline-flex items-center justify-center w-40 h-40 bg-gray-800 rounded-lg border border-gray-700 mb-4 developer-img"
-        >
-        <img src="images\lance-developer.jpg">
-        </div>
-        <h1
-          class="hero-title text-3xl sm:text-4xl md:text-5xl font-extrabold mb-2"
-        >
-          Lance Christopher Dimandal
-        </h1>
-        <p class="hero-sub text-gray-300 mb-4">
-          Web Developer — WordPress Specialist &amp; Shopify Assistant/Support
-        </p>
-        <p class="text-gray-400 max-w-2xl mx-auto mb-6">
-          I develop responsive, performance-driven websites focusing on
-          WordPress as my main specialty while managing Shopify sites as I
-          continue to upskill in the platform.
-        </p>
-        <div class="flex flex-col sm:flex-row justify-center gap-3">
-          <a
-            class="cta-btn inline-flex items-center justify-center bg-white text-black rounded-lg font-semibold shadow-sm transition transform hover:-translate-y-0.5"
-            href="mailto:dimandallance@gmail.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Mail to Lance"
-            style="padding: 0.7rem 1.25rem"
-            >💼 &nbsp; Hire / Contact</a
-          >
-          <a
-            class="cta-btn inline-flex items-center justify-center border border-gray-600 text-gray-200 rounded-lg font-semibold transition transform hover:bg-gray-850"
-            href="https://drive.google.com/file/d/1qNBZ4wSpdxR03eUkPRcy5QZT6Dzxgg52/view?usp=sharing"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Open resume"
-            style="padding: 0.7rem 1.25rem"
-            >📄 &nbsp; Download Resume</a
-          >
-        </div>
-      </div>
-    </header>
 
-    <!-- About Me -->
-    <section id="about" class="py-16 bg-gray-900">
-      <div class="container mx-auto px-6 max-w-4xl text-center">
-        <h2 class="text-3xl font-bold text-white mb-6">About Me</h2>
-        <p class="text-gray-300 text-lg mb-4">
-          Hi, I’m <span class="font-semibold text-white">Lance Dimandal</span>,
-          a dedicated Web Developer based in the Philippines. I specialize in
-          creating modern, responsive, and high-performance websites with
-          WordPress, Elementor, and Shopify.
-        </p>
-        <p class="text-gray-400 mb-4">
-          I enjoy solving problems and turning complex design concepts into
-          smooth user experiences. My workflow combines creativity, technical
-          skill, and an eye for detail — ensuring every site I build is elegant
-          and efficient.
-        </p>
-        <p class="text-gray-400">
-          Outside of development, I value teamwork and personal growth — skills
-          I’ve honed both through professional collaboration and on the ultimate
-          frisbee field.
-        </p>
-      </div>
-    </section>
-
-    <!-- Education -->
-    <section id="education" class="py-16 bg-black">
-      <div class="container mx-auto px-6 max-w-4xl text-center">
-        <h2 class="text-3xl font-bold text-white mb-10">Education</h2>
-        <div class="grid sm:grid-cols-1 md:grid-cols-2 gap-8">
-          <div class="card-hover p-6 rounded-lg">
+  <body>
+    <div class="min-h-screen flex flex-col">
+      <!-- NAV -->
+      <nav
+        class="w-full border-b border-white/6 py-4 sticky top-0 bg-[#0b0b0d]/95 backdrop-blur z-50"
+      >
+        <div class="mx-auto px-6 max-w-site flex items-center justify-between">
+          <a href="#" class="flex items-center gap-3">
             <div
-                class="inline-flex items-center justify-center w-20 h-20 bg-gray-800 rounded-lg border border-gray-700 mb-4 developer-img"
-              >
-              <img src="images\ccsfp.png">
+              class="w-10 h-10 rounded-full flex items-center justify-center bg-gradient-to-br from-slate-800 to-transparent border border-white/8"
+            >
+              <span class="font-semibold text-sm">LD</span>
             </div>
-            <h3 class="text-xl font-semibold text-white mb-2">
-              Bachelor of Science in Information Technology
-            </h3>
-            <p class="text-gray-400 mb-1">
-              City College of San Fernando Pampanga
-            </p>
-            <p class="text-sm text-gray-500">2019 – 2023</p>
-          </div>
-          <div class="card-hover p-6 rounded-lg">
-            <div
-                class="inline-flex items-center justify-center w-20 h-20 bg-gray-800 rounded-lg border border-gray-700 mb-4 developer-img"
-              >
-              <img src="images\phs.jpg">
-            </div>
-            <h3 class="text-xl font-semibold text-white mb-2">
-              Academic Track - GAS Strand (Senior High School Graduate)
-            </h3>
-            <p class="text-gray-400 mb-1">Pampanga High School</p>
-            <p class="text-sm text-gray-500">2016 – 2019</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Work Experience -->
-    <section id="education" class="py-16 bg-black">
-      <div class="container mx-auto px-6 max-w-4xl text-center">
-        <h2 class="text-3xl font-bold text-white mb-10">Work Experience</h2>
-        <div class="grid sm:grid-cols-1 md:grid-cols-2 gap-8">
-          <div class="card-hover p-6 rounded-lg">
-            <h3 class="text-xl font-semibold text-white mb-2">
-              Junior Web Developer
-            </h3>
-            <p class="text-gray-400 mb-1">
-              Shore360 Agency, Shore360 Inc.
-            </p>
-            <p class="text-sm text-gray-500">December 2023 – Present</p>
-          </div>
-          <div class="card-hover p-6 rounded-lg">
-            <h3 class="text-xl font-semibold text-white mb-2">
-              Student Trainee (Intern)
-            </h3>
-            <p class="text-gray-400 mb-1">Department of Science and Technology - Regional Office No. 3</p>
-            <p class="text-sm text-gray-500">September 2022 – January 2023</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Skills Section -->
-    <section class="py-16 bg-gray-900">
-      <div class="container mx-auto px-6">
-        <h2 class="text-3xl font-bold text-center mb-12 text-white">
-          Technical Skills & Tools
-        </h2>
-
-        <!-- CMS & Builders -->
-        <div class="mb-10">
-          <h3 class="text-xl font-semibold mb-4 text-gray-300 text-center">
-            CMS & Builders
-          </h3>
-          <div class="flex flex-wrap justify-center gap-3 max-w-5xl mx-auto">
-            <span
-              class="tech-tag bg-blue-100 text-blue-800 px-4 py-2 rounded-full font-medium"
-              >WordPress</span
-            >
-            <span
-              class="tech-tag bg-indigo-100 text-indigo-800 px-4 py-2 rounded-full font-medium"
-              >Elementor</span
-            >
-            <span
-              class="tech-tag bg-purple-100 text-purple-800 px-4 py-2 rounded-full font-medium"
-              >YOOTheme</span
-            >
-            <span
-              class="tech-tag bg-pink-100 text-pink-800 px-4 py-2 rounded-full font-medium"
-              >Gutenberg</span
-            >
-            <span
-              class="tech-tag bg-violet-100 text-violet-800 px-4 py-2 rounded-full font-medium"
-              >Divi</span
-            >
-            <span
-              class="tech-tag bg-green-100 text-green-800 px-4 py-2 rounded-full font-medium"
-              >Shopify</span
-            >
-            <span
-              class="tech-tag bg-emerald-100 text-emerald-800 px-4 py-2 rounded-full font-medium"
-              >Liquid</span
-            >
-            <span
-              class="tech-tag bg-orange-100 text-orange-800 px-4 py-2 rounded-full font-medium"
-              >HubSpot</span
-            >
-            <span
-              class="tech-tag bg-amber-100 text-amber-800 px-4 py-2 rounded-full font-medium"
-              >HubL</span
-            >
-          </div>
-        </div>
-
-        <!-- Web Development -->
-        <div class="mb-10">
-          <h3 class="text-xl font-semibold mb-4 text-gray-300 text-center">
-            Web Development
-          </h3>
-          <div class="flex flex-wrap justify-center gap-3 max-w-5xl mx-auto">
-            <span
-              class="tech-tag bg-red-100 text-red-800 px-4 py-2 rounded-full font-medium"
-              >HTML5</span
-            >
-            <span
-              class="tech-tag bg-blue-100 text-blue-800 px-4 py-2 rounded-full font-medium"
-              >CSS3</span
-            >
-            <span
-              class="tech-tag bg-pink-100 text-pink-800 px-4 py-2 rounded-full font-medium"
-              >SCSS/SASS</span
-            >
-            <span
-              class="tech-tag bg-purple-100 text-purple-800 px-4 py-2 rounded-full font-medium"
-              >Bootstrap</span
-            >
-            <span
-              class="tech-tag bg-yellow-100 text-yellow-800 px-4 py-2 rounded-full font-medium"
-              >JavaScript</span
-            >
-            <span
-              class="tech-tag bg-blue-100 text-blue-800 px-4 py-2 rounded-full font-medium"
-              >jQuery</span
-            >
-            <span
-              class="tech-tag bg-indigo-100 text-indigo-800 px-4 py-2 rounded-full font-medium"
-              >PHP</span
-            >
-            <span
-              class="tech-tag bg-orange-100 text-orange-800 px-4 py-2 rounded-full font-medium"
-              >MySQL</span
-            >
-          </div>
-        </div>
-
-        <!-- Version Control & Deployment -->
-        <div class="mb-10">
-          <h3 class="text-xl font-semibold mb-4 text-gray-300 text-center">
-            Version Control & Deployment
-          </h3>
-          <div class="flex flex-wrap justify-center gap-3 max-w-5xl mx-auto">
-            <span
-              class="tech-tag bg-gray-100 text-gray-800 px-4 py-2 rounded-full font-medium"
-              >Git</span
-            >
-            <span
-              class="tech-tag bg-slate-100 text-slate-800 px-4 py-2 rounded-full font-medium"
-              >GitHub</span
-            >
-            <span
-              class="tech-tag bg-zinc-100 text-zinc-800 px-4 py-2 rounded-full font-medium"
-              >Git Bash</span
-            >
-            <span
-              class="tech-tag bg-teal-100 text-teal-800 px-4 py-2 rounded-full font-medium"
-              >FTP/SFTP</span
-            >
-          </div>
-        </div>
-
-        <!-- Optimization & Security -->
-        <div class="mb-6">
-          <h3 class="text-xl font-semibold mb-4 text-gray-300 text-center">
-            Optimization & Security
-          </h3>
-          <div class="flex flex-wrap justify-center gap-3 max-w-5xl mx-auto">
-            <span
-              class="tech-tag bg-green-100 text-green-800 px-4 py-2 rounded-full font-medium"
-              >Performance Optimization</span
-            >
-            <span
-              class="tech-tag bg-blue-100 text-blue-800 px-4 py-2 rounded-full font-medium"
-              >SEO Best Practices</span
-            >
-            <span
-              class="tech-tag bg-red-100 text-red-800 px-4 py-2 rounded-full font-medium"
-              >Digital Shield</span
-            >
-            <span
-              class="tech-tag bg-yellow-100 text-yellow-800 px-4 py-2 rounded-full font-medium"
-              >Lighthouse</span
-            >
-            <span
-              class="tech-tag bg-orange-100 text-orange-800 px-4 py-2 rounded-full font-medium"
-              >PageSpeed Insights</span
-            >
-            <span
-              class="tech-tag bg-purple-100 text-purple-800 px-4 py-2 rounded-full font-medium"
-              >GTmetrix</span
-            >
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Portfolio Section -->
-    <section id="portfolio" class="py-16 bg-black">
-      <div class="container mx-auto px-6">
-        <h2 class="text-3xl font-bold text-center mb-12 text-white">
-          Portfolio
-        </h2>
-        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          <!-- Project 1 -->
-          <div class="card-hover rounded-lg overflow-hidden">
-            <div
-              class="h-48 bg-gradient-to-br from-gray-700 to-gray-800 flex items-center justify-center border-b border-gray-700"
-            >
-              <div class="text-gray-300 text-5xl">🛍️</div>
-            </div>
-            <div class="p-6">
-              <h3 class="text-xl font-bold mb-2 text-white">AWR Solutions</h3>
-              <p class="text-gray-400 mb-4">
-                Shopify Development (September 2025 – Present)<br />
-                Website rebuild from Neto to Shopify with advanced product
-                filtering, payment gateway integration, and inventory
-                management.
-              </p>
-              <div class="flex flex-wrap gap-2 mb-4">
-                <span
-                  class="bg-gray-800 text-gray-300 text-xs px-2 py-1 rounded border border-gray-600"
-                  >Shopify</span
-                >
-                <span
-                  class="bg-gray-800 text-gray-300 text-xs px-2 py-1 rounded border border-gray-600"
-                  >Liquid</span
-                >
-                <span
-                  class="bg-gray-800 text-gray-300 text-xs px-2 py-1 rounded border border-gray-600"
-                  >Custom Code</span
-                >
+            <div class="text-sm">
+              <div class="font-semibold">Lance Dimandal</div>
+              <div class="text-[11px]" style="color: var(--muted)">
+                Web Developer
               </div>
             </div>
-          </div>
-
-          <!-- Project 2 -->
-          <div class="card-hover rounded-lg overflow-hidden">
-            <div
-              class="h-48 bg-gradient-to-br from-gray-700 to-gray-800 flex items-center justify-center border-b border-gray-700"
-            >
-              <div class="text-gray-300 text-5xl">🏢</div>
-            </div>
-            <div class="p-6">
-              <h3 class="text-xl font-bold mb-2 text-white">Squadron Energy</h3>
-              <p class="text-gray-400 mb-4">
-                WordPress Development (July 2025 – Present)<br />
-                Custom WordPress theme and Elementor-based layouts with reusable
-                sections and optimized form structures.
-              </p>
-              <div class="flex flex-wrap gap-2 mb-4">
-                <span
-                  class="bg-gray-800 text-gray-300 text-xs px-2 py-1 rounded border border-gray-600"
-                  >WordPress</span
-                >
-                <span
-                  class="bg-gray-800 text-gray-300 text-xs px-2 py-1 rounded border border-gray-600"
-                  >Elementor</span
-                >
-                <span
-                  class="bg-gray-800 text-gray-300 text-xs px-2 py-1 rounded border border-gray-600"
-                  >Custom Code</span
-                >
-              </div>
-            </div>
-          </div>
-
-          <!-- Project 3 -->
-          <div class="card-hover rounded-lg overflow-hidden">
-            <div
-              class="h-48 bg-gradient-to-br from-gray-700 to-gray-800 flex items-center justify-center border-b border-gray-700"
-            >
-              <div class="text-gray-300 text-5xl">🔧</div>
-            </div>
-            <div class="p-6">
-              <h3 class="text-xl font-bold mb-2 text-white">
-                ePlumbing Estimators NZ Website Rebuild
-              </h3>
-              <p class="text-gray-400 mb-4">
-                WordPress Development (June 2025 – July 2025)<br />
-                NZ version of the AU website. Rebuilt site structure, improved page speed, and implemented
-                custom sections for service and contact pages.
-              </p>
-              <div class="flex flex-wrap gap-2 mb-4">
-                <span
-                  class="bg-gray-800 text-gray-300 text-xs px-2 py-1 rounded border border-gray-600"
-                  >WordPress</span
-                >
-                <span
-                  class="bg-gray-800 text-gray-300 text-xs px-2 py-1 rounded border border-gray-600"
-                  >Elementor</span
-                >
-              </div>
-            </div>
-          </div>
-
-          <!-- Project 4 -->
-          <div class="card-hover rounded-lg overflow-hidden">
-            <div
-              class="h-48 bg-gradient-to-br from-gray-700 to-gray-800 flex items-center justify-center border-b border-gray-700"
-            >
-              <div class="text-gray-300 text-5xl">🌐</div>
-            </div>
-            <div class="p-6">
-              <h3 class="text-xl font-bold mb-2 text-white">Shore360 Agency</h3>
-              <p class="text-gray-400 mb-4">
-                WordPress Development (May 2025 – Present)<br />
-                New Shore website. Developed modern, responsive WordPress sites with Elementor,
-                optimizing for performance and SEO.
-              </p>
-              <div class="flex flex-wrap gap-2 mb-4">
-                <span
-                  class="bg-gray-800 text-gray-300 text-xs px-2 py-1 rounded border border-gray-600"
-                  >WordPress</span
-                >
-                <span
-                  class="bg-gray-800 text-gray-300 text-xs px-2 py-1 rounded border border-gray-600"
-                  >Elementor</span
-                >
-                <span
-                  class="bg-gray-800 text-gray-300 text-xs px-2 py-1 rounded border border-gray-600"
-                  >Custom Code</span
-                >
-              </div>
-            </div>
-          </div>
-
-          <!-- Project 5 -->
-          <div class="card-hover rounded-lg overflow-hidden">
-            <div
-              class="h-48 bg-gradient-to-br from-gray-700 to-gray-800 flex items-center justify-center border-b border-gray-700"
-            >
-              <div class="text-gray-300 text-5xl">🚰</div>
-            </div>
-            <div class="p-6">
-              <h3 class="text-xl font-bold mb-2 text-white">
-                ePlumbing Estimators AU Website Rebuild
-              </h3>
-              <p class="text-gray-400 mb-4">
-                WordPress Development (April 2025 – June 2025)<br />
-                Redesigned the AU version of the site with optimized templates,
-                responsive sections, and integrated forms. Transalated the Figma design to Elementor.
-              </p>
-              <div class="flex flex-wrap gap-2 mb-4">
-                <span
-                  class="bg-gray-800 text-gray-300 text-xs px-2 py-1 rounded border border-gray-600"
-                  >WordPress</span
-                >
-                <span
-                  class="bg-gray-800 text-gray-300 text-xs px-2 py-1 rounded border border-gray-600"
-                  >Elementor</span
-                >
-              </div>
-            </div>
-          </div>
-
-          <!-- Project 6 -->
-          <div class="card-hover rounded-lg overflow-hidden">
-            <div
-              class="h-48 bg-gradient-to-br from-gray-700 to-gray-800 flex items-center justify-center border-b border-gray-700"
-            >
-              <div class="text-gray-300 text-5xl">💒</div>
-            </div>
-            <div class="p-6">
-              <h3 class="text-xl font-bold mb-2 text-white">
-                Grace Website Rebuild
-              </h3>
-              <p class="text-gray-400 mb-4">
-                WordPress Development (October 2024 – June 2025)<br />
-                Enhanced layout using Elementor, improved UI/UX, and optimized
-                site navigation and performance. Tested the forms using the Salesforce. Implemented custom codes for addtional features.
-              </p>
-              <div class="flex flex-wrap gap-2 mb-4">
-                <span
-                  class="bg-gray-800 text-gray-300 text-xs px-2 py-1 rounded border border-gray-600"
-                  >WordPress</span
-                >
-                <span
-                  class="bg-gray-800 text-gray-300 text-xs px-2 py-1 rounded border border-gray-600"
-                  >Elementor</span
-                >
-              </div>
-            </div>
-          </div>
-
-          <!-- Project 7 -->
-          <div class="card-hover rounded-lg overflow-hidden">
-            <div
-              class="h-48 bg-gradient-to-br from-gray-700 to-gray-800 flex items-center justify-center border-b border-gray-700"
-            >
-              <div class="text-gray-300 text-5xl">🧰</div>
-            </div>
-            <div class="p-6">
-              <h3 class="text-xl font-bold mb-2 text-white">I Can Fix That</h3>
-              <p class="text-gray-400 mb-4">
-                WordPress Development (September 2024 – October 2024)<br />
-                Redeveloped using the Elementor Builder. Developed a service-focused WordPress site with custom booking
-                forms and SEO-optimized structure.
-              </p>
-            </div>
-          </div>
-
-          <!-- Project 8 -->
-          <div class="card-hover rounded-lg overflow-hidden">
-            <div
-              class="h-48 bg-gradient-to-br from-gray-700 to-gray-800 flex items-center justify-center border-b border-gray-700"
-            >
-              <div class="text-gray-300 text-5xl">🏦</div>
-            </div>
-            <div class="p-6">
-              <h3 class="text-xl font-bold mb-2 text-white">
-                Netbank Philippines
-              </h3>
-              <p class="text-gray-400 mb-4">
-                WordPress Development (July 2024 – August 2024)<br />
-                Built secure, financial-grade site architecture with custom
-                sections, layout and contact forms.
-              </p>
-            </div>
-          </div>
-
-          <!-- Project 9 -->
-          <div class="card-hover rounded-lg overflow-hidden">
-            <div
-              class="h-48 bg-gradient-to-br from-gray-700 to-gray-800 flex items-center justify-center border-b border-gray-700"
-            >
-              <div class="text-gray-300 text-5xl">💼</div>
-            </div>
-            <div class="p-6">
-              <h3 class="text-xl font-bold mb-2 text-white">
-                Jobs360 Website Rebuild
-              </h3>
-              <p class="text-gray-400 mb-4">
-                WordPress Development (July 2024 – October 2024)<br />
-                Rebuilt the job portal site with improved layout, filtering
-                functionality, and mobile responsiveness.
-              </p>
-            </div>
-          </div>
-
-          <!-- Project 10 -->
-          <div class="card-hover rounded-lg overflow-hidden">
-            <div
-              class="h-48 bg-gradient-to-br from-gray-700 to-gray-800 flex items-center justify-center border-b border-gray-700"
-            >
-              <div class="text-gray-300 text-5xl">🏢</div>
-            </div>
-            <div class="p-6">
-              <h3 class="text-xl font-bold mb-2 text-white">
-                Shore360 Website Rebuild
-              </h3>
-              <p class="text-gray-400 mb-4">
-                WordPress Development (May 2024 – August 2024)<br />
-                Full redesign using Elementor focusing on modern UI, faster load
-                times, and engaging layout.
-              </p>
-            </div>
-          </div>
-
-          <!-- Project 11 -->
-          <div class="card-hover rounded-lg overflow-hidden">
-            <div
-              class="h-48 bg-gradient-to-br from-gray-700 to-gray-800 flex items-center justify-center border-b border-gray-700"
-            >
-              <div class="text-gray-300 text-5xl">🏥</div>
-            </div>
-            <div class="p-6">
-              <h3 class="text-xl font-bold mb-2 text-white">
-                Bahamas Flores Clinic – Flores Group
-              </h3>
-              <p class="text-gray-400 mb-4">
-                WordPress & Front-End Development (May 2024)<br />
-                Custom HTML, SCSS, and JavaScript front-end integration for
-                clinic site pages with Git version control.
-              </p>
-            </div>
-          </div>
-
-          <!-- Project 12 -->
-          <div class="card-hover rounded-lg overflow-hidden">
-            <div
-              class="h-48 bg-gradient-to-br from-gray-700 to-gray-800 flex items-center justify-center border-b border-gray-700"
-            >
-              <div class="text-gray-300 text-5xl">🏛️</div>
-            </div>
-            <div class="p-6">
-              <h3 class="text-xl font-bold mb-2 text-white">BBRC</h3>
-              <p class="text-gray-400 mb-4">
-                WordPress Development (April 2024 – June 2024)<br />
-                Second solo project. Rebuilt homepage with elegant layout, responsive sections, and
-                modern design enhancements.
-              </p>
-            </div>
-          </div>
-
-          <!-- Project 13 -->
-          <div class="card-hover rounded-lg overflow-hidden">
-            <div
-              class="h-48 bg-gradient-to-br from-gray-700 to-gray-800 flex items-center justify-center border-b border-gray-700"
-            >
-              <div class="text-gray-300 text-5xl">🏋️</div>
-            </div>
-            <div class="p-6">
-              <h3 class="text-xl font-bold mb-2 text-white">
-                MoveDynamics – GRACE
-              </h3>
-              <p class="text-gray-400 mb-4">
-                WordPress Development (April 2024 – May 2024)<br />
-                Created custom templates and components for MoveDynamics project. Translated the Figma file to Elementor.
-              </p>
-            </div>
-          </div>
-
-          <!-- Project 14 -->
-          <div class="card-hover rounded-lg overflow-hidden">
-            <div
-              class="h-48 bg-gradient-to-br from-gray-700 to-gray-800 flex items-center justify-center border-b border-gray-700"
-            >
-              <div class="text-gray-300 text-5xl">📰</div>
-            </div>
-            <div class="p-6">
-              <h3 class="text-xl font-bold mb-2 text-white">BYRONS</h3>
-              <p class="text-gray-400 mb-4">
-                WordPress Development (January 2024 – October 2024)<br />
-                First solo WordPress Development Project. Applied dynamic contents, custom fields, single pages, member and news filtering. Fixed front-end display issues, improved layout consistency, and
-                developed shortcode functionalities.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Services Section -->
-    <section class="py-16 bg-gray-900">
-      <div class="container mx-auto px-6">
-        <h2 class="text-3xl font-bold text-center mb-12 text-white">
-          Services
-        </h2>
-        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
-          <div
-            class="p-6 bg-gray-800 border border-gray-700 rounded-lg hover:bg-gray-750 hover:border-gray-600 transition duration-300"
-          >
-            <div class="text-2xl mb-3 text-gray-300">🎨</div>
-            <h3 class="font-bold mb-2 text-white">
-              Theme & Plugin Adjustments
-            </h3>
-            <p class="text-gray-400 text-sm">
-              Customizing existing themes and plugins to match your needs
-            </p>
-          </div>
-          <div
-            class="p-6 bg-gray-800 border border-gray-700 rounded-lg hover:bg-gray-750 hover:border-gray-600 transition duration-300"
-          >
-            <div class="text-2xl mb-3 text-gray-300">📝</div>
-            <h3 class="font-bold mb-2 text-white">
-              Page Layout & Content Updates
-            </h3>
-            <p class="text-gray-400 text-sm">
-              Text, images, logos, and content management
-            </p>
-          </div>
-          <div
-            class="p-6 bg-gray-800 border border-gray-700 rounded-lg hover:bg-gray-750 hover:border-gray-600 transition duration-300"
-          >
-            <div class="text-2xl mb-3 text-gray-300">💻</div>
-            <h3 class="font-bold mb-2 text-white">Custom CSS/HTML Fixes</h3>
-            <p class="text-gray-400 text-sm">
-              Basic styling and layout improvements
-            </p>
-          </div>
-          <div
-            class="p-6 bg-gray-800 border border-gray-700 rounded-lg hover:bg-gray-750 hover:border-gray-600 transition duration-300"
-          >
-            <div class="text-2xl mb-3 text-gray-300">🔧</div>
-            <h3 class="font-bold mb-2 text-white">WordPress Troubleshooting</h3>
-            <p class="text-gray-400 text-sm">
-              Fixing WordPress errors and technical issues
-            </p>
-          </div>
-          <div
-            class="p-6 bg-gray-800 border border-gray-700 rounded-lg hover:bg-gray-750 hover:border-gray-600 transition duration-300"
-          >
-            <div class="text-2xl mb-3 text-gray-300">⚡</div>
-            <h3 class="font-bold mb-2 text-white">Performance Optimization</h3>
-            <p class="text-gray-400 text-sm">
-              Page speed improvements and performance tuning
-            </p>
-          </div>
-          <div
-            class="p-6 bg-gray-800 border border-gray-700 rounded-lg hover:bg-gray-750 hover:border-gray-600 transition duration-300"
-          >
-            <div class="text-2xl mb-3 text-gray-300">🔄</div>
-            <h3 class="font-bold mb-2 text-white">Updates & Maintenance</h3>
-            <p class="text-gray-400 text-sm">
-              Regular plugin and theme updates
-            </p>
-          </div>
-          <div
-            class="p-6 bg-gray-800 border border-gray-700 rounded-lg hover:bg-gray-750 hover:border-gray-600 transition duration-300"
-          >
-            <div class="text-2xl mb-3 text-gray-300">🛡️</div>
-            <h3 class="font-bold mb-2 text-white">Security & Backups</h3>
-            <p class="text-gray-400 text-sm">
-              Security setup, malware scans, and website recovery
-            </p>
-          </div>
-          <div
-            class="p-6 bg-gray-800 border border-gray-700 rounded-lg hover:bg-gray-750 hover:border-gray-600 transition duration-300"
-          >
-            <div class="text-2xl mb-3 text-gray-300">🔍</div>
-            <h3 class="font-bold mb-2 text-white">SEO Setup</h3>
-            <p class="text-gray-400 text-sm">
-              On-page SEO, meta tags, headings, and alt texts
-            </p>
-          </div>
-          <div
-            class="p-6 bg-gray-800 border border-gray-700 rounded-lg hover:bg-gray-750 hover:border-gray-600 transition duration-300"
-          >
-            <div class="text-2xl mb-3 text-gray-300">🛍️</div>
-            <h3 class="font-bold mb-2 text-white">WooCommerce Support</h3>
-            <p class="text-gray-400 text-sm">
-              Product setup, payment and shipping configuration
-            </p>
-          </div>
-          <div
-            class="p-6 bg-gray-800 border border-gray-700 rounded-lg hover:bg-gray-750 hover:border-gray-600 transition duration-300"
-          >
-            <div class="text-2xl mb-3 text-gray-300">📱</div>
-            <h3 class="font-bold mb-2 text-white">Mobile Responsiveness</h3>
-            <p class="text-gray-400 text-sm">
-              Ensuring your site looks great on all devices
-            </p>
-          </div>
-          <div
-            class="p-6 bg-gray-800 border border-gray-700 rounded-lg hover:bg-gray-750 hover:border-gray-600 transition duration-300"
-          >
-            <div class="text-2xl mb-3 text-gray-300">✍️</div>
-            <h3 class="font-bold mb-2 text-white">Content Management</h3>
-            <p class="text-gray-400 text-sm">
-              Blog formatting, content publishing, and organization
-            </p>
-          </div>
-          <div
-            class="p-6 bg-gray-800 border border-gray-700 rounded-lg hover:bg-gray-750 hover:border-gray-600 transition duration-300"
-          >
-            <div class="text-2xl mb-3 text-gray-300">📊</div>
-            <h3 class="font-bold mb-2 text-white">Analytics & Reporting</h3>
-            <p class="text-gray-400 text-sm">
-              Google Analytics setup and monthly performance reports
-            </p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Athletic Profile -->
-    <section id="athletic" class="py-16 bg-gray-900">
-      <div class="container mx-auto px-6 max-w-4xl text-center">
-        <h2 class="text-3xl font-bold text-white mb-8">Athletic Profile</h2>
-        <p class="text-gray-300 text-lg mb-6">
-          I’m also an
-          <span class="font-semibold text-white">Ultimate Frisbee player</span>,
-          representing local teams in regional tournaments. Playing ultimate has
-          taught me leadership, focus, and discipline — qualities that also
-          shape how I approach web development.
-        </p>
-        <div class="grid md:grid-cols-2 gap-6">
-          <div class="card-hover p-6 rounded-lg">
-            <h3 class="text-xl font-semibold text-white mb-2">Team Member</h3>
-            <p class="text-gray-400">
-              Active member of Pampanga Ultimate Community, a community-based
-              ultimate frisbee team in Pampanga.
-            </p>
-            <p class="text-sm text-gray-500">January 2025 – Present</p>
-          </div>
-          <div class="card-hover p-6 rounded-lg">
-            <h3 class="text-xl font-semibold text-white mb-2">
-              ASLAG Ultimate
-            </h3>
-            <p class="text-gray-400">
-              Active member and Team Captain of the local college ultimate
-              frisbee team in the City College of San Fernando Pampanga.
-            </p>
-            <p class="text-sm text-gray-500">August 2019 – September 2023</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Contact -->
-    <section id="contact" class="py-16 bg-black">
-      <div class="container mx-auto px-6 text-center">
-        <h2 class="text-3xl font-bold mb-8 text-white">Let's Connect</h2>
-        <p class="text-lg text-gray-400 mb-8 max-w-2xl mx-auto">
-          Whether it’s a new project, collaboration, or opportunity — feel free
-          to reach out.
-        </p>
-        <div
-          class="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-6"
-        >
-          <a
-            href="tel:+639052800332"
-            class="flex items-center space-x-2 bg-white text-black px-6 py-3 rounded-lg hover:bg-gray-200 transition duration-300 font-medium"
-          >
-            <span>📞</span>
-            <span>+63 905 280 0332</span>
           </a>
-          <a
-            href="https://www.linkedin.com/in/lncdmndl/"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="flex items-center space-x-2 border border-gray-600 text-gray-300 px-6 py-3 rounded-lg hover:bg-gray-800 hover:border-gray-500 transition duration-300 font-medium"
-          >
-            <span>💼</span>
-            <span>LinkedIn</span>
-          </a>
-        </div>
-      </div>
-    </section>
 
-    <!-- Footer -->
-    <footer class="bg-gray-900 border-t border-gray-800 text-gray-400 py-8">
-      <div class="container mx-auto px-6 text-center">
-        <p>&copy; 2025 Lance Dimandal. Built with passion and precision.</p>
-      </div>
-    </footer>
+          <div class="hidden md:flex items-center gap-6 text-sm">
+            <a href="#about" class="hover:text-white transition">About</a>
+            <a href="#education" class="hover:text-white transition"
+              >Education</a
+            >
+            <a href="#skills" class="hover:text-white transition">Skills</a>
+            <a href="#portfolio" class="hover:text-white transition"
+              >Portfolio</a
+            >
+            <a href="#services" class="hover:text-white transition">Services</a>
+            <a href="#experience" class="hover:text-white transition"
+              >Experience</a
+            >
+            <a href="#athletic" class="hover:text-white transition">Athletic</a>
+            <a href="#contact" class="hover:text-white transition">Contact</a>
+            <a
+              href="https://drive.google.com/file/d/1qNBZ4wSpdxR03eUkPRcy5QZT6Dzxgg52/view?usp=sharing"
+              target="_blank"
+              class="px-3 py-2 rounded-md border border-white/6 text-sm hover:bg-white/5 transition"
+            >
+              Resume
+            </a>
+          </div>
+
+          <div class="md:hidden">
+            <button id="mobileBtn" class="p-2 rounded-md border border-white/6">
+              Menu
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      <!-- HERO -->
+      <header class="py-16">
+        <div
+          class="mx-auto px-6 max-w-site grid grid-cols-1 md:grid-cols-12 gap-8 items-center"
+        >
+          <div
+            class="md:col-span-5 flex flex-col items-center md:items-start gap-6"
+            data-aos="fade-up"
+          >
+            <div class="avatar overflow-hidden">
+              <img
+                src="images/lance-developer.jpg"
+                alt="Lance Dimandal"
+                class="w-full h-full object-cover"
+              />
+            </div>
+
+            <div class="text-left">
+              <h1 class="text-3xl md:text-4xl font-extrabold leading-tight">
+                Lance Christopher Dimandal
+              </h1>
+              <p class="text-sm text-[--muted] mt-1">
+                Web Developer —
+                <span class="accent">WordPress Specialist</span> &amp; Shopify
+                Assistant
+              </p>
+            </div>
+
+            <p class="text-gray-300 max-w-md">
+              I develop responsive, performance-driven websites focusing on
+              WordPress as my main specialty while managing Shopify sites as I
+              continue to upskill in the platform.
+            </p>
+
+            <div class="flex gap-3">
+              <a
+                href="mailto:dimandallance@gmail.com"
+                class="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-[--accent] text-black font-semibold shadow-sm hover:brightness-95 transition"
+                >💬 Hire / Contact</a
+              >
+              <a
+                href="https://drive.google.com/file/d/1qNBZ4wSpdxR03eUkPRcy5QZT6Dzxgg52/view?usp=sharing"
+                target="_blank"
+                class="inline-flex items-center gap-2 px-4 py-2 rounded-md border border-white/6 text-sm hover:bg-white/5 transition"
+                >📄 Download Resume</a
+              >
+            </div>
+          </div>
+
+          <div class="md:col-span-7" data-aos="fade-left">
+            <div class="glass rounded-2xl p-6 lift">
+              <div class="flex items-center justify-between mb-4">
+                <div>
+                  <div class="text-xs text-[--muted]">Current</div>
+                  <div class="text-sm font-medium">
+                    Junior Web Developer — Shore360 Agency
+                  </div>
+                </div>
+                <div class="text-xs text-[--muted]">Since Dec 2023</div>
+              </div>
+
+              <div class="divider mb-4"></div>
+
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="p-3">
+                  <div class="text-sm text-[--muted]">Specialties</div>
+                  <div class="mt-2 text-sm">
+                    WordPress · Elementor · Shopify
+                  </div>
+                </div>
+                <div class="p-3">
+                  <div class="text-sm text-[--muted]">Focus</div>
+                  <div class="mt-2 text-sm">
+                    Performance · Accessibility · UX
+                  </div>
+                </div>
+                <div class="p-3">
+                  <div class="text-sm text-[--muted]">Tools</div>
+                  <div class="mt-2 text-sm">
+                    Git · Chrome DevTools · Lighthouse
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 mt-6">
+              <div
+                class="glass rounded-lg p-4 lift"
+                data-aos="fade-up"
+                data-aos-delay="80"
+              >
+                <div class="text-xs text-[--muted]">Location</div>
+                <div class="font-medium">Philippines</div>
+              </div>
+              <div
+                class="glass rounded-lg p-4 lift"
+                data-aos="fade-up"
+                data-aos-delay="140"
+              >
+                <div class="text-xs text-[--muted]">Availability</div>
+                <div class="font-medium">Open to opportunities</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main class="flex-1">
+        <!-- ABOUT -->
+        <section id="about" class="py-16" data-aos="fade-up">
+          <div class="mx-auto px-6 max-w-site">
+            <div class="grid md:grid-cols-3 gap-8 items-start">
+              <div class="md:col-span-1">
+                <h2 class="text-2xl font-bold">About Me</h2>
+                <p class="text-[--muted] mt-2">
+                  A dedicated Web Developer who turns designs into smooth,
+                  responsive websites. I focus on WordPress, Elementor, and
+                  Shopify and enjoy optimizing UX and performance.
+                </p>
+              </div>
+
+              <div class="md:col-span-2 glass rounded-2xl p-6">
+                <p class="text-gray-300 mb-4">
+                  Hi, I’m <span class="font-semibold">Lance Dimandal</span>, a
+                  dedicated Web Developer based in the Philippines. I specialize
+                  in creating modern, responsive, and high-performance websites
+                  with WordPress, Elementor, and Shopify.
+                </p>
+                <p class="text-gray-300 mb-4">
+                  I enjoy solving problems and turning complex design concepts
+                  into smooth user experiences. My workflow combines creativity,
+                  technical skill, and an eye for detail — ensuring every site I
+                  build is elegant and efficient.
+                </p>
+                <p class="text-gray-300">
+                  Outside of development, I value teamwork and personal growth —
+                  skills I’ve honed both through professional collaboration and
+                  on the ultimate frisbee field.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- EDUCATION & EXPERIENCE -->
+        <section id="education" class="py-16 bg-[#060607]" data-aos="fade-up">
+          <div class="mx-auto px-6 max-w-site">
+            <div class="grid md:grid-cols-2 gap-8">
+              <div>
+                <h3 class="text-xl font-bold mb-6">Education</h3>
+                <div class="space-y-8">
+                  <!-- COLLEGE -->
+                  <div>
+                    <div
+                      class="glass rounded-lg p-4 lift"
+                      data-aos="fade-up"
+                      data-aos-delay="40"
+                    >
+                      <div class="flex items-center gap-4">
+                        <div
+                          class="w-14 h-14 rounded-lg overflow-hidden bg-white/3 flex items-center justify-center"
+                        >
+                          <img
+                            src="images/ccsfp.png"
+                            alt="College logo"
+                            class="object-contain h-full"
+                          />
+                        </div>
+                        <div>
+                          <div class="font-semibold">
+                            B.S. in Information Technology
+                          </div>
+                          <div class="text-sm text-[--muted]">
+                            City College of San Fernando Pampanga
+                          </div>
+                          <div class="text-sm text-[--muted]">2019 – 2023</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- HIGH SCHOOL -->
+                  <div>
+                    <div
+                      class="glass rounded-lg p-4 lift"
+                      data-aos="fade-up"
+                      data-aos-delay="80"
+                    >
+                      <div class="flex items-center gap-4">
+                        <div
+                          class="w-14 h-14 rounded-lg overflow-hidden bg-white/3 flex items-center justify-center"
+                        >
+                          <img
+                            src="images/phs.jpg"
+                            alt="HS logo"
+                            class="object-contain h-full"
+                          />
+                        </div>
+                        <div>
+                          <div class="font-semibold">
+                            Academic Track – GAS Strand
+                          </div>
+                          <div class="text-sm text-[--muted]">
+                            Pampanga High School
+                          </div>
+                          <div class="text-sm text-[--muted]">2016 – 2019</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                </div>
+              </div>
+
+              <div id="experience">
+                <h3 class="text-xl font-bold mb-6">Work Experience</h3>
+                <div class="space-y-4">
+                  <div
+                    class="glass rounded-lg p-4 lift"
+                    data-aos="fade-up"
+                    data-aos-delay="120"
+                  >
+                    <div class="flex items-center gap-4">
+                      <div
+                        class="w-14 h-14 rounded-lg overflow-hidden bg-white/3 flex items-center justify-center"
+                      >
+                        <img
+                          src="images/shore360.webp"
+                          alt="Shore360 logo"
+                          class="object-contain h-full"
+                        />
+                      </div>
+                      <div>
+                        <div class="font-semibold">Junior Web Developer</div>
+                        <div class="text-sm text-[--muted]">
+                          Shore360 Agency - Shore360, Inc.
+                        </div>
+                        <div class="text-sm text-[--muted]">
+                          December 2023 – Present
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div
+                    class="glass rounded-lg p-4 lift"
+                    data-aos="fade-up"
+                    data-aos-delay="160"
+                  >
+                    <div class="flex items-center gap-4">
+                      <div
+                        class="w-14 h-14 rounded-lg overflow-hidden bg-white/3 flex items-center justify-center"
+                      >
+                        <img
+                          src="images/dost_r3.webp"
+                          alt="DOST logo"
+                          class="object-contain h-full"
+                        />
+                      </div>
+                      <div>
+                        <div class="font-semibold">
+                          Student Trainee (Intern)
+                        </div>
+                        <div class="text-sm text-[--muted]">
+                          Department of Science and Technology - Regional Office
+                          No. 3
+                        </div>
+                        <div class="text-sm text-[--muted]">
+                          September 2022 – January 2023
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- SKILLS -->
+        <section id="skills" class="py-16" data-aos="fade-up">
+          <div class="mx-auto px-6 max-w-site">
+            <h3 class="text-2xl font-bold mb-6">Technical Skills & Tools</h3>
+
+            <div class="grid md:grid-cols-2 gap-8">
+              <div
+                class="glass rounded-2xl p-6 lift"
+                data-aos="fade-up"
+                data-aos-delay="40"
+              >
+                <h4 class="font-semibold mb-3">CMS & Builders</h4>
+                <div class="flex flex-wrap gap-3">
+                  <span class="tech-pill px-3 py-1 rounded-full text-sm"
+                    >WordPress</span
+                  >
+                  <span class="tech-pill px-3 py-1 rounded-full text-sm"
+                    >Elementor</span
+                  >
+                  <span class="tech-pill px-3 py-1 rounded-full text-sm"
+                    >YOOTheme</span
+                  >
+                  <span class="tech-pill px-3 py-1 rounded-full text-sm"
+                    >Gutenberg</span
+                  >
+                  <span class="tech-pill px-3 py-1 rounded-full text-sm"
+                    >Divi</span
+                  >
+                  <span class="tech-pill px-3 py-1 rounded-full text-sm"
+                    >Shopify</span
+                  >
+                  <span class="tech-pill px-3 py-1 rounded-full text-sm"
+                    >Liquid</span
+                  >
+                  <span class="tech-pill px-3 py-1 rounded-full text-sm"
+                    >HubSpot</span
+                  >
+                </div>
+              </div>
+
+              <div
+                class="glass rounded-2xl p-6 lift"
+                data-aos="fade-up"
+                data-aos-delay="80"
+              >
+                <h4 class="font-semibold mb-3">Web Development</h4>
+                <div class="flex flex-wrap gap-3">
+                  <span class="tech-pill px-3 py-1 rounded-full text-sm"
+                    >HTML5</span
+                  >
+                  <span class="tech-pill px-3 py-1 rounded-full text-sm"
+                    >CSS3</span
+                  >
+                  <span class="tech-pill px-3 py-1 rounded-full text-sm"
+                    >SCSS/SASS</span
+                  >
+                  <span class="tech-pill px-3 py-1 rounded-full text-sm"
+                    >Bootstrap</span
+                  >
+                  <span class="tech-pill px-3 py-1 rounded-full text-sm"
+                    >JavaScript</span
+                  >
+                  <span class="tech-pill px-3 py-1 rounded-full text-sm"
+                    >jQuery</span
+                  >
+                  <span class="tech-pill px-3 py-1 rounded-full text-sm"
+                    >PHP</span
+                  >
+                  <span class="tech-pill px-3 py-1 rounded-full text-sm"
+                    >MySQL</span
+                  >
+                </div>
+              </div>
+
+              <div
+                class="glass rounded-2xl p-6 lift"
+                data-aos="fade-up"
+                data-aos-delay="120"
+              >
+                <h4 class="font-semibold mb-3">Version Control & Deployment</h4>
+                <div class="flex flex-wrap gap-3">
+                  <span class="tech-pill px-3 py-1 rounded-full text-sm"
+                    >Git</span
+                  >
+                  <span class="tech-pill px-3 py-1 rounded-full text-sm"
+                    >GitHub</span
+                  >
+                  <span class="tech-pill px-3 py-1 rounded-full text-sm"
+                    >Git Bash</span
+                  >
+                  <span class="tech-pill px-3 py-1 rounded-full text-sm"
+                    >FTP/SFTP</span
+                  >
+                </div>
+              </div>
+
+              <div
+                class="glass rounded-2xl p-6 lift"
+                data-aos="fade-up"
+                data-aos-delay="160"
+              >
+                <h4 class="font-semibold mb-3">Optimization & Security</h4>
+                <div class="flex flex-wrap gap-3">
+                  <span class="tech-pill px-3 py-1 rounded-full text-sm"
+                    >Performance Optimization</span
+                  >
+                  <span class="tech-pill px-3 py-1 rounded-full text-sm"
+                    >SEO Best Practices</span
+                  >
+                  <span class="tech-pill px-3 py-1 rounded-full text-sm"
+                    >Digital Shield</span
+                  >
+                  <span class="tech-pill px-3 py-1 rounded-full text-sm"
+                    >Lighthouse</span
+                  >
+                  <span class="tech-pill px-3 py-1 rounded-full text-sm"
+                    >PageSpeed Insights</span
+                  >
+                  <span class="tech-pill px-3 py-1 rounded-full text-sm"
+                    >GTmetrix</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- PORTFOLIO -->
+        <section id="portfolio" class="py-16 bg-[#060607]" data-aos="fade-up">
+          <div class="mx-auto px-6 max-w-site">
+            <h3 class="text-2xl font-bold">Portfolio</h3>
+            <div class="divider mb-8"></div>
+            <p class="text-[--muted] mb-10 max-w-3xl">
+              A selection of projects I’ve developed — focusing on performance,
+              responsiveness, and elegant implementation through WordPress, Shopify,
+              and custom-coded solutions.
+            </p>
+
+            <div class="grid md:grid-cols-3 gap-6">
+              <!-- 1 AWR -->
+              <article class="glass rounded-2xl p-5 transform transition-shadow transition-transform lift hover:-translate-y-2 hover:shadow-lg" data-aos="fade-up" data-aos-delay="0">
+                <div class="h-40 rounded-md bg-gradient-to-br from-slate-800 to-slate-900 p-4 flex items-center justify-center mb-4 transition hover:from-slate-700 hover:to-slate-800 hover:shadow-[0_0_20px_rgba(37,99,235,0.25)] overflow-hidden">
+                  <img src="images/AWR_Logo.webp" alt="AWR Solutions Logo" class="object-contain h-20 opacity-90 hover:opacity-100 transition" />
+                </div>
+                <h4 class="font-semibold text-lg mb-1 flex items-center gap-2">
+                  AWR Solutions
+                  <span class="text-xs font-medium px-2 py-[2px] rounded-md bg-blue-900/40 text-[--accent]">In&nbsp;Progress</span>
+                </h4>
+                <p class="text-xs text-[--muted] mb-2">September 2025 – Present · Shopify Development</p>
+                <p class="text-sm text-gray-300 leading-relaxed">
+                  Website rebuild from Neto to Shopify with advanced product filtering, custom forms, payment gateway integration, and optimized inventory management.
+                </p>
+                <div class="mt-3 text-xs text-[--muted] italic">Associated with <span class="text-[--accent] font-medium">Shore360 Agency</span></div>
+                <div class="mt-4 flex gap-2 flex-wrap">
+                  <span class="tech-pill px-2 py-1 text-xs rounded">Shopify</span>
+                  <span class="tech-pill px-2 py-1 text-xs rounded">Liquid</span>
+                  <span class="tech-pill px-2 py-1 text-xs rounded">Custom Code</span>
+                </div>
+                <a href="#" target="_blank" rel="noopener" class="inline-flex items-center gap-2 mt-5 px-3 py-2 rounded-md text-sm font-medium bg-[--accent] text-black hover:brightness-95 transition">🌐 View Live Site</a>
+              </article>
+
+              <!-- 2 Squadron Energy -->
+              <article class="glass rounded-2xl p-5 transform transition-shadow transition-transform lift hover:-translate-y-2 hover:shadow-lg" data-aos="fade-up" data-aos-delay="100">
+                <div class="h-40 rounded-md bg-gradient-to-br from-slate-800 to-slate-900 p-4 flex items-center justify-center mb-4 transition hover:from-slate-700 hover:to-slate-800 hover:shadow-[0_0_20px_rgba(37,99,235,0.25)] overflow-hidden">
+                  <img src="images/SquadronEnergy-logo.svg" alt="Squadron Energy Logo" class="object-contain h-20 opacity-90 hover:opacity-100 transition" />
+                </div>
+                <h4 class="font-semibold text-lg mb-1 flex items-center gap-2">
+                  Squadron Energy
+                  <span class="text-xs font-medium px-2 py-[2px] rounded-md bg-blue-900/40 text-[--accent]">In&nbsp;Progress</span>
+                </h4>
+                <p class="text-xs text-[--muted] mb-2">July 2025 – Present · WordPress Development</p>
+                <p class="text-sm text-gray-300 leading-relaxed">
+                  Migrated the site from Craft CMS to WordPress, building reusable Elementor layouts with flexible section templates and optimized form structures.
+                </p>
+                <div class="mt-3 text-xs text-[--muted] italic">Associated with <span class="text-[--accent] font-medium">Shore360 Agency</span></div>
+                <div class="mt-4 flex gap-2 flex-wrap">
+                  <span class="tech-pill px-2 py-1 text-xs rounded">WordPress</span>
+                  <span class="tech-pill px-2 py-1 text-xs rounded">Elementor</span>
+                  <span class="tech-pill px-2 py-1 text-xs rounded">Custom Code</span>
+                  <span class="tech-pill px-2 py-1 text-xs rounded">Custom Forms</span>
+                </div>
+                <a href="#" target="_blank" rel="noopener" class="inline-flex items-center gap-2 mt-5 px-3 py-2 rounded-md text-sm font-medium bg-[--accent] text-black hover:brightness-95 transition">🌐 View Live Site</a>
+              </article>
+
+              <!-- 3 ePlumbing NZ -->
+              <article class="glass rounded-2xl p-5 transform transition-shadow transition-transform lift hover:-translate-y-2 hover:shadow-lg" data-aos="fade-up" data-aos-delay="200">
+                <div class="h-40 rounded-md bg-gradient-to-br from-slate-800 to-slate-900 p-4 flex items-center justify-center mb-4 transition hover:from-slate-700 hover:to-slate-800 hover:shadow-[0_0_20px_rgba(37,99,235,0.25)] overflow-hidden">
+                  <img src="images/plumbing-estimators-logo.webp" alt="ePlumbing Estimators NZ Logo" class="object-contain h-20 opacity-90 hover:opacity-100 transition" />
+                </div>
+                <h4 class="font-semibold text-lg mb-1">ePlumbing Estimators NZ Website Rebuild</h4>
+                <p class="text-xs text-[--muted] mb-2">June 2025 – July 2025 · WordPress Development</p>
+                <p class="text-sm text-gray-300 leading-relaxed">
+                  Rebuilt the New Zealand version of the client’s site, improving performance, structure, and UI through custom Elementor sections and optimized templates.
+                </p>
+                <div class="mt-3 text-xs text-[--muted] italic">Associated with <span class="text-[--accent] font-medium">Shore360 Agency</span></div>
+                <div class="mt-4 flex gap-2 flex-wrap">
+                  <span class="tech-pill px-2 py-1 text-xs rounded">WordPress</span>
+                  <span class="tech-pill px-2 py-1 text-xs rounded">Elementor</span>
+                </div>
+                <a href="#" target="_blank" rel="noopener" class="inline-flex items-center gap-2 mt-5 px-3 py-2 rounded-md text-sm font-medium bg-[--accent] text-black hover:brightness-95 transition">🌐 View Live Site</a>
+              </article>
+
+              <!-- 4 Shore360 Agency -->
+              <article class="glass rounded-2xl p-5 transform transition-shadow transition-transform lift hover:-translate-y-2 hover:shadow-lg" data-aos="fade-up" data-aos-delay="300">
+                <div class="h-40 rounded-md bg-gradient-to-br from-slate-800 to-slate-900 p-4 flex items-center justify-center mb-4 transition hover:from-slate-700 hover:to-slate-800 hover:shadow-[0_0_20px_rgba(37,99,235,0.25)] overflow-hidden">
+                  <img src="images/shoreagency_logo.png" alt="Shore360 Agency Logo" class="object-contain h-20 opacity-90 hover:opacity-100 transition" />
+                </div>
+                <h4 class="font-semibold text-lg mb-1 flex items-center gap-2">
+                  Shore360 Agency
+                  <span class="text-xs font-medium px-2 py-[2px] rounded-md bg-blue-900/40 text-[--accent]">In&nbsp;Progress</span>
+                </h4>
+                <p class="text-xs text-[--muted] mb-2">May 2025 – Present · WordPress Development</p>
+                <p class="text-sm text-gray-300 leading-relaxed">
+                  Designed and developed responsive WordPress sites using Elementor, prioritizing SEO, accessibility, and optimized loading speeds for clients.
+                </p>
+                <div class="mt-3 text-xs text-[--muted] italic">Associated with <span class="text-[--accent] font-medium">Shore360 Agency</span></div>
+                <div class="mt-4 flex gap-2 flex-wrap">
+                  <span class="tech-pill px-2 py-1 text-xs rounded">WordPress</span>
+                  <span class="tech-pill px-2 py-1 text-xs rounded">Elementor</span>
+                  <span class="tech-pill px-2 py-1 text-xs rounded">Custom Code</span>
+                </div>
+                <a href="#" target="_blank" rel="noopener" class="inline-flex items-center gap-2 mt-5 px-3 py-2 rounded-md text-sm font-medium bg-[--accent] text-black hover:brightness-95 transition">🌐 View Live Site</a>
+              </article>
+
+              <!-- 5 ePlumbing AU -->
+              <article class="glass rounded-2xl p-5 transform transition-shadow transition-transform lift hover:-translate-y-2 hover:shadow-lg" data-aos="fade-up" data-aos-delay="400">
+                <div class="h-40 rounded-md bg-gradient-to-br from-slate-800 to-slate-900 p-4 flex items-center justify-center mb-4 transition hover:from-slate-700 hover:to-slate-800 hover:shadow-[0_0_20px_rgba(37,99,235,0.25)] overflow-hidden">
+                  <img src="images/plumbing-estimators-logo.webp" alt="ePlumbing Estimators AU Logo" class="object-contain h-20 opacity-90 hover:opacity-100 transition" />
+                </div>
+                <h4 class="font-semibold text-lg mb-1">ePlumbing Estimators AU Website Rebuild</h4>
+                <p class="text-xs text-[--muted] mb-2">April 2025 – June 2025 · WordPress Development</p>
+                <p class="text-sm text-gray-300 leading-relaxed">
+                  Redesigned the AU site version with optimized Elementor templates, responsive layouts, and a modern UI translated from Figma to WordPress.
+                </p>
+                <div class="mt-3 text-xs text-[--muted] italic">Associated with <span class="text-[--accent] font-medium">Shore360 Agency</span></div>
+                <div class="mt-4 flex gap-2 flex-wrap">
+                  <span class="tech-pill px-2 py-1 text-xs rounded">WordPress</span>
+                  <span class="tech-pill px-2 py-1 text-xs rounded">Elementor</span>
+                </div>
+                <a href="https://plumbingestimators.com.au/" target="_blank" rel="noopener" class="inline-flex items-center gap-2 mt-5 px-3 py-2 rounded-md text-sm font-medium bg-[--accent] text-black hover:brightness-95 transition">🌐 View Live Site</a>
+              </article>
+
+              <!-- 6 Grace -->
+              <article class="glass rounded-2xl p-5 transform transition-shadow transition-transform lift hover:-translate-y-2 hover:shadow-lg" data-aos="fade-up" data-aos-delay="500">
+                <div class="h-40 rounded-md bg-gradient-to-br from-slate-800 to-slate-900 p-4 flex items-center justify-center mb-4 transition hover:from-slate-700 hover:to-slate-800 hover:shadow-[0_0_20px_rgba(37,99,235,0.25)] overflow-hidden">
+                  <img src="images/Grace-Logo.webp" alt="Grace Logo" class="object-contain h-20 opacity-90 hover:opacity-100 transition" />
+                </div>
+                <h4 class="font-semibold text-lg mb-1">Grace Website Rebuild</h4>
+                <p class="text-xs text-[--muted] mb-2">October 2024 – June 2025 · WordPress Development</p>
+                <p class="text-sm text-gray-300 leading-relaxed">
+                  Enhanced user experience and visual hierarchy using Elementor. Improved navigation, accessibility, and performance through refined code structure.
+                </p>
+                <div class="mt-3 text-xs text-[--muted] italic">Associated with <span class="text-[--accent] font-medium">Shore360 Agency</span></div>
+                <div class="mt-4 flex gap-2 flex-wrap">
+                  <span class="tech-pill px-2 py-1 text-xs rounded">WordPress</span>
+                  <span class="tech-pill px-2 py-1 text-xs rounded">Elementor</span>
+                  <span class="tech-pill px-2 py-1 text-xs rounded">Custom Code</span>
+                  <span class="tech-pill px-2 py-1 text-xs rounded">JavaScript</span>
+                  <span class="tech-pill px-2 py-1 text-xs rounded">Salesforce</span>
+                </div>
+                <a href="https://www.grace.com.au/" target="_blank" rel="noopener" class="inline-flex items-center gap-2 mt-5 px-3 py-2 rounded-md text-sm font-medium bg-[--accent] text-black hover:brightness-95 transition">🌐 View Live Site</a>
+              </article>
+
+              <!-- 7 I Can Fix That -->
+              <article class="glass rounded-2xl p-5 transform transition-shadow transition-transform lift hover:-translate-y-2 hover:shadow-lg" data-aos="fade-up" data-aos-delay="600">
+                <div class="h-40 rounded-md bg-gradient-to-br from-slate-800 to-slate-900 p-4 flex items-center justify-center mb-4 transition hover:from-slate-700 hover:to-slate-800 hover:shadow-[0_0_20px_rgba(37,99,235,0.25)] overflow-hidden">
+                  <img src="images/ICFT_Logo.svg" alt="I Can Fix That Logo" class="object-contain h-20 opacity-90 hover:opacity-100 transition" />
+                </div>
+                <h4 class="font-semibold text-lg mb-1">I Can Fix That</h4>
+                <p class="text-xs text-[--muted] mb-2">September 2024 – October 2024 · WordPress Development</p>
+                <p class="text-sm text-gray-300 leading-relaxed">
+                  Developed a service-focused WordPress site with booking functionality and SEO-optimized content. Built using Elementor and custom CSS enhancements.
+                </p>
+                <div class="mt-3 text-xs text-[--muted] italic">Associated with <span class="text-[--accent] font-medium">Shore360 Agency</span></div>
+                <div class="mt-4 flex gap-2 flex-wrap">
+                  <span class="tech-pill px-2 py-1 text-xs rounded">WordPress</span>
+                  <span class="tech-pill px-2 py-1 text-xs rounded">Elementor</span>
+                  <span class="tech-pill px-2 py-1 text-xs rounded">Custom Code & CSS</span>
+                  <span class="tech-pill px-2 py-1 text-xs rounded">JavaScript</span>
+                </div>
+                <a href="https://icanfixthat.com.au/" target="_blank" rel="noopener" class="inline-flex items-center gap-2 mt-5 px-3 py-2 rounded-md text-sm font-medium bg-[--accent] text-black hover:brightness-95 transition">🌐 View Live Site</a>
+              </article>
+
+              <!-- 8 Netbank -->
+              <article class="glass rounded-2xl p-5 transform transition-shadow transition-transform lift hover:-translate-y-2 hover:shadow-lg" data-aos="fade-up" data-aos-delay="700">
+                <div class="h-40 rounded-md bg-gradient-to-br from-slate-800 to-slate-900 p-4 flex items-center justify-center mb-4 transition hover:from-slate-700 hover:to-slate-800 hover:shadow-[0_0_20px_rgba(37,99,235,0.25)] overflow-hidden">
+                  <img src="images/Netbank-logo-1.svg" alt="NetBank Logo" class="object-contain h-20 opacity-90 hover:opacity-100 transition" />
+                </div>
+                <h4 class="font-semibold text-lg mb-1">Netbank Philippines</h4>
+                <p class="text-xs text-[--muted] mb-2">July 2024 – August 2024 · WordPress Development</p>
+                <p class="text-sm text-gray-300 leading-relaxed">
+                  Built a secure, financial-grade WordPress architecture with custom components, enhanced form structures, and compliance-focused performance optimization.
+                </p>
+                <div class="mt-3 text-xs text-[--muted] italic">Associated with <span class="text-[--accent] font-medium">Shore360 Agency</span></div>
+                <div class="mt-4 flex gap-2 flex-wrap">
+                  <span class="tech-pill px-2 py-1 text-xs rounded">WordPress</span>
+                  <span class="tech-pill px-2 py-1 text-xs rounded">Elementor</span>
+                  <span class="tech-pill px-2 py-1 text-xs rounded">Custom Code & CSS</span>
+                  <span class="tech-pill px-2 py-1 text-xs rounded">JavaScript</span>
+                  <span class="tech-pill px-2 py-1 text-xs rounded">File Organization</span>
+                </div>
+                <a href="https://netbank.ph/" target="_blank" rel="noopener" class="inline-flex items-center gap-2 mt-5 px-3 py-2 rounded-md text-sm font-medium bg-[--accent] text-black hover:brightness-95 transition">🌐 View Live Site</a>
+              </article>
+
+              <!-- 9 Jobs360 -->
+              <article class="glass rounded-2xl p-5 transform transition-shadow transition-transform lift hover:-translate-y-2 hover:shadow-lg" data-aos="fade-up" data-aos-delay="800">
+                <div class="h-40 rounded-md bg-gradient-to-br from-slate-800 to-slate-900 p-4 flex items-center justify-center mb-4 transition hover:from-slate-700 hover:to-slate-800 hover:shadow-[0_0_20px_rgba(37,99,235,0.25)] overflow-hidden">
+                  <img src="images/Jobs360-logo.svg" alt="Jobs360 Logo" class="object-contain h-20 opacity-90 hover:opacity-100 transition" />
+                </div>
+                <h4 class="font-semibold text-lg mb-1">Jobs360 Website Rebuild</h4>
+                <p class="text-xs text-[--muted] mb-2">July 2024 – October 2024 · WordPress Development</p>
+                <p class="text-sm text-gray-300 leading-relaxed">
+                  Revamped the job portal’s layout and filtering system, creating a responsive, SEO-friendly experience optimized for both employers and applicants.
+                </p>
+                <div class="mt-3 text-xs text-[--muted] italic">Associated with <span class="text-[--accent] font-medium">Shore360 Agency</span></div>
+                <div class="mt-4 flex gap-2 flex-wrap">
+                  <span class="tech-pill px-2 py-1 text-xs rounded">WordPress</span>
+                  <span class="tech-pill px-2 py-1 text-xs rounded">Elementor</span>
+                  <span class="tech-pill px-2 py-1 text-xs rounded">Custom Code & CSS</span>
+                  <span class="tech-pill px-2 py-1 text-xs rounded">JavaScript</span>
+                  <span class="tech-pill px-2 py-1 text-xs rounded">Design Translation</span>
+                </div>
+                <a href="https://www.jobs360.com.ph/" target="_blank" rel="noopener" class="inline-flex items-center gap-2 mt-5 px-3 py-2 rounded-md text-sm font-medium bg-[--accent] text-black hover:brightness-95 transition">🌐 View Live Site</a>
+              </article>
+
+              <!-- 10 Shore360 Rebuild -->
+              <article class="glass rounded-2xl p-5 transform transition-shadow transition-transform lift hover:-translate-y-2 hover:shadow-lg" data-aos="fade-up" data-aos-delay="900">
+                <div class="h-40 rounded-md bg-gradient-to-br from-slate-800 to-slate-900 p-4 flex items-center justify-center mb-4 transition hover:from-slate-700 hover:to-slate-800 hover:shadow-[0_0_20px_rgba(37,99,235,0.25)] overflow-hidden">
+                  <img src="images/Shore360.svg" alt="Shore360 Logo" class="object-contain h-20 opacity-90 hover:opacity-100 transition" />
+                </div>
+                <h4 class="font-semibold text-lg mb-1">Shore360 Website Rebuild</h4>
+                <p class="text-xs text-[--muted] mb-2">May 2024 – August 2024 · WordPress Development</p>
+                <p class="text-sm text-gray-300 leading-relaxed">
+                  Redesigned the corporate site with a clean, modern UI using Elementor and advanced CSS. Focused on faster load times and improved content structure.
+                </p>
+                <div class="mt-3 text-xs text-[--muted] italic">Associated with <span class="text-[--accent] font-medium">Shore360 Agency</span></div>
+                <div class="mt-4 flex gap-2 flex-wrap">
+                  <span class="tech-pill px-2 py-1 text-xs rounded">WordPress</span>
+                  <span class="tech-pill px-2 py-1 text-xs rounded">Elementor</span>
+                  <span class="tech-pill px-2 py-1 text-xs rounded">Custom Code & CSS</span>
+                  <span class="tech-pill px-2 py-1 text-xs rounded">Custom Widget</span>
+                  <span class="tech-pill px-2 py-1 text-xs rounded">JavaScript</span>
+                  <span class="tech-pill px-2 py-1 text-xs rounded">Design Translation</span>
+                </div>
+                <a href="#" target="_blank" rel="noopener" class="inline-flex items-center gap-2 mt-5 px-3 py-2 rounded-md text-sm font-medium bg-[--accent] text-black hover:brightness-95 transition">🌐 View Live Site</a>
+              </article>
+
+              <!-- 11 Bahamas Flores Clinic -->
+              <article class="glass rounded-2xl p-5 transform transition-shadow transition-transform lift hover:-translate-y-2 hover:shadow-lg" data-aos="fade-up" data-aos-delay="1000">
+                <div class="h-40 rounded-md bg-gradient-to-br from-slate-800 to-slate-900 p-4 flex items-center justify-center mb-4 transition hover:from-slate-700 hover:to-slate-800 hover:shadow-[0_0_20px_rgba(37,99,235,0.25)] overflow-hidden">
+                  <img src="images/Bahamas_Flores_Clinic_logo.webp" alt="Bahamas Flores Clinic Logo" class="object-contain h-20 opacity-90 hover:opacity-100 transition" />
+                </div>
+                <h4 class="font-semibold text-lg mb-1">Bahamas Flores Clinic – Flores Group</h4>
+                <p class="text-xs text-[--muted] mb-2">May 2024 · WordPress & Front-End Development</p>
+                <p class="text-sm text-gray-300 leading-relaxed">
+                  Integrated custom HTML, SCSS, and JavaScript for the front-end of a WordPress site with Git-based version control and performance refinements.
+                </p>
+                <div class="mt-3 text-xs text-[--muted] italic">Associated with <span class="text-[--accent] font-medium">Shore360 Agency</span></div>
+                <div class="mt-4 flex gap-2 flex-wrap">
+                  <span class="tech-pill px-2 py-1 text-xs rounded">HTML5</span>
+                  <span class="tech-pill px-2 py-1 text-xs rounded">CSS3/SCSS</span>
+                  <span class="tech-pill px-2 py-1 text-xs rounded">JavaScript</span>
+                  <span class="tech-pill px-2 py-1 text-xs rounded">Git Commands</span>
+                  <span class="tech-pill px-2 py-1 text-xs rounded">GitHub</span>
+                  <span class="tech-pill px-2 py-1 text-xs rounded">Git Bash</span>
+                </div>
+                <a href="https://bahamasfibroidclinic.com/" target="_blank" rel="noopener" class="inline-flex items-center gap-2 mt-5 px-3 py-2 rounded-md text-sm font-medium bg-[--accent] text-black hover:brightness-95 transition">🌐 View Live Site</a>
+              </article>
+
+              <!-- 12 BBRC -->
+              <article class="glass rounded-2xl p-5 transform transition-shadow transition-transform lift hover:-translate-y-2 hover:shadow-lg" data-aos="fade-up" data-aos-delay="1100">
+                <div class="h-40 rounded-md bg-gradient-to-br from-slate-800 to-slate-900 p-4 flex items-center justify-center mb-4 transition hover:from-slate-700 hover:to-slate-800 hover:shadow-[0_0_20px_rgba(37,99,235,0.25)] overflow-hidden">
+                  <img src="images/BBRC_Logo.svg" alt="BBRC Logo" class="object-contain h-20 opacity-90 hover:opacity-100 transition" />
+                </div>
+                <h4 class="font-semibold text-lg mb-1">BBRC</h4>
+                <p class="text-xs text-[--muted] mb-2">April 2024 – June 2024 · WordPress Development</p>
+                <p class="text-sm text-gray-300 leading-relaxed">
+                  Rebuilt the homepage with an elegant, responsive design using Elementor. Applied modern typography, subtle animations, and layout consistency.
+                </p>
+                <div class="mt-3 text-xs text-[--muted] italic">Associated with <span class="text-[--accent] font-medium">Shore360 Agency</span></div>
+                <div class="mt-4 flex gap-2 flex-wrap">
+                  <span class="tech-pill px-2 py-1 text-xs rounded">WordPress</span>
+                  <span class="tech-pill px-2 py-1 text-xs rounded">Elementor</span>
+                  <span class="tech-pill px-2 py-1 text-xs rounded">Custom Code & CSS</span>
+                </div>
+                <a href="#" target="_blank" rel="noopener" class="inline-flex items-center gap-2 mt-5 px-3 py-2 rounded-md text-sm font-medium bg-[--accent] text-black hover:brightness-95 transition">🌐 View Live Site</a>
+              </article>
+
+              <!-- 13 MoveDynamics -->
+              <article class="glass rounded-2xl p-5 transform transition-shadow transition-transform lift hover:-translate-y-2 hover:shadow-lg" data-aos="fade-up" data-aos-delay="1200">
+                <div class="h-40 rounded-md bg-gradient-to-br from-slate-800 to-slate-900 p-4 flex items-center justify-center mb-4 transition hover:from-slate-700 hover:to-slate-800 hover:shadow-[0_0_20px_rgba(37,99,235,0.25)] overflow-hidden">
+                  <img src="images/MoveDynamics_Logo.webp" alt="MoveDynamics Logo" class="object-contain h-20 opacity-90 hover:opacity-100 transition" />
+                </div>
+                <h4 class="font-semibold text-lg mb-1">MoveDynamics – GRACE</h4>
+                <p class="text-xs text-[--muted] mb-2">April 2024 – May 2024 · WordPress Development</p>
+                <p class="text-sm text-gray-300 leading-relaxed">
+                  Created custom Elementor components and translated Figma designs into a fully functional and mobile-responsive site for the MoveDynamics project.
+                </p>
+                <div class="mt-3 text-xs text-[--muted] italic">Associated with <span class="text-[--accent] font-medium">Shore360 Agency</span></div>
+                <div class="mt-4 flex gap-2 flex-wrap">
+                  <span class="tech-pill px-2 py-1 text-xs rounded">WordPress</span>
+                  <span class="tech-pill px-2 py-1 text-xs rounded">Elementor</span>
+                  <span class="tech-pill px-2 py-1 text-xs rounded">Custom Code & CSS</span>
+                  <span class="tech-pill px-2 py-1 text-xs rounded">Custom Contact Forms</span>
+                  <span class="tech-pill px-2 py-1 text-xs rounded">JavaScript</span>
+                </div>
+                <a href="#" target="_blank" rel="noopener" class="inline-flex items-center gap-2 mt-5 px-3 py-2 rounded-md text-sm font-medium bg-[--accent] text-black hover:brightness-95 transition">🌐 View Live Site</a>
+              </article>
+
+              <!-- 14 BYRONS -->
+              <article class="glass rounded-2xl p-5 transform transition-shadow transition-transform lift hover:-translate-y-2 hover:shadow-lg" data-aos="fade-up" data-aos-delay="1300">
+                <div class="h-40 rounded-md bg-gradient-to-br from-slate-800 to-slate-900 p-4 flex items-center justify-center mb-4 transition hover:from-slate-700 hover:to-slate-800 hover:shadow-[0_0_20px_rgba(37,99,235,0.25)] overflow-hidden">
+                  <img src="images/BYRONS_Logo.webp" alt="BYRONS Logo" class="object-contain h-20 opacity-90 hover:opacity-100 transition" />
+                </div>
+                <h4 class="font-semibold text-lg mb-1">BYRONS</h4>
+                <p class="text-xs text-[--muted] mb-2">January 2024 – October 2024 · WordPress Development</p>
+                <p class="text-sm text-gray-300 leading-relaxed">
+                  First solo project applying custom fields, dynamic single pages, and taxonomy filtering for members and news. Improved shortcode logic and layout consistency.
+                </p>
+                <div class="mt-3 text-xs text-[--muted] italic">Associated with <span class="text-[--accent] font-medium">Shore360 Agency</span></div>
+                <div class="mt-4 flex gap-2 flex-wrap">
+                  <span class="tech-pill px-2 py-1 text-xs rounded">WordPress</span>
+                  <span class="tech-pill px-2 py-1 text-xs rounded">Elementor</span>
+                  <span class="tech-pill px-2 py-1 text-xs rounded">Custom Code & CSS</span>
+                  <span class="tech-pill px-2 py-1 text-xs rounded">JavaScript</span>
+                  <span class="tech-pill px-2 py-1 text-xs rounded">Advanced Custom Fields</span>
+                  <span class="tech-pill px-2 py-1 text-xs rounded">Custom Post Types</span>
+                  <span class="tech-pill px-2 py-1 text-xs rounded">Single Post & Pages</span>
+                  <span class="tech-pill px-2 py-1 text-xs rounded">Dynamic Content</span>
+                </div>
+                <a href="https://byrons.com.au/" target="_blank" rel="noopener" class="inline-flex items-center gap-2 mt-5 px-3 py-2 rounded-md text-sm font-medium bg-[--accent] text-black hover:brightness-95 transition">🌐 View Live Site</a>
+              </article>
+
+            </div>
+          </div>
+        </section>
+
+
+        <!-- SERVICES -->
+        <section id="services" class="py-16" data-aos="fade-up">
+          <div class="mx-auto px-6 max-w-site">
+            <h3 class="text-2xl font-bold mb-6">Services</h3>
+
+            <div class="grid md:grid-cols-3 gap-6">
+              <div
+                class="glass rounded-2xl p-6 lift"
+                data-aos="zoom-in"
+                data-aos-delay="40"
+              >
+                <div class="text-2xl mb-3">🎨</div>
+                <h4 class="font-semibold">Theme & Plugin Adjustments</h4>
+                <p class="text-[--muted] text-sm mt-2">
+                  Customizing existing themes and plugins to match your needs
+                </p>
+              </div>
+
+              <div
+                class="glass rounded-2xl p-6 lift"
+                data-aos="zoom-in"
+                data-aos-delay="80"
+              >
+                <div class="text-2xl mb-3">📝</div>
+                <h4 class="font-semibold">Page Layout & Content Updates</h4>
+                <p class="text-[--muted] text-sm mt-2">
+                  Text, images, logos, and content management
+                </p>
+              </div>
+
+              <div
+                class="glass rounded-2xl p-6 lift"
+                data-aos="zoom-in"
+                data-aos-delay="120"
+              >
+                <div class="text-2xl mb-3">💻</div>
+                <h4 class="font-semibold">Custom CSS/HTML Fixes</h4>
+                <p class="text-[--muted] text-sm mt-2">
+                  Basic styling and layout improvements
+                </p>
+              </div>
+
+              <div
+                class="glass rounded-2xl p-6 lift"
+                data-aos="zoom-in"
+                data-aos-delay="160"
+              >
+                <div class="text-2xl mb-3">🔧</div>
+                <h4 class="font-semibold">WordPress Troubleshooting</h4>
+                <p class="text-[--muted] text-sm mt-2">
+                  Fixing WordPress errors and technical issues
+                </p>
+              </div>
+
+              <div
+                class="glass rounded-2xl p-6 lift"
+                data-aos="zoom-in"
+                data-aos-delay="200"
+              >
+                <div class="text-2xl mb-3">⚡</div>
+                <h4 class="font-semibold">Performance Optimization</h4>
+                <p class="text-[--muted] text-sm mt-2">
+                  Page speed improvements and performance tuning
+                </p>
+              </div>
+
+              <div
+                class="glass rounded-2xl p-6 lift"
+                data-aos="zoom-in"
+                data-aos-delay="240"
+              >
+                <div class="text-2xl mb-3">🔄</div>
+                <h4 class="font-semibold">Updates & Maintenance</h4>
+                <p class="text-[--muted] text-sm mt-2">
+                  Regular plugin and theme updates
+                </p>
+              </div>
+
+              <div
+                class="glass rounded-2xl p-6 lift"
+                data-aos="zoom-in"
+                data-aos-delay="280"
+              >
+                <div class="text-2xl mb-3">🛡️</div>
+                <h4 class="font-semibold">Security & Backups</h4>
+                <p class="text-[--muted] text-sm mt-2">
+                  Security setup, malware scans, and website recovery
+                </p>
+              </div>
+
+              <div
+                class="glass rounded-2xl p-6 lift"
+                data-aos="zoom-in"
+                data-aos-delay="320"
+              >
+                <div class="text-2xl mb-3">🔍</div>
+                <h4 class="font-semibold">SEO Setup</h4>
+                <p class="text-[--muted] text-sm mt-2">
+                  On-page SEO, meta tags, headings, and alt texts
+                </p>
+              </div>
+
+              <div
+                class="glass rounded-2xl p-6 lift"
+                data-aos="zoom-in"
+                data-aos-delay="360"
+              >
+                <div class="text-2xl mb-3">🛍️</div>
+                <h4 class="font-semibold">WooCommerce Support</h4>
+                <p class="text-[--muted] text-sm mt-2">
+                  Product setup, payment and shipping configuration
+                </p>
+              </div>
+
+              <div
+                class="glass rounded-2xl p-6 lift"
+                data-aos="zoom-in"
+                data-aos-delay="400"
+              >
+                <div class="text-2xl mb-3">📱</div>
+                <h4 class="font-semibold">Mobile Responsiveness</h4>
+                <p class="text-[--muted] text-sm mt-2">
+                  Ensuring your site looks great on all devices
+                </p>
+              </div>
+
+              <div
+                class="glass rounded-2xl p-6 lift"
+                data-aos="zoom-in"
+                data-aos-delay="440"
+              >
+                <div class="text-2xl mb-3">✍️</div>
+                <h4 class="font-semibold">Content Management</h4>
+                <p class="text-[--muted] text-sm mt-2">
+                  Blog formatting, content publishing, and organization
+                </p>
+              </div>
+
+              <div
+                class="glass rounded-2xl p-6 lift"
+                data-aos="zoom-in"
+                data-aos-delay="480"
+              >
+                <div class="text-2xl mb-3">📊</div>
+                <h4 class="font-semibold">Analytics & Reporting</h4>
+                <p class="text-[--muted] text-sm mt-2">
+                  Google Analytics setup and monthly performance reports
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ATHLETIC PROFILE -->
+        <section id="athletic" class="py-16 bg-[#060607]" data-aos="fade-up">
+          <div class="mx-auto px-6 max-w-site text-center">
+            <h3 class="text-2xl font-bold mb-4">Athletic Profile</h3>
+            <div class="divider mb-8"></div>
+
+            <p class="text-[--muted] max-w-2xl mx-auto mb-10">
+              I’m also an <span class="font-semibold text-white">Ultimate Frisbee player</span>,
+              representing local teams in regional tournaments. Playing ultimate has taught me leadership,
+              focus, and discipline — qualities that also shape how I approach web development.
+            </p>
+
+            <div class="grid md:grid-cols-2 gap-6">
+              <!-- Pampanga Ultimate Community -->
+              <div
+                class="glass rounded-lg p-6 lift flex items-center gap-5 text-left"
+                data-aos="fade-up"
+                data-aos-delay="40"
+              >
+                <div
+                  class="w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center"
+                >
+                  <img
+                    src="images/PUC_logo.webp"
+                    alt="Pampanga Ultimate Community Logo"
+                    class="object-contain h-16 opacity-90 hover:opacity-100 transition"
+                  />
+                </div>
+                <div>
+                  <div class="font-semibold text-white">Pampanga Ultimate Community</div>
+                  <div class="text-[--muted] mt-1">
+                    Active member of <span class="text-[--accent] font-medium">Pampanga Ultimate Community</span>,
+                    a community-based Ultimate Frisbee team in Pampanga.
+                  </div>
+                  <div class="text-sm text-[--muted] mt-2">January 2025 – Present</div>
+                </div>
+              </div>
+
+              <!-- ASLAG Ultimate -->
+              <div
+                class="glass rounded-lg p-6 lift flex items-center gap-5 text-left"
+                data-aos="fade-up"
+                data-aos-delay="80"
+              >
+                <div
+                  class="w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center"
+                >
+                  <img
+                    src="images/ASLAG_Ultimate_Logo.webp"
+                    alt="ASLAG Ultimate Logo"
+                    class="object-contain h-16 opacity-90 hover:opacity-100 transition"
+                  />
+                </div>
+                <div>
+                  <div class="font-semibold text-white">ASLAG Ultimate</div>
+                  <div class="text-[--muted] mt-1">
+                    Active member and <span class="text-[--accent] font-medium">Team Captain</span> of the local college Ultimate team
+                    at City College of San Fernando Pampanga.
+                  </div>
+                  <div class="text-sm text-[--muted] mt-2">August 2019 – September 2023</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- CONTACT -->
+        <section id="contact" class="py-16" data-aos="fade-up">
+          <div class="mx-auto px-6 max-w-site text-center">
+            <h3 class="text-2xl font-bold mb-4">Let's Connect</h3>
+            <p class="text-[--muted] mb-6 max-w-2xl mx-auto">
+              Whether it’s a new project, collaboration, or opportunity — feel
+              free to reach out.
+            </p>
+
+            <div
+              class="flex flex-col md:flex-row items-center justify-center gap-4"
+            >
+              <a
+                href="tel:+639052800332"
+                class="inline-flex items-center gap-2 px-6 py-3 rounded-md bg-white text-black font-medium"
+                >📞 +63 905 280 0332</a
+              >
+              <a
+                href="https://www.linkedin.com/in/lncdmndl/"
+                target="_blank"
+                class="inline-flex items-center gap-2 px-6 py-3 rounded-md border border-white/6"
+                >💼 LinkedIn</a
+              >
+              <a
+                href="mailto:dimandallance@gmail.com"
+                class="inline-flex items-center gap-2 px-6 py-3 rounded-md border border-white/6"
+                >✉️ Email</a
+              >
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <!-- FOOTER -->
+      <footer class="py-6 border-t border-white/4 bg-[#060607]">
+        <div class="mx-auto px-6 max-w-site text-center text-sm text-[--muted]">
+          &copy; 2025 Lance Dimandal. Built with passion and precision.
+        </div>
+      </footer>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script>
+      // Initialize AOS
+      AOS.init({
+        duration: 800,
+        easing: "ease-out-cubic",
+        once: true,
+        offset: 80,
+      });
+
+      // Feather icons
+      feather && feather.replace();
+
+      // Mobile menu (simple)
+      const mobileBtn = document.getElementById("mobileBtn");
+      mobileBtn &&
+        mobileBtn.addEventListener("click", () => {
+          const existing = document.getElementById("mobileMenu");
+          if (existing) return existing.remove();
+
+          const div = document.createElement("div");
+          div.id = "mobileMenu";
+          div.className = "fixed inset-0 bg-black/70 flex items-start p-6 z-60";
+          div.innerHTML =
+            '<div class="bg-[#0a0a0b] p-6 rounded-lg w-full max-w-xs space-y-4 mobile-menu">' +
+            '<a href="#about" class="block">About</a>' +
+            '<a href="#skills" class="block">Skills</a>' +
+            '<a href="#portfolio" class="block">Portfolio</a>' +
+            '<a href="#services" class="block">Services</a>' +
+            '<a href="#education" class="block">Education</a>' +
+            '<a href="#experience" class="block">Experience</a>' +
+            '<a href="#athletic" class="block">Athletic</a>' +
+            '<a href="#contact" class="block">Contact</a>' +
+            '<button id="closeMobile" class="mt-4 px-3 py-2 rounded bg-white text-black w-full">Close</button></div>';
+
+          document.body.appendChild(div);
+          document
+            .getElementById("closeMobile")
+            .addEventListener("click", () => div.remove());
+        });
+    </script>
   </body>
 </html>
