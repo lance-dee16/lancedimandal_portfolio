@@ -1,1349 +1,2542 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Lance Dimandal — Web Developer Portfolio</title>
 
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Lance Dimandal — Web Developer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap"
+    rel="stylesheet" />
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-    <!-- Feather Icons -->
-    <script src="https://unpkg.com/feather-icons"></script>
+    :root {
+      --bg: #080810;
+      --bg2: #0d0d18;
+      --surface: #111120;
+      --surface2: #181830;
+      --border: rgba(255, 255, 255, 0.06);
+      --border2: rgba(255, 255, 255, 0.1);
+      --text: #e8e8f0;
+      --muted: #7070a0;
+      --muted2: #9090b8;
+      --accent: #4f6ef7;
+      --accent2: #7c9bff;
+      --accent-glow: rgba(79, 110, 247, 0.15);
+      --gold: #e8c96e;
+    }
 
-    <!-- AOS (Animate On Scroll) -->
-    <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet" />
-    <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+    html {
+      scroll-behavior: smooth;
+    }
 
-    <style>
-      :root {
-        --accent: #0ea5ff; /* blue accent */
-        --card-bg: rgba(255, 255, 255, 0.03);
-        --muted: #9ca3af;
-        --glass: rgba(255, 255, 255, 0.03);
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: "DM Sans", sans-serif;
+      font-size: 15px;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* NOISE TEXTURE OVERLAY */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.4;
+    }
+
+    /* GRID LINES BG */
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(79, 110, 247, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(79, 110, 247, 0.03) 1px, transparent 1px);
+      background-size: 80px 80px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* NAV */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid var(--border);
+      background: rgba(8, 8, 16, 0.9);
+      backdrop-filter: blur(20px);
+      padding: 1rem 0;
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      font-family: "Syne", sans-serif;
+      font-weight: 800;
+      font-size: 1.1rem;
+      letter-spacing: -0.02em;
+      text-decoration: none;
+      color: var(--text);
+    }
+
+    .logo span {
+      color: var(--accent2);
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 2rem;
+      align-items: center;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: var(--muted);
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    nav a:hover {
+      color: var(--text);
+    }
+
+    .nav-cta {
+      padding: 0.45rem 1.1rem;
+      background: var(--accent);
+      color: #fff !important;
+      border-radius: 6px;
+      font-size: 0.78rem !important;
+      letter-spacing: 0.04em;
+      transition: opacity 0.2s !important;
+    }
+
+    .nav-cta:hover {
+      opacity: 0.85;
+    }
+
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .hamburger span {
+      display: block;
+      width: 22px;
+      height: 1.5px;
+      background: var(--text);
+    }
+
+    #mobile-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(8, 8, 16, 0.97);
+      z-index: 200;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2rem;
+    }
+
+    #mobile-overlay.open {
+      display: flex;
+    }
+
+    #mobile-overlay a {
+      font-family: "Syne", sans-serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 1.5rem;
+      right: 2rem;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--muted);
+      background: none;
+      border: none;
+    }
+
+    /* HERO */
+    .hero {
+      min-height: 92vh;
+      display: flex;
+      align-items: center;
+      padding: 6rem 0 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-glow {
+      position: absolute;
+      top: -20%;
+      left: -10%;
+      width: 700px;
+      height: 700px;
+      background: radial-gradient(circle,
+          rgba(79, 110, 247, 0.08) 0%,
+          transparent 60%);
+      pointer-events: none;
+    }
+
+    .hero-glow2 {
+      position: absolute;
+      bottom: -20%;
+      right: -10%;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle,
+          rgba(124, 155, 255, 0.05) 0%,
+          transparent 60%);
+      pointer-events: none;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5rem;
+      align-items: center;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent2);
+      background: rgba(79, 110, 247, 0.08);
+      border: 1px solid rgba(79, 110, 247, 0.2);
+      padding: 0.35rem 0.8rem;
+      border-radius: 100px;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-eyebrow::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      background: var(--accent2);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1;
       }
 
-      html {
-        scroll-behavior: smooth; /* smooth page scroll for nav anchors */
+      50% {
+        opacity: 0.3;
+      }
+    }
+
+    h1 {
+      font-family: "Syne", sans-serif;
+      font-size: clamp(2.8rem, 5vw, 4.5rem);
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+      margin-bottom: 1.5rem;
+    }
+
+    h1 .line2 {
+      color: var(--accent2);
+    }
+
+    .hero-desc {
+      font-size: 1.05rem;
+      color: var(--muted2);
+      max-width: 460px;
+      line-height: 1.7;
+      margin-bottom: 2.5rem;
+    }
+
+    .hero-btns {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.8rem;
+      background: var(--accent);
+      color: #fff;
+      border-radius: 8px;
+      font-weight: 500;
+      font-size: 0.9rem;
+      text-decoration: none;
+      transition:
+        transform 0.2s,
+        box-shadow 0.2s;
+      box-shadow: 0 0 30px rgba(79, 110, 247, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 40px rgba(79, 110, 247, 0.4);
+    }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.8rem;
+      border: 1px solid var(--border2);
+      color: var(--text);
+      border-radius: 8px;
+      font-weight: 400;
+      font-size: 0.9rem;
+      text-decoration: none;
+      transition:
+        border-color 0.2s,
+        background 0.2s;
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--accent);
+      background: rgba(79, 110, 247, 0.05);
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 2.5rem;
+      margin-top: 3rem;
+    }
+
+    .stat {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .stat-num {
+      font-family: "Syne", sans-serif;
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    /* HERO CARD SIDE */
+    .hero-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 2rem;
+      position: relative;
+    }
+
+    .hero-card::before {
+      content: "";
+      position: absolute;
+      inset: -1px;
+      border-radius: 21px;
+      background: linear-gradient(135deg,
+          rgba(79, 110, 247, 0.3),
+          transparent 50%,
+          rgba(124, 155, 255, 0.1));
+      z-index: -1;
+    }
+
+    .hc-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .avatar {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), #6b4fbb);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "Syne", sans-serif;
+      font-size: 1rem;
+      font-weight: 800;
+      color: #fff;
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+
+    .avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .hc-name {
+      font-family: "Syne", sans-serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+
+    .hc-role {
+      font-size: 0.78rem;
+      color: var(--accent2);
+    }
+
+    .status-dot {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.72rem;
+      color: var(--muted2);
+      background: rgba(34, 197, 94, 0.08);
+      border: 1px solid rgba(34, 197, 94, 0.2);
+      padding: 0.3rem 0.7rem;
+      border-radius: 100px;
+    }
+
+    .status-dot::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #22c55e;
+      animation: pulse 2s infinite;
+    }
+
+    .hc-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .hc-cell {
+      padding: 0.9rem;
+      background: var(--bg2);
+      border-radius: 10px;
+      border: 1px solid var(--border);
+    }
+
+    .hc-cell-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      margin-bottom: 0.4rem;
+    }
+
+    .hc-cell-val {
+      font-size: 0.82rem;
+      font-weight: 500;
+    }
+
+    .skill-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    .skill-tag {
+      font-size: 0.72rem;
+      padding: 0.3rem 0.7rem;
+      border-radius: 5px;
+      border: 1px solid var(--border);
+      color: var(--muted2);
+      background: var(--bg2);
+      transition:
+        border-color 0.2s,
+        color 0.2s;
+    }
+
+    .skill-tag:hover {
+      border-color: var(--accent);
+      color: var(--accent2);
+    }
+
+    /* SECTION HEADERS */
+    .section-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--accent2);
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+    }
+
+    h2 {
+      font-family: "Syne", sans-serif;
+      font-size: clamp(2rem, 3.5vw, 2.8rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      margin-bottom: 1rem;
+    }
+
+    h3 {
+      font-family: "Syne", sans-serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+
+    /* SECTION SPACING */
+    section {
+      padding: 7rem 0;
+      position: relative;
+      z-index: 1;
+    }
+
+    .section-divider {
+      height: 1px;
+      background: linear-gradient(90deg,
+          transparent,
+          var(--border2),
+          transparent);
+      margin: 0;
+    }
+
+    /* ABOUT */
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.5fr;
+      gap: 5rem;
+      align-items: start;
+    }
+
+    .about-text p {
+      color: var(--muted2);
+      line-height: 1.8;
+      margin-bottom: 1.2rem;
+    }
+
+    .about-text p:last-child {
+      margin-bottom: 0;
+    }
+
+    .value-list {
+      margin-top: 2.5rem;
+    }
+
+    .value-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .value-item:last-child {
+      border-bottom: none;
+    }
+
+    .value-icon {
+      width: 36px;
+      height: 36px;
+      flex-shrink: 0;
+      background: rgba(79, 110, 247, 0.1);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+    }
+
+    .value-text {
+      font-size: 0.88rem;
+      color: var(--muted2);
+    }
+
+    .value-title {
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 0.1rem;
+      font-size: 0.9rem;
+    }
+
+    .about-sidebar {}
+
+    .quote-block {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 0 12px 12px 0;
+      padding: 1.8rem;
+      margin-bottom: 2rem;
+      font-size: 1.05rem;
+      font-style: italic;
+      color: var(--muted2);
+      line-height: 1.7;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .info-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.2rem;
+    }
+
+    .info-card-label {
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-bottom: 0.5rem;
+    }
+
+    .info-card-val {
+      font-family: "Syne", sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+    }
+
+    /* TIMELINE */
+    .timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .tl-item {
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      gap: 2rem;
+      padding: 2rem 0;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+
+    .tl-item:last-child {
+      border-bottom: none;
+    }
+
+    .tl-date {
+      font-size: 0.75rem;
+      color: var(--muted);
+      padding-top: 0.2rem;
+      text-align: right;
+      font-feature-settings: "tnum";
+    }
+
+    .tl-dot {
+      position: absolute;
+      left: 140px;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 12px rgba(79, 110, 247, 0.5);
+    }
+
+    .tl-content {}
+
+    .tl-org {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.6rem;
+    }
+
+    .tl-logo {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--muted);
+    }
+
+    .tl-logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      padding: 4px;
+    }
+
+    .tl-role {
+      font-family: "Syne", sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+    }
+
+    .tl-company {
+      font-size: 0.82rem;
+      color: var(--accent2);
+    }
+
+    .tl-desc {
+      font-size: 0.85rem;
+      color: var(--muted2);
+      line-height: 1.7;
+    }
+
+    /* SKILLS */
+    .skills-bento {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+    }
+
+    .skill-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.5rem;
+      transition:
+        border-color 0.3s,
+        transform 0.3s;
+    }
+
+    .skill-card:hover {
+      border-color: rgba(79, 110, 247, 0.3);
+      transform: translateY(-3px);
+    }
+
+    .skill-card-icon {
+      font-size: 1.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .skill-card h4 {
+      font-family: "Syne", sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: var(--text);
+    }
+
+    .pill-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+
+    .pill {
+      font-size: 0.68rem;
+      padding: 0.25rem 0.6rem;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--muted2);
+    }
+
+    /* PORTFOLIO */
+    .portfolio-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 3rem;
+      gap: 2rem;
+    }
+
+    .portfolio-count {
+      font-size: 4rem;
+      font-family: "Syne", sans-serif;
+      font-weight: 800;
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(79, 110, 247, 0.3);
+      line-height: 1;
+    }
+
+    .project-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+
+    .project-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      transition:
+        border-color 0.3s,
+        transform 0.3s,
+        box-shadow 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .project-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg,
+          rgba(79, 110, 247, 0.04),
+          transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+    }
+
+    .project-card:hover::before {
+      opacity: 1;
+    }
+
+    .project-card:hover {
+      border-color: rgba(79, 110, 247, 0.25);
+      transform: translateY(-4px);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+    }
+
+    .project-logo-wrap {
+      height: 100px;
+      background: var(--bg2);
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.2rem;
+      overflow: hidden;
+      padding: 1rem;
+      transition: border-color 0.3s;
+    }
+
+    .project-card:hover .project-logo-wrap {
+      border-color: rgba(79, 110, 247, 0.2);
+    }
+
+    .project-logo-wrap img {
+      max-height: 60px;
+      max-width: 100%;
+      object-fit: contain;
+      opacity: 0.85;
+      transition: opacity 0.3s;
+    }
+
+    .project-card:hover .project-logo-wrap img {
+      opacity: 1;
+    }
+
+    .project-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 0.25rem 0.6rem;
+      border-radius: 4px;
+      margin-bottom: 0.75rem;
+      width: fit-content;
+    }
+
+    .badge-progress {
+      background: rgba(79, 110, 247, 0.12);
+      color: var(--accent2);
+      border: 1px solid rgba(79, 110, 247, 0.2);
+    }
+
+    .badge-progress::before {
+      content: "";
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--accent2);
+      animation: pulse 2s infinite;
+    }
+
+    .badge-done {
+      background: rgba(34, 197, 94, 0.08);
+      color: #4ade80;
+      border: 1px solid rgba(34, 197, 94, 0.15);
+    }
+
+    .project-title {
+      font-family: "Syne", sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 0.3rem;
+    }
+
+    .project-meta {
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .project-desc {
+      font-size: 0.82rem;
+      color: var(--muted2);
+      line-height: 1.65;
+      flex: 1;
+      margin-bottom: 1rem;
+    }
+
+    .project-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      margin-top: auto;
+    }
+
+    .project-agency {
+      font-size: 0.7rem;
+      color: var(--muted);
+    }
+
+    .project-agency span {
+      color: var(--accent2);
+    }
+
+    .project-link {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--accent2);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      transition: gap 0.2s;
+    }
+
+    .project-link:hover {
+      gap: 0.5rem;
+    }
+
+    .project-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-bottom: 0.8rem;
+    }
+
+    .project-tag {
+      font-size: 0.65rem;
+      padding: 0.2rem 0.5rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      color: var(--muted);
+    }
+
+    /* SERVICES */
+    .services-intro {
+      max-width: 600px;
+      color: var(--muted2);
+      margin-bottom: 4rem;
+    }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+    }
+
+    .service-card {
+      padding: 1.5rem;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: var(--surface);
+      transition:
+        border-color 0.3s,
+        background 0.3s;
+    }
+
+    .service-card:hover {
+      border-color: rgba(79, 110, 247, 0.3);
+      background: rgba(79, 110, 247, 0.03);
+    }
+
+    .svc-icon {
+      font-size: 1.5rem;
+      margin-bottom: 0.8rem;
+    }
+
+    .svc-title {
+      font-family: "Syne", sans-serif;
+      font-size: 0.88rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .svc-desc {
+      font-size: 0.78rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* ATHLETIC */
+    .athletic-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+
+    .ath-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2rem;
+      display: flex;
+      gap: 1.5rem;
+      align-items: flex-start;
+      transition: border-color 0.3s;
+    }
+
+    .ath-card:hover {
+      border-color: rgba(79, 110, 247, 0.25);
+    }
+
+    .ath-logo {
+      width: 64px;
+      height: 64px;
+      flex-shrink: 0;
+      background: var(--bg2);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .ath-logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      padding: 8px;
+    }
+
+    .ath-name {
+      font-family: "Syne", sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .ath-role {
+      display: inline-block;
+      font-size: 0.68rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 0.2rem 0.6rem;
+      background: rgba(232, 201, 110, 0.1);
+      border: 1px solid rgba(232, 201, 110, 0.2);
+      color: var(--gold);
+      border-radius: 4px;
+      margin-bottom: 0.6rem;
+    }
+
+    .ath-desc {
+      font-size: 0.82rem;
+      color: var(--muted2);
+      line-height: 1.65;
+    }
+
+    .ath-period {
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-top: 0.5rem;
+    }
+
+    /* CONTACT */
+    .contact-inner {
+      max-width: 760px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .contact-inner h2 {
+      margin-bottom: 1rem;
+    }
+
+    .contact-inner p {
+      color: var(--muted2);
+      font-size: 1.05rem;
+      margin-bottom: 3rem;
+    }
+
+    .contact-links {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .contact-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.8rem 1.6rem;
+      border: 1px solid var(--border2);
+      border-radius: 10px;
+      text-decoration: none;
+      color: var(--text);
+      font-size: 0.88rem;
+      font-weight: 500;
+      transition:
+        border-color 0.2s,
+        background 0.2s,
+        transform 0.2s;
+      background: var(--surface);
+    }
+
+    .contact-link:hover {
+      border-color: var(--accent);
+      background: rgba(79, 110, 247, 0.08);
+      transform: translateY(-2px);
+    }
+
+    .contact-link-primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+      box-shadow: 0 0 30px rgba(79, 110, 247, 0.25);
+    }
+
+    .contact-link-primary:hover {
+      background: var(--accent2);
+      border-color: var(--accent2);
+    }
+
+    /* FOOTER */
+    footer {
+      padding: 2.5rem 0;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      font-size: 0.78rem;
+      color: var(--muted);
+      position: relative;
+      z-index: 1;
+    }
+
+    /* EXPERIENCE GRID */
+    .exp-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5rem;
+    }
+
+    /* SKILLS ROW 2 */
+    .skills-row2 {
+      margin-top: 1rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .skill-card-wide {
+      grid-column: span 2;
+    }
+
+    /* UTILITY */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(24px);
+      transition:
+        opacity 0.7s ease,
+        transform 0.7s ease;
+    }
+
+    .fade-in.visible {
+      opacity: 1;
+      transform: none;
+    }
+
+    /* ── TABLET LANDSCAPE: 1024px ── */
+    @media (max-width: 1024px) {
+      .wrap {
+        padding: 0 1.5rem;
       }
 
-      body {
-        background: #0b0b0d;
-        color: #e5e7eb;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-        font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI",
-          Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji",
-          "Segoe UI Emoji", "Segoe UI Symbol";
+      .hero-grid {
+        gap: 3rem;
       }
 
-      /* subtle glass card */
-      .glass {
-        background: linear-gradient(
-          180deg,
-          rgba(255, 255, 255, 0.02),
-          rgba(255, 255, 255, 0.015)
-        );
-        border: 1px solid rgba(255, 255, 255, 0.04);
-        backdrop-filter: blur(6px);
+      .skills-bento {
+        grid-template-columns: repeat(2, 1fr);
       }
 
-      /* image container */
-      .avatar {
-        width: 110px;
-        height: 110px;
-        border-radius: 9999px;
-        overflow: hidden;
-        border: 2px solid rgba(255, 255, 255, 0.06);
-        box-shadow: 0 6px 20px rgba(2, 6, 23, 0.6);
+      .skills-row2 {
+        grid-template-columns: 1fr 1fr !important;
       }
 
-      /* hover lift for project cards */
-      .lift {
-        transition: all 0.28s cubic-bezier(0.2, 0.9, 0.2, 1);
-      }
-      .lift:hover {
-        transform: translateY(-6px);
-        box-shadow: 0 20px 40px rgba(2, 6, 23, 0.6);
+      .services-grid {
+        grid-template-columns: repeat(3, 1fr);
       }
 
-      /* tech tag */
-      .tech-pill {
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid rgba(255, 255, 255, 0.04);
+      section {
+        padding: 5rem 0;
+      }
+    }
+
+    /* ── TABLET PORTRAIT: 900px ── */
+    @media (max-width: 900px) {
+      nav ul {
+        display: none;
       }
 
-      /* highlight accent text */
-      .accent {
-        color: var(--accent);
+      .hamburger {
+        display: flex;
       }
 
-      /* responsive container max width */
-      .max-w-site {
-        max-width: 1180px;
+      .hero {
+        min-height: auto;
+        padding: 5rem 0 3rem;
       }
 
-      /* small utility for divider */
-      .divider {
-        height: 1px;
-        background: linear-gradient(
-          90deg,
-          rgba(255, 255, 255, 0.02),
-          rgba(14, 165, 255, 0.05),
-          rgba(255, 255, 255, 0.02)
-        );
-        border-radius: 2px;
+      .hero-grid {
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
       }
 
-      /* AOS default small tweak for smoother feel */
-      [data-aos] {
-        will-change: transform, opacity;
+      .hero-desc {
+        max-width: 100%;
       }
 
-      /* mobile menu link style (for appended menu) */
-      .mobile-menu a {
-        display: block;
-        padding: 0.5rem 0;
-        color: #e5e7eb;
+      .about-grid {
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
       }
-    </style>
-  </head>
-
-  <body>
-    <div class="min-h-screen flex flex-col">
-      <!-- NAV -->
-      <nav
-        class="w-full border-b border-white/6 py-4 sticky top-0 bg-[#0b0b0d]/95 backdrop-blur z-50"
-      >
-        <div class="mx-auto px-6 max-w-site flex items-center justify-between">
-          <a href="#" class="flex items-center gap-3">
-            <div
-              class="w-10 h-10 rounded-full flex items-center justify-center bg-gradient-to-br from-slate-800 to-transparent border border-white/8"
-            >
-              <span class="font-semibold text-sm">LD</span>
-            </div>
-            <div class="text-sm">
-              <div class="font-semibold">Lance Dimandal</div>
-              <div class="text-[11px]" style="color: var(--muted)">
-                Web Developer
-              </div>
-            </div>
-          </a>
-
-          <div class="hidden md:flex items-center gap-6 text-sm">
-            <a href="#about" class="hover:text-white transition">About</a>
-            <a href="#education" class="hover:text-white transition"
-              >Education</a
-            >
-            <a href="#experience" class="hover:text-white transition"
-              >Experience</a
-            >
-            <a href="#skills" class="hover:text-white transition">Skills</a>
-            <a href="#portfolio" class="hover:text-white transition"
-              >Portfolio</a
-            >
-            <a href="#services" class="hover:text-white transition">Services</a>
-            
-            <a href="#athletic" class="hover:text-white transition">Athletic</a>
-            <a href="#contact" class="hover:text-white transition">Contact</a>
-            <a
-              href="https://drive.google.com/file/d/1Mb0xZC9y8W2rfwXyPVawpkBrl2A2t6YT/view?usp=sharing"
-              target="_blank"
-              class="px-3 py-2 rounded-md border border-white/6 text-sm hover:bg-white/5 transition"
-            >
-              Resume
-            </a>
-          </div>
-
-          <div class="md:hidden">
-            <button id="mobileBtn" class="p-2 rounded-md border border-white/6">
-              Menu
-            </button>
-          </div>
-        </div>
-      </nav>
-
-      <!-- HERO -->
-      <header class="py-16">
-        <div
-          class="mx-auto px-6 max-w-site grid grid-cols-1 md:grid-cols-12 gap-8 items-center"
-        >
-          <div
-            class="md:col-span-5 flex flex-col items-center md:items-start gap-6"
-            data-aos="fade-up"
-          >
-            <div class="avatar overflow-hidden">
-              <img
-                src="images/lance-developer.jpg"
-                alt="Lance Dimandal"
-                class="w-full h-full object-cover"
-              />
-            </div>
-
-            <div class="text-left">
-              <h1 class="text-3xl md:text-4xl font-extrabold leading-tight">
-                Lance Christopher Dimandal
-              </h1>
-              <p class="text-sm text-[--muted] mt-1">
-                Web Developer —
-                <span class="accent">WordPress Specialist</span> &amp; Shopify
-                Assistant
-              </p>
-            </div>
-
-            <p class="text-gray-300 max-w-md">
-              I develop responsive, performance-driven websites focusing on
-              WordPress as my main specialty while managing Shopify sites as I
-              continue to upskill in the platform.
-            </p>
-
-            <div class="flex gap-3">
-              <a
-                href="mailto:dimandallance@gmail.com"
-                class="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-[--accent] text-black font-semibold shadow-sm hover:brightness-95 transition"
-                >💬 Hire / Contact</a
-              >
-              <a
-                href="https://drive.google.com/file/d/1Mb0xZC9y8W2rfwXyPVawpkBrl2A2t6YT/view?usp=sharing"
-                target="_blank"
-                class="inline-flex items-center gap-2 px-4 py-2 rounded-md border border-white/6 text-sm hover:bg-white/5 transition"
-                >📄 Download Resume</a
-              >
-            </div>
-          </div>
-
-          <div class="md:col-span-7" data-aos="fade-left">
-            <div class="glass rounded-2xl p-6 lift">
-              <div class="flex items-center justify-between mb-4">
-                <div>
-                  <div class="text-xs text-[--muted]">Current</div>
-                  <div class="text-sm font-medium">
-                    Junior Web Developer — Shore360 Agency
-                  </div>
-                </div>
-                <div class="text-xs text-[--muted]">Since Dec 2023</div>
-              </div>
-
-              <div class="divider mb-4"></div>
-
-              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div class="p-3">
-                  <div class="text-sm text-[--muted]">Specialties</div>
-                  <div class="mt-2 text-sm">
-                    WordPress · Elementor · Shopify · HubSpot
-                  </div>
-                </div>
-                <div class="p-3">
-                  <div class="text-sm text-[--muted]">Focus</div>
-                  <div class="mt-2 text-sm">
-                    Performance · Accessibility · UX · Responsive Design
-                  </div>
-                </div>
-                <div class="p-3">
-                  <div class="text-sm text-[--muted]">Tools</div>
-                  <div class="mt-2 text-sm">
-                    Git · VS Code · Chrome DevTools · Lighthouse · Figma · Jira · ClickUp
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="grid grid-cols-2 gap-4 mt-6">
-              <div
-                class="glass rounded-lg p-4 lift"
-                data-aos="fade-up"
-                data-aos-delay="80"
-              >
-                <div class="text-xs text-[--muted]">Location</div>
-                <div class="font-medium">Philippines</div>
-              </div>
-              <div
-                class="glass rounded-lg p-4 lift"
-                data-aos="fade-up"
-                data-aos-delay="140"
-              >
-                <div class="text-xs text-[--muted]">Availability</div>
-                <div class="font-medium">Open to opportunities</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <main class="flex-1">
-        <!-- ABOUT -->
-        <section id="about" class="py-16" data-aos="fade-up">
-          <div class="mx-auto px-6 max-w-site">
-            <div class="grid md:grid-cols-3 gap-8 items-start">
-              <div class="md:col-span-1">
-                <h2 class="text-2xl font-bold">About Me</h2>
-                <p class="text-[--muted] mt-2">
-                  A dedicated Web Developer who turns designs into smooth,
-                  responsive websites. I focus on WordPress, Elementor, and
-                  Shopify and enjoy optimizing UX and performance.
-                </p>
-              </div>
-
-              <div class="md:col-span-2 glass rounded-2xl p-6">
-                <p class="text-gray-300 mb-4">
-                  Hi, I’m <span class="font-semibold">Lance Dimandal</span>, a
-                  dedicated Web Developer based in the Philippines. I specialize
-                  in creating modern, responsive, and high-performance websites
-                  with WordPress, Elementor, and Shopify.
-                </p>
-                <p class="text-gray-300 mb-4">
-                  I enjoy solving problems and turning complex design concepts
-                  into smooth user experiences. My workflow combines creativity,
-                  technical skill, and an eye for detail — ensuring every site I
-                  build is elegant and efficient.
-                </p>
-                <p class="text-gray-300">
-                  Outside of development, I value teamwork and personal growth —
-                  skills I’ve honed both through professional collaboration and
-                  on the ultimate frisbee field.
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- EDUCATION & EXPERIENCE -->
-        <section id="education" class="py-16 bg-[#060607]" data-aos="fade-up">
-          <div class="mx-auto px-6 max-w-site">
-            <div class="grid md:grid-cols-2 gap-8">
-              <div>
-                <h3 class="text-xl font-bold mb-6">Education</h3>
-                <div class="space-y-8">
-                  <!-- COLLEGE -->
-                  <div>
-                    <div
-                      class="glass rounded-lg p-4 lift"
-                      data-aos="fade-up"
-                      data-aos-delay="40"
-                    >
-                      <div class="flex items-center gap-4">
-                        <div
-                          class="w-14 h-14 rounded-lg overflow-hidden bg-white/3 flex items-center justify-center"
-                        >
-                          <img
-                            src="images/ccsfp.png"
-                            alt="College logo"
-                            class="object-contain h-full"
-                          />
-                        </div>
-                        <div>
-                          <div class="font-semibold">
-                            B.S. in Information Technology
-                          </div>
-                          <div class="text-sm text-[--muted]">
-                            City College of San Fernando Pampanga
-                          </div>
-                          <div class="text-sm text-[--muted]">2019 – 2023</div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- HIGH SCHOOL -->
-                  <div>
-                    <div
-                      class="glass rounded-lg p-4 lift"
-                      data-aos="fade-up"
-                      data-aos-delay="80"
-                    >
-                      <div class="flex items-center gap-4">
-                        <div
-                          class="w-14 h-14 rounded-lg overflow-hidden bg-white/3 flex items-center justify-center"
-                        >
-                          <img
-                            src="images/phs.jpg"
-                            alt="HS logo"
-                            class="object-contain h-full"
-                          />
-                        </div>
-                        <div>
-                          <div class="font-semibold">
-                            Academic Track – GAS Strand
-                          </div>
-                          <div class="text-sm text-[--muted]">
-                            Pampanga High School
-                          </div>
-                          <div class="text-sm text-[--muted]">2016 – 2019</div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  
-                </div>
-              </div>
-
-              <div id="experience">
-                <h3 class="text-xl font-bold mb-6">Work Experience</h3>
-                <div class="space-y-8">
-                  <div
-                    class="glass rounded-lg p-4 lift"
-                    data-aos="fade-up"
-                    data-aos-delay="120"
-                  >
-                    <div class="flex items-center gap-4">
-                      <div
-                        class="w-14 h-14 rounded-lg overflow-hidden bg-white/3 flex items-center justify-center"
-                      >
-                        <img
-                          src="images/shore360.webp"
-                          alt="Shore360 logo"
-                          class="object-contain h-full"
-                        />
-                      </div>
-                      <div>
-                        <div class="font-semibold">Junior Web Developer</div>
-                        <div class="text-sm text-[--muted]">
-                          Shore360 Agency - Shore360, Inc.
-                        </div>
-                        <div class="text-sm text-[--muted]">
-                          December 2023 – Present
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div
-                    class="glass rounded-lg p-4 lift"
-                    data-aos="fade-up"
-                    data-aos-delay="160"
-                  >
-                    <div class="flex items-center gap-4">
-                      <div
-                        class="w-14 h-14 rounded-lg overflow-hidden bg-white/3 flex items-center justify-center"
-                      >
-                        <img
-                          src="images/dost_r3.webp"
-                          alt="DOST logo"
-                          class="object-contain h-full"
-                        />
-                      </div>
-                      <div>
-                        <div class="font-semibold">
-                          Student Trainee (Intern)
-                        </div>
-                        <div class="text-sm text-[--muted]">
-                          Department of Science and Technology - Region 3
-                        </div>
-                        <div class="text-sm text-[--muted]">
-                          September 2022 – January 2023
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- SKILLS -->
-        <section id="skills" class="py-16" data-aos="fade-up">
-          <div class="mx-auto px-6 max-w-site">
-            <h3 class="text-2xl font-bold mb-6">Technical Skills & Tools</h3>
-
-            <div class="grid md:grid-cols-2 gap-8">
-              <div
-                class="glass rounded-2xl p-6 lift"
-                data-aos="fade-up"
-                data-aos-delay="40"
-              >
-                <h4 class="font-semibold mb-3">CMS & Builders</h4>
-                <div class="flex flex-wrap gap-3">
-                  <span class="tech-pill px-3 py-1 rounded-full text-sm"
-                    >WordPress</span
-                  >
-                  <span class="tech-pill px-3 py-1 rounded-full text-sm"
-                    >Elementor</span
-                  >
-                  <span class="tech-pill px-3 py-1 rounded-full text-sm"
-                    >YOOTheme</span
-                  >
-                  <span class="tech-pill px-3 py-1 rounded-full text-sm"
-                    >Gutenberg</span
-                  >
-                  <span class="tech-pill px-3 py-1 rounded-full text-sm"
-                    >Divi</span
-                  >
-                  <span class="tech-pill px-3 py-1 rounded-full text-sm"
-                    >Shopify</span
-                  >
-                  <span class="tech-pill px-3 py-1 rounded-full text-sm"
-                    >Liquid</span
-                  >
-                  <span class="tech-pill px-3 py-1 rounded-full text-sm"
-                    >HubSpot</span
-                  >
-                  <span class="tech-pill px-3 py-1 rounded-full text-sm"
-                    >Wix</span
-                  >
-                  <span class="tech-pill px-3 py-1 rounded-full text-sm"
-                    >Squarespace</span
-                  >
-                </div>
-              </div>
-
-              <div
-                class="glass rounded-2xl p-6 lift"
-                data-aos="fade-up"
-                data-aos-delay="80"
-              >
-                <h4 class="font-semibold mb-3">Web Development</h4>
-                <div class="flex flex-wrap gap-3">
-                  <span class="tech-pill px-3 py-1 rounded-full text-sm"
-                    >HTML5</span
-                  >
-                  <span class="tech-pill px-3 py-1 rounded-full text-sm"
-                    >CSS3</span
-                  >
-                  <span class="tech-pill px-3 py-1 rounded-full text-sm"
-                    >SCSS/SASS</span
-                  >
-                  <span class="tech-pill px-3 py-1 rounded-full text-sm"
-                    >Bootstrap</span
-                  >
-                  <span class="tech-pill px-3 py-1 rounded-full text-sm"
-                    >JavaScript</span
-                  >
-                  <span class="tech-pill px-3 py-1 rounded-full text-sm"
-                    >jQuery</span
-                  >
-                  <span class="tech-pill px-3 py-1 rounded-full text-sm"
-                    >PHP</span
-                  >
-                  <span class="tech-pill px-3 py-1 rounded-full text-sm"
-                    >MySQL</span
-                  >
-                </div>
-              </div>
-
-              <div
-                class="glass rounded-2xl p-6 lift"
-                data-aos="fade-up"
-                data-aos-delay="120"
-              >
-                <h4 class="font-semibold mb-3">Version Control & Deployment</h4>
-                <div class="flex flex-wrap gap-3">
-                  <span class="tech-pill px-3 py-1 rounded-full text-sm"
-                    >Git</span
-                  >
-                  <span class="tech-pill px-3 py-1 rounded-full text-sm"
-                    >GitHub</span
-                  >
-                  <span class="tech-pill px-3 py-1 rounded-full text-sm"
-                    >Git Bash</span
-                  >
-                  <span class="tech-pill px-3 py-1 rounded-full text-sm"
-                    >FTP/SFTP</span
-                  >
-                </div>
-              </div>
-
-              <div
-                class="glass rounded-2xl p-6 lift"
-                data-aos="fade-up"
-                data-aos-delay="160"
-              >
-                <h4 class="font-semibold mb-3">Optimization & Security</h4>
-                <div class="flex flex-wrap gap-3">
-                  <span class="tech-pill px-3 py-1 rounded-full text-sm"
-                    >Performance Optimization</span
-                  >
-                  <span class="tech-pill px-3 py-1 rounded-full text-sm"
-                    >SEO Best Practices</span
-                  >
-                  <span class="tech-pill px-3 py-1 rounded-full text-sm"
-                    >Digital Shield</span
-                  >
-                  <span class="tech-pill px-3 py-1 rounded-full text-sm"
-                    >Lighthouse</span
-                  >
-                  <span class="tech-pill px-3 py-1 rounded-full text-sm"
-                    >PageSpeed Insights</span
-                  >
-                  <span class="tech-pill px-3 py-1 rounded-full text-sm"
-                    >GTmetrix</span
-                  >
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- PORTFOLIO -->
-        <section id="portfolio" class="py-16 bg-[#060607]" data-aos="fade-up">
-          <div class="mx-auto px-6 max-w-site">
-            <h3 class="text-2xl font-bold">Portfolio</h3>
-            <div class="divider mb-8"></div>
-            <p class="text-[--muted] mb-10 max-w-3xl">
-              A selection of projects I’ve developed — focusing on performance,
-              responsiveness, and elegant implementation through WordPress, Shopify,
-              and custom-coded solutions.
-            </p>
-
-            <div class="grid md:grid-cols-3 gap-6">
-              
-              <!-- Recent Project -->
-              <article class="glass rounded-2xl p-5 transform transition-shadow transition-transform lift hover:-translate-y-2 hover:shadow-lg" data-aos="fade-up" data-aos-delay="0">
-                <div class="h-40 rounded-md bg-gradient-to-br from-slate-800 to-slate-900 p-4 flex items-center justify-center mb-4 transition hover:from-slate-700 hover:to-slate-800 hover:shadow-[0_0_20px_rgba(37,99,235,0.25)] overflow-hidden">
-                  <img src="images/SC-Logo.png" alt="Simple Claims Logo" class="object-contain h-20 opacity-90 hover:opacity-100 transition" />
-                </div>
-                <h4 class="font-semibold text-lg mb-1 flex items-center gap-2">
-                  Simple Claims
-                  <span class="text-xs font-medium px-2 py-[2px] rounded-md bg-blue-900/40 text-[--accent]">In&nbsp;Progress</span>
-                </h4>
-                <p class="text-xs text-[--muted] mb-2">February 2026 – Present · WordPress Development</p>
-                <p class="text-sm text-gray-300 leading-relaxed">
-                  Built a new claims website for the AU market using Elementor, with fully custom sections and layouts, ensuring clean page structure, responsive design, and SEO-friendly setup from launch.
-                </p>
-                <div class="mt-3 text-xs text-[--muted] italic">Associated with <span class="text-[--accent] font-medium">Shore360 Agency</span></div>
-                <div class="mt-4 flex gap-2 flex-wrap">
-                  <span class="tech-pill px-2 py-1 text-xs rounded">WordPress</span>
-                  <span class="tech-pill px-2 py-1 text-xs rounded">Elementor</span>
-                  <span class="tech-pill px-2 py-1 text-xs rounded">Custom CSS</span>
-                  <span class="tech-pill px-2 py-1 text-xs rounded">Custom JS</span>
-                  <span class="tech-pill px-2 py-1 text-xs rounded">Responsive Friendly</span>
-                </div>
-              </article>
-
-              <!-- Simtech -->
-              <article class="glass rounded-2xl p-5 transform transition-shadow transition-transform lift hover:-translate-y-2 hover:shadow-lg" data-aos="fade-up" data-aos-delay="0">
-                <div class="h-40 rounded-md bg-gradient-to-br from-slate-800 to-slate-900 p-4 flex items-center justify-center mb-4 transition hover:from-slate-700 hover:to-slate-800 hover:shadow-[0_0_20px_rgba(37,99,235,0.25)] overflow-hidden">
-                  <img src="images/simtech-logo.png" alt="Simtech Logo" class="object-contain h-20 opacity-90 hover:opacity-100 transition" />
-                </div>
-                <h4 class="font-semibold text-lg mb-1 flex items-center gap-2">
-                  Simtech
-                  <span class="text-xs font-medium px-2 py-[2px] rounded-md bg-blue-900/40 text-[--accent]">In&nbsp;Progress</span>
-                </h4>
-                <p class="text-xs text-[--muted] mb-2">December 2025 – Present · WordPress Development</p>
-                <p class="text-sm text-gray-300 leading-relaxed">
-                  Rebuilt the website using Elementor with fully custom sections and layouts, implementing a multi-regional structure (Global, US, Asia, and AU sites) to improve design consistency, page hierarchy, and overall user experience, while maintaining responsive performance and SEO-friendly configurations across all regions.
-                </p>
-                <div class="mt-3 text-xs text-[--muted] italic">Associated with <span class="text-[--accent] font-medium">Shore360 Agency</span></div>
-                <div class="mt-4 flex gap-2 flex-wrap">
-                  <span class="tech-pill px-2 py-1 text-xs rounded">WordPress</span>
-                  <span class="tech-pill px-2 py-1 text-xs rounded">Elementor</span>
-                  <span class="tech-pill px-2 py-1 text-xs rounded">Custom CSS</span>
-                  <span class="tech-pill px-2 py-1 text-xs rounded">Slick</span>
-                  <span class="tech-pill px-2 py-1 text-xs rounded">Responsive Friendly</span>
-                </div>
-              </article>
-
-              <!-- Alvaro Logistics Group -->
-              <article class="glass rounded-2xl p-5 transform transition-shadow transition-transform lift hover:-translate-y-2 hover:shadow-lg" data-aos="fade-up" data-aos-delay="0">
-                <div class="h-40 rounded-md bg-gradient-to-br from-slate-800 to-slate-900 p-4 flex items-center justify-center mb-4 transition hover:from-slate-700 hover:to-slate-800 hover:shadow-[0_0_20px_rgba(37,99,235,0.25)] overflow-hidden">
-                  <img src="images/Alvaro Logistics Logo - Official.avif" alt="Alvaro Logistics Logo" class="object-contain h-20 opacity-90 hover:opacity-100 transition" />
-                </div>
-                <h4 class="font-semibold text-lg mb-1 flex items-center gap-2">
-                  Alvaro Logistics Group
-                  <span class="text-xs font-medium px-2 py-[2px] rounded-md bg-blue-900/40 text-[--accent]">In&nbsp;Progress</span>
-                </h4>
-                <p class="text-xs text-[--muted] mb-2">November 2025 – Present · WordPress Development</p>
-                <p class="text-sm text-gray-300 leading-relaxed">
-                  Rebuilt the website using Elementor, developing fully custom sections and layouts, improving design consistency, page structure, and overall user experience while maintaining responsive and SEO-friendly configurations.
-                </p>
-                <div class="mt-3 text-xs text-[--muted] italic">Associated with <span class="text-[--accent] font-medium">Shore360 Agency</span></div>
-                <div class="mt-4 flex gap-2 flex-wrap">
-                  <span class="tech-pill px-2 py-1 text-xs rounded">WordPress</span>
-                  <span class="tech-pill px-2 py-1 text-xs rounded">Elementor</span>
-                  <span class="tech-pill px-2 py-1 text-xs rounded">Custom CSS</span>
-                  <span class="tech-pill px-2 py-1 text-xs rounded">Responsive Friendly</span>
-                </div>
-              </article>
-
-              <!-- Intermedia -->
-              <article class="glass rounded-2xl p-5 transform transition-shadow transition-transform lift hover:-translate-y-2 hover:shadow-lg" data-aos="fade-up" data-aos-delay="0">
-                <div class="h-40 rounded-md bg-gradient-to-br from-slate-800 to-slate-900 p-4 flex items-center justify-center mb-4 transition hover:from-slate-700 hover:to-slate-800 hover:shadow-[0_0_20px_rgba(37,99,235,0.25)] overflow-hidden">
-                  <img src="images/intm-logo-wide.svg" alt="Intermedia Logo" class="object-contain h-20 opacity-90 hover:opacity-100 transition" />
-                </div>
-                <h4 class="font-semibold text-lg mb-1 flex items-center gap-2">
-                  Intermedia
-                  <span class="text-xs font-medium px-2 py-[2px] rounded-md bg-blue-900/40 text-[--accent]">In&nbsp;Progress</span>
-                </h4>
-                <p class="text-xs text-[--muted] mb-2">October 2025 - Present · HubSpot EDM Development</p>
-                <p class="text-sm text-gray-300 leading-relaxed">
-                  Collaborated with the lead designer and the Intermedia client to develop and refine custom email templates in HubSpot, ensuring alignment with brand guidelines and marketing objectives.
-                </p>
-                <div class="mt-3 text-xs text-[--muted] italic">Associated with <span class="text-[--accent] font-medium">Shore360 Agency</span></div>
-                <div class="mt-4 flex gap-2 flex-wrap">
-                  <span class="tech-pill px-2 py-1 text-xs rounded">HubSpot</span>
-                  <span class="tech-pill px-2 py-1 text-xs rounded">HubL</span>
-                  <span class="tech-pill px-2 py-1 text-xs rounded">HTML</span>
-                  <span class="tech-pill px-2 py-1 text-xs rounded">VML</span>
-                  <span class="tech-pill px-2 py-1 text-xs rounded">CSS</span>
-                </div>
-              </article>
-
-              <!-- STEM Finance -->
-              <article class="glass rounded-2xl p-5 transform transition-shadow transition-transform lift hover:-translate-y-2 hover:shadow-lg" data-aos="fade-up" data-aos-delay="0">
-                <div class="h-40 rounded-md bg-gradient-to-br from-slate-800 to-slate-900 p-4 flex items-center justify-center mb-4 transition hover:from-slate-700 hover:to-slate-800 hover:shadow-[0_0_20px_rgba(37,99,235,0.25)] overflow-hidden">
-                  <img src="images/STEM Finance - Logo.avif" alt="STEM Finance Logo" class="object-contain h-20 opacity-90 hover:opacity-100 transition" />
-                </div>
-                <h4 class="font-semibold text-lg mb-1 flex items-center gap-2">
-                  STEM Finance
-                </h4>
-                <p class="text-xs text-[--muted] mb-2">October 2025 · Wix Development</p>
-                <p class="text-sm text-gray-300 leading-relaxed">
-                  Rebuilt the website using the Wix Builder, implementing custom section layouts and tailored styling to enhance design consistency, user experience, and overall visual appeal.
-                </p>
-                <div class="mt-3 text-xs text-[--muted] italic">Associated with <span class="text-[--accent] font-medium">Shore360 Agency</span></div>
-                <div class="mt-4 flex gap-2 flex-wrap">
-                  <span class="tech-pill px-2 py-1 text-xs rounded">Wix</span>
-                  <span class="tech-pill px-2 py-1 text-xs rounded">Custom CSS</span>
-                  <span class="tech-pill px-2 py-1 text-xs rounded">Custom JavaScript</span>
-                </div>
-                <a href="https://www.stemfinance.com.au/" target="_blank" rel="noopener" class="inline-flex items-center gap-2 mt-5 px-3 py-2 rounded-md text-sm font-medium bg-[--accent] text-black hover:brightness-95 transition">🌐 View Live Site</a>
-              </article>
-
-              <!-- Tailgate Sports Bar -->
-              <article class="glass rounded-2xl p-5 transform transition-shadow transition-transform lift hover:-translate-y-2 hover:shadow-lg" data-aos="fade-up" data-aos-delay="0">
-                <div class="h-40 rounded-md bg-gradient-to-br from-slate-800 to-slate-900 p-4 flex items-center justify-center mb-4 transition hover:from-slate-700 hover:to-slate-800 hover:shadow-[0_0_20px_rgba(37,99,235,0.25)] overflow-hidden">
-                  <img src="images/Tailgate-Sports-Bar-Logo.webp" alt="Tailgate Sports Bar Logo" class="object-contain h-20 opacity-90 hover:opacity-100 transition" />
-                </div>
-                <h4 class="font-semibold text-lg mb-1 flex items-center gap-2">
-                  Tailgate Sports Bar
-                </h4>
-                <p class="text-xs text-[--muted] mb-2">September 2025 · Squarespace Update and Optimization</p>
-                <p class="text-sm text-gray-300 leading-relaxed">
-                  Modified the Tailgate Sports Bar website on Squarespace, updating layouts and styling while adding custom integrations to enhance functionality and user experience.
-                </p>
-                <div class="mt-3 text-xs text-[--muted] italic">Associated with <span class="text-[--accent] font-medium">Shore360 Agency</span></div>
-                <div class="mt-4 flex gap-2 flex-wrap">
-                  <span class="tech-pill px-2 py-1 text-xs rounded">Squarespace</span>
-                  <span class="tech-pill px-2 py-1 text-xs rounded">HTML</span>
-                  <span class="tech-pill px-2 py-1 text-xs rounded">CSS</span>
-                  <span class="tech-pill px-2 py-1 text-xs rounded">Drag and Drop</span>
-                  <span class="tech-pill px-2 py-1 text-xs rounded">Custom Integration</span>
-                </div>
-                <a href="https://www.tailgatesportsbar.com.au/" target="_blank" rel="noopener" class="inline-flex items-center gap-2 mt-5 px-3 py-2 rounded-md text-sm font-medium bg-[--accent] text-black hover:brightness-95 transition">🌐 View Live Site</a>
-              </article>
-              
-              <!-- AWR -->
-              <article class="glass rounded-2xl p-5 transform transition-shadow transition-transform lift hover:-translate-y-2 hover:shadow-lg" data-aos="fade-up" data-aos-delay="0">
-                <div class="h-40 rounded-md bg-gradient-to-br from-slate-800 to-slate-900 p-4 flex items-center justify-center mb-4 transition hover:from-slate-700 hover:to-slate-800 hover:shadow-[0_0_20px_rgba(37,99,235,0.25)] overflow-hidden">
-                  <img src="images/AWR_Logo.webp" alt="AWR Solutions Logo" class="object-contain h-20 opacity-90 hover:opacity-100 transition" />
-                </div>
-                <h4 class="font-semibold text-lg mb-1 flex items-center gap-2">
-                  AWR Solutions
-                  <span class="text-xs font-medium px-2 py-[2px] rounded-md bg-blue-900/40 text-[--accent]">In&nbsp;Progress</span>
-                </h4>
-                <p class="text-xs text-[--muted] mb-2">September 2025 – Present · Shopify Development</p>
-                <p class="text-sm text-gray-300 leading-relaxed">
-                  Website rebuild from Neto to Shopify with advanced product filtering, custom forms, payment gateway integration, and optimized inventory management.
-                </p>
-                <div class="mt-3 text-xs text-[--muted] italic">Associated with <span class="text-[--accent] font-medium">Shore360 Agency</span></div>
-                <div class="mt-4 flex gap-2 flex-wrap">
-                  <span class="tech-pill px-2 py-1 text-xs rounded">Shopify</span>
-                  <span class="tech-pill px-2 py-1 text-xs rounded">Liquid</span>
-                  <span class="tech-pill px-2 py-1 text-xs rounded">Custom Code</span>
-                </div>
-              </article>
-
-              <!-- Squadron Energy -->
-              <article class="glass rounded-2xl p-5 transform transition-shadow transition-transform lift hover:-translate-y-2 hover:shadow-lg" data-aos="fade-up" data-aos-delay="100">
-                <div class="h-40 rounded-md bg-gradient-to-br from-slate-800 to-slate-900 p-4 flex items-center justify-center mb-4 transition hover:from-slate-700 hover:to-slate-800 hover:shadow-[0_0_20px_rgba(37,99,235,0.25)] overflow-hidden">
-                  <img src="images/SquadronEnergy-logo.svg" alt="Squadron Energy Logo" class="object-contain h-20 opacity-90 hover:opacity-100 transition" />
-                </div>
-                <h4 class="font-semibold text-lg mb-1 flex items-center gap-2">
-                  Squadron Energy
-                </h4>
-                <p class="text-xs text-[--muted] mb-2">July 2025 – November 2025 · WordPress Development</p>
-                <p class="text-sm text-gray-300 leading-relaxed">
-                  Migrated the site from Craft CMS to WordPress, building reusable Elementor layouts with flexible section templates and optimized form structures.
-                </p>
-                <div class="mt-3 text-xs text-[--muted] italic">Associated with <span class="text-[--accent] font-medium">Shore360 Agency</span></div>
-                <div class="mt-4 flex gap-2 flex-wrap">
-                  <span class="tech-pill px-2 py-1 text-xs rounded">WordPress</span>
-                  <span class="tech-pill px-2 py-1 text-xs rounded">Elementor</span>
-                  <span class="tech-pill px-2 py-1 text-xs rounded">Custom Code</span>
-                  <span class="tech-pill px-2 py-1 text-xs rounded">Custom Forms</span>
-                </div>
-                <a href="https://squadronenergy.com/" target="_blank" rel="noopener" class="inline-flex items-center gap-2 mt-5 px-3 py-2 rounded-md text-sm font-medium bg-[--accent] text-black hover:brightness-95 transition">🌐 View Live Site</a>
-              </article>
-
-              <!-- ePlumbing NZ -->
-              <article class="glass rounded-2xl p-5 transform transition-shadow transition-transform lift hover:-translate-y-2 hover:shadow-lg" data-aos="fade-up" data-aos-delay="200">
-                <div class="h-40 rounded-md bg-gradient-to-br from-slate-800 to-slate-900 p-4 flex items-center justify-center mb-4 transition hover:from-slate-700 hover:to-slate-800 hover:shadow-[0_0_20px_rgba(37,99,235,0.25)] overflow-hidden">
-                  <img src="images/plumbing-estimators-logo.webp" alt="ePlumbing Estimators NZ Logo" class="object-contain h-20 opacity-90 hover:opacity-100 transition" />
-                </div>
-                <h4 class="font-semibold text-lg mb-1">ePlumbing Estimators NZ Website Rebuild</h4>
-                <p class="text-xs text-[--muted] mb-2">June 2025 – July 2025 · WordPress Development</p>
-                <p class="text-sm text-gray-300 leading-relaxed">
-                  Rebuilt the New Zealand version of the client’s site, improving performance, structure, and UI through custom Elementor sections and optimized templates.
-                </p>
-                <div class="mt-3 text-xs text-[--muted] italic">Associated with <span class="text-[--accent] font-medium">Shore360 Agency</span></div>
-                <div class="mt-4 flex gap-2 flex-wrap">
-                  <span class="tech-pill px-2 py-1 text-xs rounded">WordPress</span>
-                  <span class="tech-pill px-2 py-1 text-xs rounded">Elementor</span>
-                </div>
-                <a href="https://plumbingestimators.co.nz/" target="_blank" rel="noopener" class="inline-flex items-center gap-2 mt-5 px-3 py-2 rounded-md text-sm font-medium bg-[--accent] text-black hover:brightness-95 transition">🌐 View Live Site</a>
-              </article>
-
-              <!-- Shore360 Agency -->
-              <article class="glass rounded-2xl p-5 transform transition-shadow transition-transform lift hover:-translate-y-2 hover:shadow-lg" data-aos="fade-up" data-aos-delay="300">
-                <div class="h-40 rounded-md bg-gradient-to-br from-slate-800 to-slate-900 p-4 flex items-center justify-center mb-4 transition hover:from-slate-700 hover:to-slate-800 hover:shadow-[0_0_20px_rgba(37,99,235,0.25)] overflow-hidden">
-                  <img src="images/shoreagency_logo.png" alt="Shore360 Agency Logo" class="object-contain h-20 opacity-90 hover:opacity-100 transition" />
-                </div>
-                <h4 class="font-semibold text-lg mb-1 flex items-center gap-2">
-                  Shore360 Agency
-                </h4>
-                <p class="text-xs text-[--muted] mb-2">May 2025 – November 2025 · WordPress Development</p>
-                <p class="text-sm text-gray-300 leading-relaxed">
-                  Designed and developed responsive WordPress sites using Elementor, prioritizing SEO, accessibility, and optimized loading speeds for clients.
-                </p>
-                <div class="mt-3 text-xs text-[--muted] italic">Associated with <span class="text-[--accent] font-medium">Shore360 Agency</span></div>
-                <div class="mt-4 flex gap-2 flex-wrap">
-                  <span class="tech-pill px-2 py-1 text-xs rounded">WordPress</span>
-                  <span class="tech-pill px-2 py-1 text-xs rounded">Elementor</span>
-                  <span class="tech-pill px-2 py-1 text-xs rounded">Custom Code</span>
-                </div>
-                <a href="https://shore360agency.com/" target="_blank" rel="noopener" class="inline-flex items-center gap-2 mt-5 px-3 py-2 rounded-md text-sm font-medium bg-[--accent] text-black hover:brightness-95 transition">🌐 View Live Site</a>
-              </article>
-
-              <!-- ePlumbing AU -->
-              <article class="glass rounded-2xl p-5 transform transition-shadow transition-transform lift hover:-translate-y-2 hover:shadow-lg" data-aos="fade-up" data-aos-delay="400">
-                <div class="h-40 rounded-md bg-gradient-to-br from-slate-800 to-slate-900 p-4 flex items-center justify-center mb-4 transition hover:from-slate-700 hover:to-slate-800 hover:shadow-[0_0_20px_rgba(37,99,235,0.25)] overflow-hidden">
-                  <img src="images/plumbing-estimators-logo.webp" alt="ePlumbing Estimators AU Logo" class="object-contain h-20 opacity-90 hover:opacity-100 transition" />
-                </div>
-                <h4 class="font-semibold text-lg mb-1">ePlumbing Estimators AU Website Rebuild</h4>
-                <p class="text-xs text-[--muted] mb-2">April 2025 – June 2025 · WordPress Development</p>
-                <p class="text-sm text-gray-300 leading-relaxed">
-                  Redesigned the AU site version with optimized Elementor templates, responsive layouts, and a modern UI translated from Figma to WordPress.
-                </p>
-                <div class="mt-3 text-xs text-[--muted] italic">Associated with <span class="text-[--accent] font-medium">Shore360 Agency</span></div>
-                <div class="mt-4 flex gap-2 flex-wrap">
-                  <span class="tech-pill px-2 py-1 text-xs rounded">WordPress</span>
-                  <span class="tech-pill px-2 py-1 text-xs rounded">Elementor</span>
-                </div>
-                <a href="https://plumbingestimators.com.au/" target="_blank" rel="noopener" class="inline-flex items-center gap-2 mt-5 px-3 py-2 rounded-md text-sm font-medium bg-[--accent] text-black hover:brightness-95 transition">🌐 View Live Site</a>
-              </article>
-
-              <!-- Grace -->
-              <article class="glass rounded-2xl p-5 transform transition-shadow transition-transform lift hover:-translate-y-2 hover:shadow-lg" data-aos="fade-up" data-aos-delay="500">
-                <div class="h-40 rounded-md bg-gradient-to-br from-slate-800 to-slate-900 p-4 flex items-center justify-center mb-4 transition hover:from-slate-700 hover:to-slate-800 hover:shadow-[0_0_20px_rgba(37,99,235,0.25)] overflow-hidden">
-                  <img src="images/Grace-Logo.webp" alt="Grace Logo" class="object-contain h-20 opacity-90 hover:opacity-100 transition" />
-                </div>
-                <h4 class="font-semibold text-lg mb-1">Grace Website Rebuild</h4>
-                <p class="text-xs text-[--muted] mb-2">October 2024 – June 2025 · WordPress Development</p>
-                <p class="text-sm text-gray-300 leading-relaxed">
-                  Enhanced user experience and visual hierarchy using Elementor. Improved navigation, accessibility, and performance through refined code structure.
-                </p>
-                <div class="mt-3 text-xs text-[--muted] italic">Associated with <span class="text-[--accent] font-medium">Shore360 Agency</span></div>
-                <div class="mt-4 flex gap-2 flex-wrap">
-                  <span class="tech-pill px-2 py-1 text-xs rounded">WordPress</span>
-                  <span class="tech-pill px-2 py-1 text-xs rounded">Elementor</span>
-                  <span class="tech-pill px-2 py-1 text-xs rounded">Custom Code</span>
-                  <span class="tech-pill px-2 py-1 text-xs rounded">JavaScript</span>
-                  <span class="tech-pill px-2 py-1 text-xs rounded">Salesforce</span>
-                </div>
-                <a href="https://www.grace.com.au/" target="_blank" rel="noopener" class="inline-flex items-center gap-2 mt-5 px-3 py-2 rounded-md text-sm font-medium bg-[--accent] text-black hover:brightness-95 transition">🌐 View Live Site</a>
-              </article>
-
-              <!-- I Can Fix That -->
-              <article class="glass rounded-2xl p-5 transform transition-shadow transition-transform lift hover:-translate-y-2 hover:shadow-lg" data-aos="fade-up" data-aos-delay="600">
-                <div class="h-40 rounded-md bg-gradient-to-br from-slate-800 to-slate-900 p-4 flex items-center justify-center mb-4 transition hover:from-slate-700 hover:to-slate-800 hover:shadow-[0_0_20px_rgba(37,99,235,0.25)] overflow-hidden">
-                  <img src="images/ICFT_Logo.svg" alt="I Can Fix That Logo" class="object-contain h-20 opacity-90 hover:opacity-100 transition" />
-                </div>
-                <h4 class="font-semibold text-lg mb-1">I Can Fix That</h4>
-                <p class="text-xs text-[--muted] mb-2">September 2024 – October 2024 · WordPress Development</p>
-                <p class="text-sm text-gray-300 leading-relaxed">
-                  Developed a service-focused WordPress site with booking functionality and SEO-optimized content. Built using Elementor and custom CSS enhancements.
-                </p>
-                <div class="mt-3 text-xs text-[--muted] italic">Associated with <span class="text-[--accent] font-medium">Shore360 Agency</span></div>
-                <div class="mt-4 flex gap-2 flex-wrap">
-                  <span class="tech-pill px-2 py-1 text-xs rounded">WordPress</span>
-                  <span class="tech-pill px-2 py-1 text-xs rounded">Elementor</span>
-                  <span class="tech-pill px-2 py-1 text-xs rounded">Custom Code & CSS</span>
-                  <span class="tech-pill px-2 py-1 text-xs rounded">JavaScript</span>
-                </div>
-                <a href="https://icanfixthat.com.au/" target="_blank" rel="noopener" class="inline-flex items-center gap-2 mt-5 px-3 py-2 rounded-md text-sm font-medium bg-[--accent] text-black hover:brightness-95 transition">🌐 View Live Site</a>
-              </article>
-
-              <!-- Netbank -->
-              <article class="glass rounded-2xl p-5 transform transition-shadow transition-transform lift hover:-translate-y-2 hover:shadow-lg" data-aos="fade-up" data-aos-delay="700">
-                <div class="h-40 rounded-md bg-gradient-to-br from-slate-800 to-slate-900 p-4 flex items-center justify-center mb-4 transition hover:from-slate-700 hover:to-slate-800 hover:shadow-[0_0_20px_rgba(37,99,235,0.25)] overflow-hidden">
-                  <img src="images/Netbank-logo-1.svg" alt="NetBank Logo" class="object-contain h-20 opacity-90 hover:opacity-100 transition" />
-                </div>
-                <h4 class="font-semibold text-lg mb-1">Netbank Philippines</h4>
-                <p class="text-xs text-[--muted] mb-2">July 2024 – August 2024 · WordPress Development</p>
-                <p class="text-sm text-gray-300 leading-relaxed">
-                  Built a secure, financial-grade WordPress architecture with custom components, enhanced form structures, and compliance-focused performance optimization.
-                </p>
-                <div class="mt-3 text-xs text-[--muted] italic">Associated with <span class="text-[--accent] font-medium">Shore360 Agency</span></div>
-                <div class="mt-4 flex gap-2 flex-wrap">
-                  <span class="tech-pill px-2 py-1 text-xs rounded">WordPress</span>
-                  <span class="tech-pill px-2 py-1 text-xs rounded">Elementor</span>
-                  <span class="tech-pill px-2 py-1 text-xs rounded">Custom Code & CSS</span>
-                  <span class="tech-pill px-2 py-1 text-xs rounded">JavaScript</span>
-                  <span class="tech-pill px-2 py-1 text-xs rounded">File Organization</span>
-                </div>
-                <a href="https://netbank.ph/" target="_blank" rel="noopener" class="inline-flex items-center gap-2 mt-5 px-3 py-2 rounded-md text-sm font-medium bg-[--accent] text-black hover:brightness-95 transition">🌐 View Live Site</a>
-              </article>
-
-              <!-- Jobs360 -->
-              <article class="glass rounded-2xl p-5 transform transition-shadow transition-transform lift hover:-translate-y-2 hover:shadow-lg" data-aos="fade-up" data-aos-delay="800">
-                <div class="h-40 rounded-md bg-gradient-to-br from-slate-800 to-slate-900 p-4 flex items-center justify-center mb-4 transition hover:from-slate-700 hover:to-slate-800 hover:shadow-[0_0_20px_rgba(37,99,235,0.25)] overflow-hidden">
-                  <img src="images/Jobs360-logo.svg" alt="Jobs360 Logo" class="object-contain h-20 opacity-90 hover:opacity-100 transition" />
-                </div>
-                <h4 class="font-semibold text-lg mb-1">Jobs360 Website Rebuild</h4>
-                <p class="text-xs text-[--muted] mb-2">July 2024 – October 2024 · WordPress Development</p>
-                <p class="text-sm text-gray-300 leading-relaxed">
-                  Revamped the job portal’s layout and filtering system, creating a responsive, SEO-friendly experience optimized for both employers and applicants.
-                </p>
-                <div class="mt-3 text-xs text-[--muted] italic">Associated with <span class="text-[--accent] font-medium">Shore360 Agency</span></div>
-                <div class="mt-4 flex gap-2 flex-wrap">
-                  <span class="tech-pill px-2 py-1 text-xs rounded">WordPress</span>
-                  <span class="tech-pill px-2 py-1 text-xs rounded">Elementor</span>
-                  <span class="tech-pill px-2 py-1 text-xs rounded">Custom Code & CSS</span>
-                  <span class="tech-pill px-2 py-1 text-xs rounded">JavaScript</span>
-                  <span class="tech-pill px-2 py-1 text-xs rounded">Design Translation</span>
-                </div>
-                <a href="https://www.jobs360.com.ph/" target="_blank" rel="noopener" class="inline-flex items-center gap-2 mt-5 px-3 py-2 rounded-md text-sm font-medium bg-[--accent] text-black hover:brightness-95 transition">🌐 View Live Site</a>
-              </article>
-
-              <!-- Shore360 Rebuild -->
-              <article class="glass rounded-2xl p-5 transform transition-shadow transition-transform lift hover:-translate-y-2 hover:shadow-lg" data-aos="fade-up" data-aos-delay="900">
-                <div class="h-40 rounded-md bg-gradient-to-br from-slate-800 to-slate-900 p-4 flex items-center justify-center mb-4 transition hover:from-slate-700 hover:to-slate-800 hover:shadow-[0_0_20px_rgba(37,99,235,0.25)] overflow-hidden">
-                  <img src="images/Shore360.svg" alt="Shore360 Logo" class="object-contain h-20 opacity-90 hover:opacity-100 transition" />
-                </div>
-                <h4 class="font-semibold text-lg mb-1">Shore360 Website Rebuild</h4>
-                <p class="text-xs text-[--muted] mb-2">May 2024 – August 2024 · WordPress Development</p>
-                <p class="text-sm text-gray-300 leading-relaxed">
-                  Redesigned the corporate site with a clean, modern UI using Elementor and advanced CSS. Focused on faster load times and improved content structure.
-                </p>
-                <div class="mt-3 text-xs text-[--muted] italic">Associated with <span class="text-[--accent] font-medium">Shore360 Agency</span></div>
-                <div class="mt-4 flex gap-2 flex-wrap">
-                  <span class="tech-pill px-2 py-1 text-xs rounded">WordPress</span>
-                  <span class="tech-pill px-2 py-1 text-xs rounded">Elementor</span>
-                  <span class="tech-pill px-2 py-1 text-xs rounded">Custom Code & CSS</span>
-                  <span class="tech-pill px-2 py-1 text-xs rounded">Custom Widget</span>
-                  <span class="tech-pill px-2 py-1 text-xs rounded">JavaScript</span>
-                  <span class="tech-pill px-2 py-1 text-xs rounded">Design Translation</span>
-                </div>
-                <a href="#" target="_blank" rel="noopener" class="inline-flex items-center gap-2 mt-5 px-3 py-2 rounded-md text-sm font-medium bg-[--accent] text-black hover:brightness-95 transition">🌐 View Live Site</a>
-              </article>
-
-              <!-- Bahamas Flores Clinic -->
-              <article class="glass rounded-2xl p-5 transform transition-shadow transition-transform lift hover:-translate-y-2 hover:shadow-lg" data-aos="fade-up" data-aos-delay="1000">
-                <div class="h-40 rounded-md bg-gradient-to-br from-slate-800 to-slate-900 p-4 flex items-center justify-center mb-4 transition hover:from-slate-700 hover:to-slate-800 hover:shadow-[0_0_20px_rgba(37,99,235,0.25)] overflow-hidden">
-                  <img src="images/Bahamas_Flores_Clinic_logo.webp" alt="Bahamas Flores Clinic Logo" class="object-contain h-20 opacity-90 hover:opacity-100 transition" />
-                </div>
-                <h4 class="font-semibold text-lg mb-1">Bahamas Flores Clinic – Flores Group</h4>
-                <p class="text-xs text-[--muted] mb-2">May 2024 · WordPress & Front-End Development</p>
-                <p class="text-sm text-gray-300 leading-relaxed">
-                  Integrated custom HTML, SCSS, and JavaScript for the front-end of a WordPress site with Git-based version control and performance refinements.
-                </p>
-                <div class="mt-3 text-xs text-[--muted] italic">Associated with <span class="text-[--accent] font-medium">Shore360 Agency</span></div>
-                <div class="mt-4 flex gap-2 flex-wrap">
-                  <span class="tech-pill px-2 py-1 text-xs rounded">HTML5</span>
-                  <span class="tech-pill px-2 py-1 text-xs rounded">CSS3/SCSS</span>
-                  <span class="tech-pill px-2 py-1 text-xs rounded">JavaScript</span>
-                  <span class="tech-pill px-2 py-1 text-xs rounded">Git Commands</span>
-                  <span class="tech-pill px-2 py-1 text-xs rounded">GitHub</span>
-                  <span class="tech-pill px-2 py-1 text-xs rounded">Git Bash</span>
-                </div>
-                <a href="https://bahamasfibroidclinic.com/" target="_blank" rel="noopener" class="inline-flex items-center gap-2 mt-5 px-3 py-2 rounded-md text-sm font-medium bg-[--accent] text-black hover:brightness-95 transition">🌐 View Live Site</a>
-              </article>
-
-              <!-- BBRC -->
-              <article class="glass rounded-2xl p-5 transform transition-shadow transition-transform lift hover:-translate-y-2 hover:shadow-lg" data-aos="fade-up" data-aos-delay="1100">
-                <div class="h-40 rounded-md bg-gradient-to-br from-slate-800 to-slate-900 p-4 flex items-center justify-center mb-4 transition hover:from-slate-700 hover:to-slate-800 hover:shadow-[0_0_20px_rgba(37,99,235,0.25)] overflow-hidden">
-                  <img src="images/BBRC_Logo.svg" alt="BBRC Logo" class="object-contain h-20 opacity-90 hover:opacity-100 transition" />
-                </div>
-                <h4 class="font-semibold text-lg mb-1">BBRC</h4>
-                <p class="text-xs text-[--muted] mb-2">April 2024 – June 2024 · WordPress Development</p>
-                <p class="text-sm text-gray-300 leading-relaxed">
-                  Rebuilt the homepage with an elegant, responsive design using Elementor. Applied modern typography, subtle animations, and layout consistency.
-                </p>
-                <div class="mt-3 text-xs text-[--muted] italic">Associated with <span class="text-[--accent] font-medium">Shore360 Agency</span></div>
-                <div class="mt-4 flex gap-2 flex-wrap">
-                  <span class="tech-pill px-2 py-1 text-xs rounded">WordPress</span>
-                  <span class="tech-pill px-2 py-1 text-xs rounded">Elementor</span>
-                  <span class="tech-pill px-2 py-1 text-xs rounded">Custom Code & CSS</span>
-                </div>
-              </article>
-
-              <!-- MoveDynamics -->
-              <article class="glass rounded-2xl p-5 transform transition-shadow transition-transform lift hover:-translate-y-2 hover:shadow-lg" data-aos="fade-up" data-aos-delay="1200">
-                <div class="h-40 rounded-md bg-gradient-to-br from-slate-800 to-slate-900 p-4 flex items-center justify-center mb-4 transition hover:from-slate-700 hover:to-slate-800 hover:shadow-[0_0_20px_rgba(37,99,235,0.25)] overflow-hidden">
-                  <img src="images/MoveDynamics_Logo.webp" alt="MoveDynamics Logo" class="object-contain h-20 opacity-90 hover:opacity-100 transition" />
-                </div>
-                <h4 class="font-semibold text-lg mb-1">MoveDynamics – GRACE</h4>
-                <p class="text-xs text-[--muted] mb-2">April 2024 – May 2024 · WordPress Development</p>
-                <p class="text-sm text-gray-300 leading-relaxed">
-                  Created custom Elementor components and translated Figma designs into a fully functional and mobile-responsive site for the MoveDynamics project.
-                </p>
-                <div class="mt-3 text-xs text-[--muted] italic">Associated with <span class="text-[--accent] font-medium">Shore360 Agency</span></div>
-                <div class="mt-4 flex gap-2 flex-wrap">
-                  <span class="tech-pill px-2 py-1 text-xs rounded">WordPress</span>
-                  <span class="tech-pill px-2 py-1 text-xs rounded">Elementor</span>
-                  <span class="tech-pill px-2 py-1 text-xs rounded">Custom Code & CSS</span>
-                  <span class="tech-pill px-2 py-1 text-xs rounded">Custom Contact Forms</span>
-                  <span class="tech-pill px-2 py-1 text-xs rounded">JavaScript</span>
-                </div>
-                <a href="https://www.movedynamics.com.au/" target="_blank" rel="noopener" class="inline-flex items-center gap-2 mt-5 px-3 py-2 rounded-md text-sm font-medium bg-[--accent] text-black hover:brightness-95 transition">🌐 View Live Site</a>
-              </article>
-
-              <!-- BYRONS -->
-              <article class="glass rounded-2xl p-5 transform transition-shadow transition-transform lift hover:-translate-y-2 hover:shadow-lg" data-aos="fade-up" data-aos-delay="1300">
-                <div class="h-40 rounded-md bg-gradient-to-br from-slate-800 to-slate-900 p-4 flex items-center justify-center mb-4 transition hover:from-slate-700 hover:to-slate-800 hover:shadow-[0_0_20px_rgba(37,99,235,0.25)] overflow-hidden">
-                  <img src="images/BYRONS_Logo.webp" alt="BYRONS Logo" class="object-contain h-20 opacity-90 hover:opacity-100 transition" />
-                </div>
-                <h4 class="font-semibold text-lg mb-1">BYRONS</h4>
-                <p class="text-xs text-[--muted] mb-2">January 2024 – October 2024 · WordPress Development</p>
-                <p class="text-sm text-gray-300 leading-relaxed">
-                  First solo project applying custom fields, dynamic single pages, and taxonomy filtering for members and news. Improved shortcode logic and layout consistency.
-                </p>
-                <div class="mt-3 text-xs text-[--muted] italic">Associated with <span class="text-[--accent] font-medium">Shore360 Agency</span></div>
-                <div class="mt-4 flex gap-2 flex-wrap">
-                  <span class="tech-pill px-2 py-1 text-xs rounded">WordPress</span>
-                  <span class="tech-pill px-2 py-1 text-xs rounded">Elementor</span>
-                  <span class="tech-pill px-2 py-1 text-xs rounded">Custom Code & CSS</span>
-                  <span class="tech-pill px-2 py-1 text-xs rounded">JavaScript</span>
-                  <span class="tech-pill px-2 py-1 text-xs rounded">Advanced Custom Fields</span>
-                  <span class="tech-pill px-2 py-1 text-xs rounded">Custom Post Types</span>
-                  <span class="tech-pill px-2 py-1 text-xs rounded">Single Post & Pages</span>
-                  <span class="tech-pill px-2 py-1 text-xs rounded">Dynamic Content</span>
-                </div>
-                <a href="https://byrons.com.au/" target="_blank" rel="noopener" class="inline-flex items-center gap-2 mt-5 px-3 py-2 rounded-md text-sm font-medium bg-[--accent] text-black hover:brightness-95 transition">🌐 View Live Site</a>
-              </article>
-
-            </div>
-          </div>
-        </section>
-
-
-        <!-- SERVICES -->
-        <section id="services" class="py-16" data-aos="fade-up">
-          <div class="mx-auto px-6 max-w-site">
-            <h3 class="text-2xl font-bold mb-6">Services</h3>
-
-            <div class="grid md:grid-cols-3 gap-6">
-              <div
-                class="glass rounded-2xl p-6 lift"
-                data-aos="zoom-in"
-                data-aos-delay="40"
-              >
-                <div class="text-2xl mb-3">🎨</div>
-                <h4 class="font-semibold">Theme & Plugin Adjustments</h4>
-                <p class="text-[--muted] text-sm mt-2">
-                  Customizing existing themes and plugins to match your needs
-                </p>
-              </div>
-
-              <div
-                class="glass rounded-2xl p-6 lift"
-                data-aos="zoom-in"
-                data-aos-delay="80"
-              >
-                <div class="text-2xl mb-3">📝</div>
-                <h4 class="font-semibold">Page Layout & Content Updates</h4>
-                <p class="text-[--muted] text-sm mt-2">
-                  Text, images, logos, and content management
-                </p>
-              </div>
-
-              <div
-                class="glass rounded-2xl p-6 lift"
-                data-aos="zoom-in"
-                data-aos-delay="120"
-              >
-                <div class="text-2xl mb-3">💻</div>
-                <h4 class="font-semibold">Custom CSS/HTML Fixes</h4>
-                <p class="text-[--muted] text-sm mt-2">
-                  Basic styling and layout improvements
-                </p>
-              </div>
-
-              <div
-                class="glass rounded-2xl p-6 lift"
-                data-aos="zoom-in"
-                data-aos-delay="160"
-              >
-                <div class="text-2xl mb-3">🔧</div>
-                <h4 class="font-semibold">WordPress Troubleshooting</h4>
-                <p class="text-[--muted] text-sm mt-2">
-                  Fixing WordPress errors and technical issues
-                </p>
-              </div>
-
-              <div
-                class="glass rounded-2xl p-6 lift"
-                data-aos="zoom-in"
-                data-aos-delay="200"
-              >
-                <div class="text-2xl mb-3">⚡</div>
-                <h4 class="font-semibold">Performance Optimization</h4>
-                <p class="text-[--muted] text-sm mt-2">
-                  Page speed improvements and performance tuning
-                </p>
-              </div>
-
-              <div
-                class="glass rounded-2xl p-6 lift"
-                data-aos="zoom-in"
-                data-aos-delay="240"
-              >
-                <div class="text-2xl mb-3">🔄</div>
-                <h4 class="font-semibold">Updates & Maintenance</h4>
-                <p class="text-[--muted] text-sm mt-2">
-                  Regular plugin and theme updates
-                </p>
-              </div>
-
-              <div
-                class="glass rounded-2xl p-6 lift"
-                data-aos="zoom-in"
-                data-aos-delay="280"
-              >
-                <div class="text-2xl mb-3">🛡️</div>
-                <h4 class="font-semibold">Security & Backups</h4>
-                <p class="text-[--muted] text-sm mt-2">
-                  Security setup, malware scans, and website recovery
-                </p>
-              </div>
-
-              <div
-                class="glass rounded-2xl p-6 lift"
-                data-aos="zoom-in"
-                data-aos-delay="320"
-              >
-                <div class="text-2xl mb-3">🔍</div>
-                <h4 class="font-semibold">SEO Setup</h4>
-                <p class="text-[--muted] text-sm mt-2">
-                  On-page SEO, meta tags, headings, and alt texts
-                </p>
-              </div>
-
-              <div
-                class="glass rounded-2xl p-6 lift"
-                data-aos="zoom-in"
-                data-aos-delay="360"
-              >
-                <div class="text-2xl mb-3">🛍️</div>
-                <h4 class="font-semibold">WooCommerce Support</h4>
-                <p class="text-[--muted] text-sm mt-2">
-                  Product setup, payment and shipping configuration
-                </p>
-              </div>
-
-              <div
-                class="glass rounded-2xl p-6 lift"
-                data-aos="zoom-in"
-                data-aos-delay="400"
-              >
-                <div class="text-2xl mb-3">📱</div>
-                <h4 class="font-semibold">Mobile Responsiveness</h4>
-                <p class="text-[--muted] text-sm mt-2">
-                  Ensuring your site looks great on all devices
-                </p>
-              </div>
-
-              <div
-                class="glass rounded-2xl p-6 lift"
-                data-aos="zoom-in"
-                data-aos-delay="440"
-              >
-                <div class="text-2xl mb-3">✍️</div>
-                <h4 class="font-semibold">Content Management</h4>
-                <p class="text-[--muted] text-sm mt-2">
-                  Blog formatting, content publishing, and organization
-                </p>
-              </div>
-
-              <div
-                class="glass rounded-2xl p-6 lift"
-                data-aos="zoom-in"
-                data-aos-delay="480"
-              >
-                <div class="text-2xl mb-3">📊</div>
-                <h4 class="font-semibold">Analytics & Reporting</h4>
-                <p class="text-[--muted] text-sm mt-2">
-                  Google Analytics setup and monthly performance reports
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- ATHLETIC PROFILE -->
-        <section id="athletic" class="py-16 bg-[#060607]" data-aos="fade-up">
-          <div class="mx-auto px-6 max-w-site text-center">
-            <h3 class="text-2xl font-bold mb-4">Athletic Profile</h3>
-            <div class="divider mb-8"></div>
-
-            <p class="text-[--muted] max-w-2xl mx-auto mb-10">
-              I’m also an <span class="font-semibold text-white">Ultimate Frisbee player</span>,
-              representing local teams in regional tournaments. Playing ultimate has taught me leadership,
-              focus, and discipline — qualities that also shape how I approach web development.
-            </p>
-
-            <div class="grid md:grid-cols-2 gap-6">
-              <!-- Pampanga Ultimate Community -->
-              <div
-                class="glass rounded-lg p-6 lift flex items-center gap-5 text-left"
-                data-aos="fade-up"
-                data-aos-delay="40"
-              >
-                <div
-                  class="w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center"
-                >
-                  <img
-                    src="images/PUC_logo.webp"
-                    alt="Pampanga Ultimate Community Logo"
-                    class="object-contain h-16 opacity-90 hover:opacity-100 transition"
-                  />
-                </div>
-                <div>
-                  <div class="font-semibold text-white">Pampanga Ultimate Community</div>
-                  <div class="text-[--muted] mt-1">
-                    Active member of <span class="text-[--accent] font-medium">Pampanga Ultimate Community</span>,
-                    a community-based Ultimate Frisbee team in Pampanga.
-                  </div>
-                  <div class="text-sm text-[--muted] mt-2">January 2025 – Present</div>
-                </div>
-              </div>
-
-              <!-- ASLAG Ultimate -->
-              <div
-                class="glass rounded-lg p-6 lift flex items-center gap-5 text-left"
-                data-aos="fade-up"
-                data-aos-delay="80"
-              >
-                <div
-                  class="w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center"
-                >
-                  <img
-                    src="images/ASLAG_Ultimate_Logo.webp"
-                    alt="ASLAG Ultimate Logo"
-                    class="object-contain h-16 opacity-90 hover:opacity-100 transition"
-                  />
-                </div>
-                <div>
-                  <div class="font-semibold text-white">ASLAG Ultimate</div>
-                  <div class="text-[--muted] mt-1">
-                    Active member and <span class="text-[--accent] font-medium">Team Captain</span> of the local college Ultimate team
-                    at City College of San Fernando Pampanga.
-                  </div>
-                  <div class="text-sm text-[--muted] mt-2">August 2019 – September 2023</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- CONTACT -->
-        <section id="contact" class="py-16" data-aos="fade-up">
-          <div class="mx-auto px-6 max-w-site text-center">
-            <h3 class="text-2xl font-bold mb-4">Let's Connect</h3>
-            <p class="text-[--muted] mb-6 max-w-2xl mx-auto">
-              Whether it’s a new project, collaboration, or opportunity — feel
-              free to reach out.
-            </p>
-
-            <div
-              class="flex flex-col md:flex-row items-center justify-center gap-4"
-            >
-              <a
-                href="tel:+639052800332"
-                class="inline-flex items-center gap-2 px-6 py-3 rounded-md bg-white text-black font-medium"
-                >📞 +63 905 280 0332</a
-              >
-              <a
-                href="https://www.linkedin.com/in/lncdmndl/"
-                target="_blank"
-                class="inline-flex items-center gap-2 px-6 py-3 rounded-md border border-white/6"
-                >💼 LinkedIn</a
-              >
-              <a
-                href="mailto:dimandallance@gmail.com"
-                class="inline-flex items-center gap-2 px-6 py-3 rounded-md border border-white/6"
-                >✉️ Email</a
-              >
-            </div>
-          </div>
-        </section>
-      </main>
-
-      <!-- FOOTER -->
-      <footer class="py-6 border-t border-white/4 bg-[#060607]">
-        <div class="mx-auto px-6 max-w-site text-center text-sm text-[--muted]">
-          &copy; 2025 Lance Dimandal. Built with passion and precision.
-        </div>
-      </footer>
+
+      /* Experience: stack the two columns */
+      .exp-grid {
+        grid-template-columns: 1fr !important;
+        gap: 3rem;
+      }
+
+      .skills-bento {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .skills-row2 {
+        grid-template-columns: 1fr 1fr !important;
+      }
+
+      .project-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .portfolio-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+      }
+
+      .portfolio-count {
+        font-size: 2.5rem;
+      }
+
+      .services-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .athletic-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .tl-item {
+        grid-template-columns: 110px 1fr;
+        gap: 1.2rem;
+      }
+
+      .tl-dot {
+        left: 110px;
+      }
+    }
+
+    /* ── MOBILE LARGE: 640px ── */
+    @media (max-width: 640px) {
+      .wrap {
+        padding: 0 1rem;
+      }
+
+      section {
+        padding: 4rem 0;
+      }
+
+      /* NAV */
+      .logo {
+        font-size: 1rem;
+      }
+
+      /* HERO */
+      .hero {
+        padding: 4rem 0 2.5rem;
+      }
+
+      h1 {
+        font-size: clamp(2.2rem, 9vw, 3rem);
+      }
+
+      .hero-desc {
+        font-size: 0.95rem;
+      }
+
+      .hero-btns {
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+
+      .btn-primary,
+      .btn-secondary {
+        width: 100%;
+        justify-content: center;
+        padding: 0.85rem 1.5rem;
+        font-size: 0.9rem;
+      }
+
+      .hero-stats {
+        flex-wrap: wrap;
+        gap: 1.5rem 2rem;
+      }
+
+      .stat-num {
+        font-size: 1.5rem;
+      }
+
+      /* HERO CARD */
+      .hc-header {
+        flex-wrap: wrap;
+        gap: 0.75rem;
+      }
+
+      .status-dot {
+        margin-left: 0;
+      }
+
+      .hc-row {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      /* ABOUT */
+      .info-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .quote-block {
+        font-size: 0.95rem;
+        padding: 1.3rem;
+      }
+
+      /* TIMELINE */
+      .tl-item {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+        padding: 1.5rem 0;
+      }
+
+      .tl-date {
+        text-align: left;
+        padding-top: 0;
+      }
+
+      .tl-dot {
+        display: none;
+      }
+
+      /* SKILLS */
+      .skills-bento {
+        grid-template-columns: 1fr;
+      }
+
+      .skills-row2 {
+        grid-template-columns: 1fr !important;
+      }
+
+      .skill-card-wide {
+        grid-column: span 1;
+      }
+
+      /* PORTFOLIO */
+      .project-grid {
+        grid-template-columns: 1fr;
+      }
+
+      /* SERVICES */
+      .services-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      /* ATHLETIC */
+      .athletic-grid {
+        grid-template-columns: 1fr;
+      }
+
+      /* CONTACT */
+      .contact-links {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .contact-link {
+        justify-content: center;
+        width: 100%;
+      }
+
+      .contact-inner p {
+        font-size: 0.95rem;
+      }
+
+      /* FOOTER */
+      footer .wrap {
+        display: flex;
+        flex-direction: column;
+        gap: 0.3rem;
+        align-items: center;
+      }
+    }
+
+    /* ── MOBILE SMALL: 420px ── */
+    @media (max-width: 420px) {
+      .wrap {
+        padding: 0 0.875rem;
+      }
+
+      h1 {
+        font-size: 2.1rem;
+      }
+
+      .hc-row {
+        grid-template-columns: 1fr;
+      }
+
+      .info-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .services-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-card {
+        padding: 1.25rem;
+      }
+
+      .hero-btns .btn-primary,
+      .hero-btns .btn-secondary {
+        font-size: 0.85rem;
+      }
+
+      .project-card {
+        padding: 1.2rem;
+      }
+
+      .ath-card {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .ath-logo {
+        width: 52px;
+        height: 52px;
+      }
+
+      section {
+        padding: 3rem 0;
+      }
+
+      h2 {
+        font-size: 1.7rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- MOBILE OVERLAY -->
+  <div id="mobile-overlay">
+    <button class="close-btn" onclick="closeMobile()">✕</button>
+    <a href="#about" onclick="closeMobile()">About</a>
+    <a href="#experience" onclick="closeMobile()">Experience</a>
+    <a href="#skills" onclick="closeMobile()">Skills</a>
+    <a href="#portfolio" onclick="closeMobile()">Portfolio</a>
+    <a href="#services" onclick="closeMobile()">Services</a>
+    <a href="#athletic" onclick="closeMobile()">Athletic</a>
+    <a href="#contact" onclick="closeMobile()">Contact</a>
+  </div>
+
+  <!-- NAV -->
+  <nav>
+    <div class="wrap nav-inner">
+      <a href="#" class="logo">Lance<span>.</span></a>
+      <ul>
+        <li><a href="#about">About</a></li>
+        <li><a href="#experience">Experience</a></li>
+        <li><a href="#skills">Skills</a></li>
+        <li><a href="#portfolio">Portfolio</a></li>
+        <li><a href="#services">Services</a></li>
+        <li><a href="#athletic">Athletic</a></li>
+        <li><a href="#contact">Contact</a></li>
+        <li>
+          <a href="https://drive.google.com/file/d/1Mb0xZC9y8W2rfwXyPVawpkBrl2A2t6YT/view?usp=sharing" target="_blank"
+            class="nav-cta">Resume ↗</a>
+        </li>
+      </ul>
+      <div class="hamburger" onclick="openMobile()">
+        <span></span><span></span><span></span>
+      </div>
     </div>
+  </nav>
 
-    <!-- SCRIPTS -->
-    <script>
-      // Initialize AOS
-      AOS.init({
-        duration: 800,
-        easing: "ease-out-cubic",
-        once: true,
-        offset: 80,
-      });
+  <!-- HERO -->
+  <header class="hero">
+    <div class="hero-glow"></div>
+    <div class="hero-glow2"></div>
+    <div class="wrap">
+      <div class="hero-grid">
+        <div>
+          <div class="hero-eyebrow">Available for opportunities</div>
+          <h1>
+            Lance<br />
+            <span class="line2">Dimandal</span>
+          </h1>
+          <p class="hero-desc">
+            Web Developer based in the Philippines, specializing in WordPress
+            and Shopify — building responsive, performance-driven websites
+            that convert.
+          </p>
+          <div class="hero-btns">
+            <a href="mailto:dimandallance@gmail.com" class="btn-primary">Get in touch →</a>
+            <a href="https://drive.google.com/file/d/1Mb0xZC9y8W2rfwXyPVawpkBrl2A2t6YT/view?usp=sharing" target="_blank"
+              class="btn-secondary">View Resume ↗</a>
+          </div>
+          <div class="hero-stats">
+            <div class="stat">
+              <span class="stat-num">1.5+</span>
+              <span class="stat-label">Years at Shore360</span>
+            </div>
+            <div class="stat">
+              <span class="stat-num">15+</span>
+              <span class="stat-label">Projects delivered</span>
+            </div>
+            <div class="stat">
+              <span class="stat-num">10+</span>
+              <span class="stat-label">CMS platforms</span>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="hero-card">
+            <div class="hc-header">
+              <div class="avatar">
+                <img src="images/lance-developer.jpg" alt="Lance Dimandal"
+                  onerror="this.parentElement.innerHTML = 'LD'" />
+              </div>
+              <div>
+                <div class="hc-name">Lance Christopher Dimandal</div>
+                <div class="hc-role">
+                  WordPress Specialist &amp; Shopify Dev
+                </div>
+              </div>
+              <div class="status-dot">Open</div>
+            </div>
+            <div class="hc-row">
+              <div class="hc-cell">
+                <div class="hc-cell-label">Current Role</div>
+                <div class="hc-cell-val">Junior Web Developer</div>
+              </div>
+              <div class="hc-cell">
+                <div class="hc-cell-label">Company</div>
+                <div class="hc-cell-val">Shore360 Agency</div>
+              </div>
+              <div class="hc-cell">
+                <div class="hc-cell-label">Since</div>
+                <div class="hc-cell-val">December 2023</div>
+              </div>
+              <div class="hc-cell">
+                <div class="hc-cell-label">Location</div>
+                <div class="hc-cell-val">Philippines 🇵🇭</div>
+              </div>
+            </div>
+            <div>
+              <div class="hc-cell-label" style="margin-bottom: 0.6rem">
+                Core Stack
+              </div>
+              <div class="skill-tags">
+                <span class="skill-tag">WordPress</span>
+                <span class="skill-tag">Elementor</span>
+                <span class="skill-tag">Shopify</span>
+                <span class="skill-tag">HubSpot</span>
+                <span class="skill-tag">HTML5</span>
+                <span class="skill-tag">CSS3</span>
+                <span class="skill-tag">JavaScript</span>
+                <span class="skill-tag">PHP</span>
+                <span class="skill-tag">Git</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
 
-      // Feather icons
-      feather && feather.replace();
+  <div class="section-divider"></div>
 
-      // Mobile menu (simple)
-      const mobileBtn = document.getElementById("mobileBtn");
-      mobileBtn &&
-        mobileBtn.addEventListener("click", () => {
-          const existing = document.getElementById("mobileMenu");
-          if (existing) return existing.remove();
+  <!-- ABOUT -->
+  <section id="about" class="fade-in">
+    <div class="wrap">
+      <div class="about-grid">
+        <div>
+          <div class="section-label">// About Me</div>
+          <h2>The developer<br />behind the work</h2>
+          <div class="about-text" style="margin-top: 1.5rem">
+            <p>
+              I'm a dedicated Web Developer based in the Philippines, building
+              modern and responsive websites with a focus on WordPress,
+              Elementor, and Shopify. Every project I take on is driven by a
+              commitment to clean code, great UX, and measurable performance.
+            </p>
+            <p>
+              My workflow blends technical precision with an eye for design —
+              translating Figma mockups and client briefs into polished,
+              functional web experiences that perform well in real-world
+              conditions.
+            </p>
+            <p>
+              I believe in continuous improvement, both professionally and
+              personally — a mindset shaped through years of team sports and
+              collaborative work.
+            </p>
+          </div>
+          <div class="value-list" style="margin-top: 2rem">
+            <div class="value-item">
+              <div class="value-icon">⚡</div>
+              <div>
+                <div class="value-title">Performance-First</div>
+                <div class="value-text">
+                  Every site I build is optimized for speed, accessibility and
+                  Core Web Vitals.
+                </div>
+              </div>
+            </div>
+            <div class="value-item">
+              <div class="value-icon">🎯</div>
+              <div>
+                <div class="value-title">Pixel-Accurate</div>
+                <div class="value-text">
+                  Faithful translation from design to code with meticulous
+                  attention to detail.
+                </div>
+              </div>
+            </div>
+            <div class="value-item">
+              <div class="value-icon">🤝</div>
+              <div>
+                <div class="value-title">Collaborative</div>
+                <div class="value-text">
+                  Strong communicator who works well in agency, remote and
+                  cross-functional teams.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="about-sidebar">
+          <div class="quote-block">
+            "Outside of development, I value teamwork and personal growth —
+            skills I've honed both through professional collaboration and on
+            the ultimate frisbee field."
+          </div>
+          <div class="info-grid">
+            <div class="info-card">
+              <div class="info-card-label">Degree</div>
+              <div class="info-card-val">B.S. Information Technology</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">Graduated</div>
+              <div class="info-card-val">2023</div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">Email</div>
+              <div class="info-card-val" style="font-size: 0.78rem; word-break: break-all">
+                dimandallance@gmail.com
+              </div>
+            </div>
+            <div class="info-card">
+              <div class="info-card-label">LinkedIn</div>
+              <div class="info-card-val">
+                <a href="https://www.linkedin.com/in/lncdmndl/" target="_blank"
+                  style="color: var(--accent2); text-decoration: none">lncdmndl ↗</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-          const div = document.createElement("div");
-          div.id = "mobileMenu";
-          div.className = "fixed inset-0 bg-black/70 flex items-start p-6 z-60";
-          div.innerHTML =
-            '<div class="bg-[#0a0a0b] p-6 rounded-lg w-full max-w-xs space-y-4 mobile-menu">' +
-            '<a href="#about" class="block">About</a>' +
-            '<a href="#skills" class="block">Skills</a>' +
-            '<a href="#portfolio" class="block">Portfolio</a>' +
-            '<a href="#services" class="block">Services</a>' +
-            '<a href="#education" class="block">Education</a>' +
-            '<a href="#experience" class="block">Experience</a>' +
-            '<a href="#athletic" class="block">Athletic</a>' +
-            '<a href="#contact" class="block">Contact</a>' +
-            '<button id="closeMobile" class="mt-4 px-3 py-2 rounded bg-white text-black w-full">Close</button></div>';
+  <div class="section-divider"></div>
 
-          document.body.appendChild(div);
-          document
-            .getElementById("closeMobile")
-            .addEventListener("click", () => div.remove());
+  <!-- EXPERIENCE & EDUCATION -->
+  <section id="experience" class="fade-in">
+    <div class="wrap">
+      <div class="exp-grid">
+        <div>
+          <div class="section-label">// Work Experience</div>
+          <h2 style="font-size: 1.8rem; margin-bottom: 2.5rem">Career</h2>
+          <div class="timeline">
+            <div class="tl-item">
+              <div class="tl-date">Dec 2023<br />— Present</div>
+              <div class="tl-dot"></div>
+              <div class="tl-content">
+                <div class="tl-org">
+                  <div class="tl-logo">
+                    <img src="images/shore360.webp" alt="Shore360" onerror="this.parentElement.innerHTML = 'S3'" />
+                  </div>
+                  <div>
+                    <div class="tl-role">Junior Web Developer</div>
+                    <div class="tl-company">
+                      Shore360 Agency · Shore360, Inc.
+                    </div>
+                  </div>
+                </div>
+                <div class="tl-desc">
+                  Building and maintaining client websites across WordPress,
+                  Shopify, HubSpot, Wix and Squarespace. Collaborating with
+                  designers and stakeholders to deliver pixel-accurate,
+                  performant web solutions.
+                </div>
+              </div>
+            </div>
+            <div class="tl-item">
+              <div class="tl-date">Sep 2022<br />— Jan 2023</div>
+              <div class="tl-dot"></div>
+              <div class="tl-content">
+                <div class="tl-org">
+                  <div class="tl-logo">
+                    <img src="images/dost_r3.webp" alt="DOST" onerror="this.parentElement.innerHTML = 'DOST'" />
+                  </div>
+                  <div>
+                    <div class="tl-role">Student Trainee (Intern)</div>
+                    <div class="tl-company">DOST — Region 3</div>
+                  </div>
+                </div>
+                <div class="tl-desc">
+                  Supported the IT division with technical tasks, data
+                  management, and development work as part of the on-the-job
+                  training program.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="section-label">// Education</div>
+          <h2 style="font-size: 1.8rem; margin-bottom: 2.5rem">Academic</h2>
+          <div class="timeline">
+            <div class="tl-item">
+              <div class="tl-date">2019 – 2023</div>
+              <div class="tl-dot"></div>
+              <div class="tl-content">
+                <div class="tl-org">
+                  <div class="tl-logo">
+                    <img src="images/ccsfp.png" alt="CCSFP" onerror="this.parentElement.innerHTML = 'CC'" />
+                  </div>
+                  <div>
+                    <div class="tl-role">B.S. Information Technology</div>
+                    <div class="tl-company">
+                      City College of San Fernando Pampanga
+                    </div>
+                  </div>
+                </div>
+                <div class="tl-desc">
+                  Four-year program covering software development, web
+                  technologies, databases, networking and information systems.
+                  Graduated with a focus on practical application through
+                  capstone projects.
+                </div>
+              </div>
+            </div>
+            <div class="tl-item">
+              <div class="tl-date">2016 – 2019</div>
+              <div class="tl-dot"></div>
+              <div class="tl-content">
+                <div class="tl-org">
+                  <div class="tl-logo">
+                    <img src="images/phs.jpg" alt="PHS" onerror="this.parentElement.innerHTML = 'PHS'" />
+                  </div>
+                  <div>
+                    <div class="tl-role">Academic Track — GAS Strand</div>
+                    <div class="tl-company">Pampanga High School</div>
+                  </div>
+                </div>
+                <div class="tl-desc">
+                  Completed senior high school under the General Academic
+                  Strand with a foundation in humanities, social sciences, and
+                  applied technology subjects.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- SKILLS -->
+  <section id="skills" class="fade-in">
+    <div class="wrap">
+      <div class="section-label">// Technical Proficiency</div>
+      <h2 style="margin-bottom: 3rem">Skills &amp; Tools</h2>
+      <div class="skills-bento">
+        <div class="skill-card">
+          <div class="skill-card-icon">🏗️</div>
+          <h4>CMS &amp; Builders</h4>
+          <div class="pill-list">
+            <span class="pill">WordPress</span><span class="pill">Elementor</span><span
+              class="pill">YOOTheme</span><span class="pill">Gutenberg</span><span class="pill">Divi</span><span
+              class="pill">Shopify</span><span class="pill">Liquid</span><span class="pill">HubSpot</span><span
+              class="pill">Wix</span><span class="pill">Squarespace</span>
+          </div>
+        </div>
+        <div class="skill-card">
+          <div class="skill-card-icon">💻</div>
+          <h4>Web Development</h4>
+          <div class="pill-list">
+            <span class="pill">HTML5</span><span class="pill">CSS3</span><span class="pill">SCSS/SASS</span><span
+              class="pill">Bootstrap</span><span class="pill">JavaScript</span><span class="pill">jQuery</span><span
+              class="pill">PHP</span><span class="pill">MySQL</span>
+          </div>
+        </div>
+        <div class="skill-card">
+          <div class="skill-card-icon">🔀</div>
+          <h4>Version Control</h4>
+          <div class="pill-list">
+            <span class="pill">Git</span><span class="pill">GitHub</span><span class="pill">Git Bash</span><span
+              class="pill">FTP/SFTP</span>
+          </div>
+        </div>
+        <div class="skill-card">
+          <div class="skill-card-icon">🚀</div>
+          <h4>Optimization &amp; SEO</h4>
+          <div class="pill-list">
+            <span class="pill">Lighthouse</span><span class="pill">PageSpeed</span><span
+              class="pill">GTmetrix</span><span class="pill">Performance Optim.</span><span class="pill">SEO Best
+              Practices</span><span class="pill">Digital Shield</span>
+          </div>
+        </div>
+      </div>
+      <div class="skills-row2">
+        <div class="skill-card skill-card-wide">
+          <div class="skill-card-icon">🛠️</div>
+          <h4>Design &amp; Productivity Tools</h4>
+          <div class="pill-list">
+            <span class="pill">Figma</span><span class="pill">VS Code</span><span class="pill">Chrome
+              DevTools</span><span class="pill">Jira</span><span class="pill">ClickUp</span><span
+              class="pill">Slack</span>
+          </div>
+        </div>
+        <div class="skill-card">
+          <div class="skill-card-icon">📐</div>
+          <h4>Advanced WP</h4>
+          <div class="pill-list">
+            <span class="pill">ACF</span><span class="pill">Custom Post Types</span><span class="pill">Dynamic
+              Content</span><span class="pill">WooCommerce</span><span class="pill">HubL</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- PORTFOLIO -->
+  <section id="portfolio" class="fade-in">
+    <div class="wrap">
+      <div class="portfolio-header">
+        <div>
+          <div class="section-label">// Selected Work</div>
+          <h2>Portfolio</h2>
+          <p style="
+                color: var(--muted2);
+                max-width: 500px;
+                margin-top: 0.75rem;
+                font-size: 0.9rem;
+              ">
+            Performance-driven websites built across WordPress, Shopify, and
+            custom-coded solutions — for clients ranging from startups to
+            established brands.
+          </p>
+        </div>
+        <div class="portfolio-count">15+</div>
+      </div>
+
+      <div class="project-grid">
+        <!-- Simple Claims -->
+        <div class="project-card">
+          <div class="project-logo-wrap">
+            <img src="images/SC-Logo.png" alt="Simple Claims" />
+          </div>
+          <span class="project-badge badge-progress">In Progress</span>
+          <div class="project-title">Simple Claims</div>
+          <div class="project-meta">Feb 2026 – Present · WordPress</div>
+          <div class="project-desc">
+            New claims website for the AU market built with Elementor. Custom
+            sections, responsive design, and SEO-friendly setup from day one.
+          </div>
+          <div class="project-tags">
+            <span class="project-tag">WordPress</span><span class="project-tag">Elementor</span><span
+              class="project-tag">Custom CSS/JS</span>
+          </div>
+          <div class="project-footer">
+            <div class="project-agency">Shore360<span> Agency</span></div>
+          </div>
+        </div>
+
+        <!-- Simtech -->
+        <div class="project-card">
+          <div class="project-logo-wrap">
+            <img src="images/simtech-logo.png" alt="Simtech" />
+          </div>
+          <span class="project-badge badge-progress">In Progress</span>
+          <div class="project-title">Simtech</div>
+          <div class="project-meta">Dec 2025 – Present · WordPress</div>
+          <div class="project-desc">
+            Multi-regional rebuild (Global, US, Asia, AU) using Elementor with
+            custom layouts, improved design consistency and SEO across all
+            regions.
+          </div>
+          <div class="project-tags">
+            <span class="project-tag">WordPress</span><span class="project-tag">Elementor</span><span
+              class="project-tag">Multi-region</span>
+          </div>
+          <div class="project-footer">
+            <div class="project-agency">Shore360<span> Agency</span></div>
+          </div>
+        </div>
+
+        <!-- Alvaro Logistics -->
+        <div class="project-card">
+          <div class="project-logo-wrap">
+            <img src="images/Alvaro Logistics Logo - Official.avif" alt="Alvaro Logistics" />
+          </div>
+          <span class="project-badge badge-progress">In Progress</span>
+          <div class="project-title">Alvaro Logistics Group</div>
+          <div class="project-meta">Nov 2025 – Present · WordPress</div>
+          <div class="project-desc">
+            Rebuilt with Elementor — custom sections, improved design
+            consistency, responsive and SEO-friendly configurations.
+          </div>
+          <div class="project-tags">
+            <span class="project-tag">WordPress</span><span class="project-tag">Elementor</span><span
+              class="project-tag">Custom CSS</span>
+          </div>
+          <div class="project-footer">
+            <div class="project-agency">Shore360<span> Agency</span></div>
+          </div>
+        </div>
+
+        <!-- Intermedia -->
+        <div class="project-card">
+          <div class="project-logo-wrap">
+            <img src="images/intm-logo-wide.svg" alt="Intermedia" />
+          </div>
+          <span class="project-badge badge-progress">In Progress</span>
+          <div class="project-title">Intermedia</div>
+          <div class="project-meta">Oct 2025 – Present · HubSpot EDM</div>
+          <div class="project-desc">
+            Custom email templates developed in HubSpot with the lead
+            designer, aligned to brand guidelines and marketing objectives.
+          </div>
+          <div class="project-tags">
+            <span class="project-tag">HubSpot</span><span class="project-tag">HubL</span><span
+              class="project-tag">HTML</span><span class="project-tag">VML</span>
+          </div>
+          <div class="project-footer">
+            <div class="project-agency">Shore360<span> Agency</span></div>
+          </div>
+        </div>
+
+        <!-- AWR Solutions -->
+        <div class="project-card">
+          <div class="project-logo-wrap">
+            <img src="images/AWR_Logo.webp" alt="AWR Solutions" />
+          </div>
+          <span class="project-badge badge-progress">In Progress</span>
+          <div class="project-title">AWR Solutions</div>
+          <div class="project-meta">Sep 2025 – Present · Shopify</div>
+          <div class="project-desc">
+            Neto-to-Shopify migration with advanced product filtering, custom
+            forms, payment gateway integration and optimized inventory
+            management.
+          </div>
+          <div class="project-tags">
+            <span class="project-tag">Shopify</span><span class="project-tag">Liquid</span><span
+              class="project-tag">Custom Code</span>
+          </div>
+          <div class="project-footer">
+            <div class="project-agency">Shore360<span> Agency</span></div>
+          </div>
+        </div>
+
+        <!-- STEM Finance -->
+        <div class="project-card">
+          <div class="project-logo-wrap">
+            <img src="images/STEM Finance - Logo.avif" alt="STEM Finance" />
+          </div>
+          <span class="project-badge badge-done">✓ Live</span>
+          <div class="project-title">STEM Finance</div>
+          <div class="project-meta">Oct 2025 · Wix Development</div>
+          <div class="project-desc">
+            Rebuilt with Wix Builder — custom section layouts, tailored
+            styling to enhance design consistency and visual appeal.
+          </div>
+          <div class="project-tags">
+            <span class="project-tag">Wix</span><span class="project-tag">Custom CSS</span><span
+              class="project-tag">JavaScript</span>
+          </div>
+          <div class="project-footer">
+            <div class="project-agency">Shore360<span> Agency</span></div>
+            <a href="https://www.stemfinance.com.au/" target="_blank" class="project-link">Live Site →</a>
+          </div>
+        </div>
+
+        <!-- Tailgate Sports Bar -->
+        <div class="project-card">
+          <div class="project-logo-wrap">
+            <img src="images/Tailgate-Sports-Bar-Logo.webp" alt="Tailgate Sports Bar" />
+          </div>
+          <span class="project-badge badge-done">✓ Live</span>
+          <div class="project-title">Tailgate Sports Bar</div>
+          <div class="project-meta">Sep 2025 · Squarespace</div>
+          <div class="project-desc">
+            Updated layouts, styling and custom integrations to enhance
+            functionality and user experience on Squarespace.
+          </div>
+          <div class="project-tags">
+            <span class="project-tag">Squarespace</span><span class="project-tag">HTML/CSS</span><span
+              class="project-tag">Custom Integration</span>
+          </div>
+          <div class="project-footer">
+            <div class="project-agency">Shore360<span> Agency</span></div>
+            <a href="https://www.tailgatesportsbar.com.au/" target="_blank" class="project-link">Live Site →</a>
+          </div>
+        </div>
+
+        <!-- Squadron Energy -->
+        <div class="project-card">
+          <div class="project-logo-wrap">
+            <img src="images/SquadronEnergy-logo.svg" alt="Squadron Energy" />
+          </div>
+          <span class="project-badge badge-done">✓ Live</span>
+          <div class="project-title">Squadron Energy</div>
+          <div class="project-meta">Jul – Nov 2025 · WordPress</div>
+          <div class="project-desc">
+            Craft CMS to WordPress migration. Reusable Elementor layouts with
+            flexible templates and optimized form structures.
+          </div>
+          <div class="project-tags">
+            <span class="project-tag">WordPress</span><span class="project-tag">Elementor</span><span
+              class="project-tag">CMS Migration</span>
+          </div>
+          <div class="project-footer">
+            <div class="project-agency">Shore360<span> Agency</span></div>
+            <a href="https://squadronenergy.com/" target="_blank" class="project-link">Live Site →</a>
+          </div>
+        </div>
+
+        <!-- Shore360 Agency -->
+        <div class="project-card">
+          <div class="project-logo-wrap">
+            <img src="images/shoreagency_logo.png" alt="Shore360 Agency" />
+          </div>
+          <span class="project-badge badge-done">✓ Live</span>
+          <div class="project-title">Shore360 Agency</div>
+          <div class="project-meta">May – Nov 2025 · WordPress</div>
+          <div class="project-desc">
+            Designed and developed responsive WordPress site prioritizing SEO,
+            accessibility, and optimized loading speeds.
+          </div>
+          <div class="project-tags">
+            <span class="project-tag">WordPress</span><span class="project-tag">Elementor</span><span
+              class="project-tag">SEO</span>
+          </div>
+          <div class="project-footer">
+            <div class="project-agency">Shore360<span> Agency</span></div>
+            <a href="https://shore360agency.com/" target="_blank" class="project-link">Live Site →</a>
+          </div>
+        </div>
+
+        <!-- ePlumbing NZ -->
+        <div class="project-card">
+          <div class="project-logo-wrap">
+            <img src="images/plumbing-estimators-logo.webp" alt="ePlumbing NZ" />
+          </div>
+          <span class="project-badge badge-done">✓ Live</span>
+          <div class="project-title">ePlumbing Estimators NZ</div>
+          <div class="project-meta">Jun – Jul 2025 · WordPress</div>
+          <div class="project-desc">
+            NZ version rebuild with improved performance, structure and UI
+            through custom Elementor sections and optimized templates.
+          </div>
+          <div class="project-tags">
+            <span class="project-tag">WordPress</span><span class="project-tag">Elementor</span>
+          </div>
+          <div class="project-footer">
+            <div class="project-agency">Shore360<span> Agency</span></div>
+            <a href="https://plumbingestimators.co.nz/" target="_blank" class="project-link">Live Site →</a>
+          </div>
+        </div>
+
+        <!-- ePlumbing AU -->
+        <div class="project-card">
+          <div class="project-logo-wrap">
+            <img src="images/plumbing-estimators-logo.webp" alt="ePlumbing AU" />
+          </div>
+          <span class="project-badge badge-done">✓ Live</span>
+          <div class="project-title">ePlumbing Estimators AU</div>
+          <div class="project-meta">Apr – Jun 2025 · WordPress</div>
+          <div class="project-desc">
+            AU redesign with optimized Elementor templates, responsive
+            layouts, and modern UI translated from Figma.
+          </div>
+          <div class="project-tags">
+            <span class="project-tag">WordPress</span><span class="project-tag">Elementor</span><span
+              class="project-tag">Figma → WP</span>
+          </div>
+          <div class="project-footer">
+            <div class="project-agency">Shore360<span> Agency</span></div>
+            <a href="https://plumbingestimators.com.au/" target="_blank" class="project-link">Live Site →</a>
+          </div>
+        </div>
+
+        <!-- Grace -->
+        <div class="project-card">
+          <div class="project-logo-wrap">
+            <img src="images/Grace-Logo.webp" alt="Grace" />
+          </div>
+          <span class="project-badge badge-done">✓ Live</span>
+          <div class="project-title">Grace Website Rebuild</div>
+          <div class="project-meta">Oct 2024 – Jun 2025 · WordPress</div>
+          <div class="project-desc">
+            Enhanced UX and visual hierarchy with Elementor. Improved
+            navigation, accessibility, and Salesforce integration.
+          </div>
+          <div class="project-tags">
+            <span class="project-tag">WordPress</span><span class="project-tag">Elementor</span><span
+              class="project-tag">Salesforce</span><span class="project-tag">JS</span>
+          </div>
+          <div class="project-footer">
+            <div class="project-agency">Shore360<span> Agency</span></div>
+            <a href="https://www.grace.com.au/" target="_blank" class="project-link">Live Site →</a>
+          </div>
+        </div>
+
+        <!-- I Can Fix That -->
+        <div class="project-card">
+          <div class="project-logo-wrap">
+            <img src="images/ICFT_Logo.svg" alt="I Can Fix That" />
+          </div>
+          <span class="project-badge badge-done">✓ Live</span>
+          <div class="project-title">I Can Fix That</div>
+          <div class="project-meta">Sep – Oct 2024 · WordPress</div>
+          <div class="project-desc">
+            Service-focused WordPress site with booking functionality and
+            SEO-optimized content using Elementor.
+          </div>
+          <div class="project-tags">
+            <span class="project-tag">WordPress</span><span class="project-tag">Elementor</span><span
+              class="project-tag">Booking</span>
+          </div>
+          <div class="project-footer">
+            <div class="project-agency">Shore360<span> Agency</span></div>
+            <a href="https://icanfixthat.com.au/" target="_blank" class="project-link">Live Site →</a>
+          </div>
+        </div>
+
+        <!-- Netbank -->
+        <div class="project-card">
+          <div class="project-logo-wrap">
+            <img src="images/Netbank-logo-1.svg" alt="Netbank" />
+          </div>
+          <span class="project-badge badge-done">✓ Live</span>
+          <div class="project-title">Netbank Philippines</div>
+          <div class="project-meta">Jul – Aug 2024 · WordPress</div>
+          <div class="project-desc">
+            Secure, financial-grade WordPress architecture with custom
+            components, enhanced forms, and compliance-focused optimization.
+          </div>
+          <div class="project-tags">
+            <span class="project-tag">WordPress</span><span class="project-tag">Elementor</span><span
+              class="project-tag">Finance</span>
+          </div>
+          <div class="project-footer">
+            <div class="project-agency">Shore360<span> Agency</span></div>
+            <a href="https://netbank.ph/" target="_blank" class="project-link">Live Site →</a>
+          </div>
+        </div>
+
+        <!-- Jobs360 -->
+        <div class="project-card">
+          <div class="project-logo-wrap">
+            <img src="images/Jobs360-logo.svg" alt="Jobs360" />
+          </div>
+          <span class="project-badge badge-done">✓ Live</span>
+          <div class="project-title">Jobs360 Website Rebuild</div>
+          <div class="project-meta">Jul – Oct 2024 · WordPress</div>
+          <div class="project-desc">
+            Revamped job portal layout and filtering system — responsive,
+            SEO-friendly, optimized for employers and applicants alike.
+          </div>
+          <div class="project-tags">
+            <span class="project-tag">WordPress</span><span class="project-tag">Elementor</span><span
+              class="project-tag">Dynamic Content</span>
+          </div>
+          <div class="project-footer">
+            <div class="project-agency">Shore360<span> Agency</span></div>
+            <a href="https://www.jobs360.com.ph/" target="_blank" class="project-link">Live Site →</a>
+          </div>
+        </div>
+
+        <!-- Bahamas Flores -->
+        <div class="project-card">
+          <div class="project-logo-wrap">
+            <img src="images/Bahamas_Flores_Clinic_logo.webp" alt="Bahamas Flores Clinic" />
+          </div>
+          <span class="project-badge badge-done">✓ Live</span>
+          <div class="project-title">Bahamas Flores Clinic</div>
+          <div class="project-meta">May 2024 · WordPress + Front-End</div>
+          <div class="project-desc">
+            Custom HTML, SCSS and JavaScript front-end integration for a
+            WordPress site, with Git-based version control.
+          </div>
+          <div class="project-tags">
+            <span class="project-tag">HTML5</span><span class="project-tag">SCSS</span><span
+              class="project-tag">JS</span><span class="project-tag">Git</span>
+          </div>
+          <div class="project-footer">
+            <div class="project-agency">Shore360<span> Agency</span></div>
+            <a href="https://bahamasfibroidclinic.com/" target="_blank" class="project-link">Live Site →</a>
+          </div>
+        </div>
+
+        <!-- BYRONS -->
+        <div class="project-card">
+          <div class="project-logo-wrap">
+            <img src="images/BYRONS_Logo.webp" alt="BYRONS" />
+          </div>
+          <span class="project-badge badge-done">✓ Live</span>
+          <div class="project-title">BYRONS</div>
+          <div class="project-meta">Jan – Oct 2024 · WordPress</div>
+          <div class="project-desc">
+            First solo project — custom fields, dynamic single pages, taxonomy
+            filtering for members and news. ACF and custom post types.
+          </div>
+          <div class="project-tags">
+            <span class="project-tag">WordPress</span><span class="project-tag">ACF</span><span
+              class="project-tag">Custom Post Types</span><span class="project-tag">Dynamic</span>
+          </div>
+          <div class="project-footer">
+            <div class="project-agency">Shore360<span> Agency</span></div>
+            <a href="https://byrons.com.au/" target="_blank" class="project-link">Live Site →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- SERVICES -->
+  <section id="services" class="fade-in">
+    <div class="wrap">
+      <div class="section-label">// What I Offer</div>
+      <h2 style="margin-bottom: 0.5rem">Services</h2>
+      <p class="services-intro">
+        Practical, no-nonsense web services focused on real results — from
+        quick fixes to full rebuilds.
+      </p>
+      <div class="services-grid">
+        <div class="service-card">
+          <div class="svc-icon">🎨</div>
+          <div class="svc-title">Theme & Plugin Customization</div>
+          <div class="svc-desc">
+            Tailoring themes and plugins to match your exact needs
+          </div>
+        </div>
+        <div class="service-card">
+          <div class="svc-icon">📝</div>
+          <div class="svc-title">Content & Layout Updates</div>
+          <div class="svc-desc">
+            Text, images, logos and content management
+          </div>
+        </div>
+        <div class="service-card">
+          <div class="svc-icon">💻</div>
+          <div class="svc-title">Custom CSS/HTML Fixes</div>
+          <div class="svc-desc">
+            Styling and layout improvements that stick
+          </div>
+        </div>
+        <div class="service-card">
+          <div class="svc-icon">🔧</div>
+          <div class="svc-title">WordPress Troubleshooting</div>
+          <div class="svc-desc">
+            Diagnosing and resolving WP errors quickly
+          </div>
+        </div>
+        <div class="service-card">
+          <div class="svc-icon">⚡</div>
+          <div class="svc-title">Performance Optimization</div>
+          <div class="svc-desc">
+            Faster load times and better Core Web Vitals scores
+          </div>
+        </div>
+        <div class="service-card">
+          <div class="svc-icon">🔄</div>
+          <div class="svc-title">Updates & Maintenance</div>
+          <div class="svc-desc">
+            Regular plugin, theme, and WordPress core updates
+          </div>
+        </div>
+        <div class="service-card">
+          <div class="svc-icon">🛡️</div>
+          <div class="svc-title">Security & Backups</div>
+          <div class="svc-desc">
+            Security hardening, scans, and recovery solutions
+          </div>
+        </div>
+        <div class="service-card">
+          <div class="svc-icon">🔍</div>
+          <div class="svc-title">On-Page SEO</div>
+          <div class="svc-desc">
+            Meta tags, headings, alt texts and schema setup
+          </div>
+        </div>
+        <div class="service-card">
+          <div class="svc-icon">🛍️</div>
+          <div class="svc-title">WooCommerce Support</div>
+          <div class="svc-desc">
+            Product setup, payment and shipping config
+          </div>
+        </div>
+        <div class="service-card">
+          <div class="svc-icon">📱</div>
+          <div class="svc-title">Mobile Responsiveness</div>
+          <div class="svc-desc">
+            Pixel-perfect layouts across all screen sizes
+          </div>
+        </div>
+        <div class="service-card">
+          <div class="svc-icon">✍️</div>
+          <div class="svc-title">Content Management</div>
+          <div class="svc-desc">
+            Blog formatting, publishing and organization
+          </div>
+        </div>
+        <div class="service-card">
+          <div class="svc-icon">📊</div>
+          <div class="svc-title">Analytics Setup</div>
+          <div class="svc-desc">
+            Google Analytics integration and performance reports
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ATHLETIC -->
+  <section id="athletic" class="fade-in">
+    <div class="wrap">
+      <div class="section-label">// Beyond the Screen</div>
+      <h2 style="margin-bottom: 1rem">Athletic Profile</h2>
+      <p style="color: var(--muted2); max-width: 560px; margin-bottom: 3rem">
+        An Ultimate Frisbee player at heart — team sports have shaped how I
+        approach focus, leadership and discipline in every project I take on.
+      </p>
+      <div class="athletic-grid">
+        <div class="ath-card">
+          <div class="ath-logo">
+            <img src="images/PUC_logo.webp" alt="PUC" onerror="this.parentElement.innerHTML = 'PUC'" />
+          </div>
+          <div>
+            <div class="ath-name">Pampanga Ultimate Community</div>
+            <div class="ath-role">Active Member</div>
+            <div class="ath-desc">
+              Community-based Ultimate Frisbee team in Pampanga. Active member
+              representing the team in regional tournaments and local
+              competitions.
+            </div>
+            <div class="ath-period">Jan 2025 – Present</div>
+          </div>
+        </div>
+        <div class="ath-card">
+          <div class="ath-logo">
+            <img src="images/ASLAG_Ultimate_Logo.webp" alt="ASLAG" onerror="this.parentElement.innerHTML = 'ASL'" />
+          </div>
+          <div>
+            <div class="ath-name">ASLAG Ultimate</div>
+            <div class="ath-role">Team Captain</div>
+            <div class="ath-desc">
+              Led the college Ultimate team at City College of San Fernando
+              Pampanga. Developed leadership, communication and strategic
+              thinking through competitive play.
+            </div>
+            <div class="ath-period">Aug 2019 – Sep 2023</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- CONTACT -->
+  <section id="contact" class="fade-in">
+    <div class="wrap">
+      <div class="contact-inner">
+        <div class="section-label" style="text-align: center">
+          // Let's Work Together
+        </div>
+        <h2>Ready to build<br />something great?</h2>
+        <p>
+          Whether it's a new project, a rebuild, or a quick fix — I'm
+          available and ready to help. Reach out through any of the channels
+          below.
+        </p>
+        <div class="contact-links">
+          <a href="mailto:dimandallance@gmail.com" class="contact-link contact-link-primary">✉️
+            dimandallance@gmail.com</a>
+          <a href="tel:+639052800332" class="contact-link">📞 +63 905 280 0332</a>
+          <a href="https://www.linkedin.com/in/lncdmndl/" target="_blank" class="contact-link">💼 LinkedIn</a>
+          <a href="https://drive.google.com/file/d/1Mb0xZC9y8W2rfwXyPVawpkBrl2A2t6YT/view?usp=sharing" target="_blank"
+            class="contact-link">📄 Resume</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="wrap">
+      <span style="
+            color: var(--accent2);
+            font-family: &quot;Syne&quot;, sans-serif;
+            font-weight: 700;
+          ">Lance Dimandal</span>
+      &nbsp;·&nbsp; Web Developer &nbsp;·&nbsp; Philippines &nbsp;·&nbsp;
+      Built with passion and precision &nbsp;·&nbsp; © 2025
+    </div>
+  </footer>
+
+  <script>
+    function openMobile() {
+      document.getElementById("mobile-overlay").classList.add("open");
+    }
+    function closeMobile() {
+      document.getElementById("mobile-overlay").classList.remove("open");
+    }
+
+    // Close mobile menu when nav link clicked
+    document.querySelectorAll("#mobile-overlay a").forEach((a) => {
+      a.addEventListener("click", closeMobile);
+    });
+
+    // Scroll animations
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) e.target.classList.add("visible");
         });
-    </script>
-  </body>
+      },
+      { threshold: 0.08 },
+    );
+    document
+      .querySelectorAll(".fade-in")
+      .forEach((el) => observer.observe(el));
+
+    // Staggered project cards
+    const cards = document.querySelectorAll(
+      ".project-card,.service-card,.skill-card,.ath-card,.tl-item,.info-card",
+    );
+    const cardObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e, i) => {
+          if (e.isIntersecting) {
+            setTimeout(() => {
+              e.target.style.opacity = "1";
+              e.target.style.transform = "translateY(0)";
+            }, i * 60);
+            cardObserver.unobserve(e.target);
+          }
+        });
+      },
+      { threshold: 0.05 },
+    );
+    cards.forEach((c) => {
+      c.style.opacity = "0";
+      c.style.transform = "translateY(20px)";
+      c.style.transition = "opacity 0.5s ease,transform 0.5s ease";
+      cardObserver.observe(c);
+    });
+  </script>
+</body>
+
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
