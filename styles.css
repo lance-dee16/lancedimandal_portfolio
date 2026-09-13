@@ -1233,3 +1233,52 @@ section {
    max-width: 560px !important;
    margin-bottom: 3rem !important;
 }
+
+/* Skills: one consistent grid, with readable tool labels. */
+.toolkit-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 20px;
+}
+.toolkit-card {
+  min-width: 0;
+  padding: 25px 22px;
+  background: #102030;
+  border: 1px solid #24394b;
+  border-radius: 12px;
+}
+.toolkit-card h3 {
+  margin: 0 0 20px;
+  color: #edf2f5;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.5;
+  letter-spacing: -0.02em;
+}
+.toolkit-list {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.toolkit-list li {
+  max-width: 100%;
+  padding: 5px 9px;
+  border: 1px solid #2a4256;
+  border-radius: 5px;
+  background: #0b1a28;
+  color: #bcd0df;
+  font-size: 12px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 1100px) {
+  .toolkit-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 600px) {
+  .toolkit-grid { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+  .toolkit-card { padding: 24px; }
+}
