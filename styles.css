@@ -1282,3 +1282,15 @@ section {
   .toolkit-grid { grid-template-columns: minmax(0, 1fr); gap: 16px; }
   .toolkit-card { padding: 24px; }
 }
+
+/* Original portfolio assets. Keep the images folder beside index.html. */
+.portrait-card { margin: 0; overflow: hidden; border: 1px solid #2c455c; border-radius: 16px; background: #102437; width: 100%; max-width: 440px; justify-self: center; }
+.portrait-photo { display: block; width: 100%; aspect-ratio: 1 / 1; object-fit: cover; object-position: center 30%; }
+.portrait-caption { display: flex; flex-direction: column; gap: 4px; padding: 20px 24px; }
+.portrait-caption strong { font-size: 18px; font-weight: 500; }
+.portrait-caption span { color: #a7bfd3; font-size: 12px; }
+.project-logo-panel { display: flex; align-items: center; justify-content: center; min-height: 90px; padding: 18px; margin-bottom: 20px; border: 1px solid #294253; border-radius: 8px; background: #16334a; }
+.project-logo { display: block; max-width: 100%; width: auto; height: 54px; object-fit: contain; }
+.organization-logo-panel { display: inline-flex; align-items: center; justify-content: center; width: 58px; height: 58px; padding: 7px; margin-bottom: 15px; border-radius: 8px; background: #16334a; }
+.organization-logo { width: 100%; height: 100%; object-fit: contain; }
+
