@@ -707,12 +707,16 @@
         });
       });
 
+      /* Mobile metrics stay locked to the grid horizontally.
+         A vertical reveal avoids the staggered left/right misalignment that
+         occurred while later cards were still completing an x-axis tween. */
       gsap.from('.metric-card', {
-        x: 24,
+        y: 22,
         opacity: 0,
-        duration: 0.55,
-        stagger: 0.08,
+        duration: 0.5,
+        stagger: 0.07,
         ease: 'power3.out',
+        clearProps: 'transform',
         scrollTrigger: { trigger: '.metric-deck', start: 'top 90%', once: true }
       });
 
