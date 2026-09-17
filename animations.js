@@ -273,16 +273,19 @@
         lines = heroSplit.lines;
         gsap.set(lines, { yPercent: 110, rotate: 2 });
       }
-      gsap.set(['.hero .eyebrow', '.hero-kicker', '.hero-desc', '.hero-actions', '.hero-foot'], { opacity: 0, y: 20 });
-      gsap.set('.portrait-scene', { opacity: 0, y: 45, rotationY: -10, rotationX: 5, scale: 0.94, transformPerspective: 1200 });
-      gsap.set('.tech-cube-shell', { opacity: 0, scale: 0.6, rotation: -18 });
+      var compactHero = window.matchMedia('(max-width: 980px)').matches;
+      gsap.set(['.hero .eyebrow', '.hero-kicker', '.hero-desc', '.hero-actions', '.hero-foot'], { opacity: 0, y: compactHero ? 14 : 20 });
+      gsap.set('.portrait-scene', compactHero
+        ? { opacity: 0, y: 28, scale: 0.97 }
+        : { opacity: 0, y: 45, rotationY: -10, rotationX: 5, scale: 0.94, transformPerspective: 1200 });
+      gsap.set('.tech-cube-shell', { opacity: 0, scale: compactHero ? 0.82 : 0.6, rotation: compactHero ? -8 : -18 });
 
       heroTl.to('.hero .eyebrow', { opacity: 1, y: 0, duration: 0.55 })
         .to('.hero-kicker', { opacity: 1, y: 0, duration: 0.45 }, '-=0.32');
       if (lines) heroTl.to(lines, { yPercent: 0, rotate: 0, duration: 1.05, stagger: 0.1 }, '-=0.28');
       heroTl.to('.hero-desc', { opacity: 1, y: 0, duration: 0.65 }, '-=0.5')
         .to('.hero-actions', { opacity: 1, y: 0, duration: 0.55 }, '-=0.4')
-        .to('.portrait-scene', { opacity: 1, y: 0, rotationY: 0, rotationX: 0, scale: 1, duration: 1.05 }, '-=0.82')
+        .to('.portrait-scene', { opacity: 1, y: 0, rotationY: 0, rotationX: 0, scale: 1, duration: compactHero ? 0.82 : 1.05 }, '-=0.82')
         .to('.tech-cube-shell', { opacity: 1, scale: 1, rotation: 0, duration: 0.8, ease: 'back.out(1.7)' }, '-=0.7')
         .to('.hero-foot', { opacity: 1, y: 0, duration: 0.55 }, '-=0.55');
     }
@@ -311,11 +314,14 @@
         gsap.to(breakTrack, { xPercent: -50, duration: 20, repeat: -1, ease: 'none' });
       }
 
-      /* Subtle 3D cube movement through the hero, no WebGL required. */
-      gsap.fromTo('.tech-cube-shell',
-        { y: -12, rotationZ: -5 },
-        { y: 58, rotationZ: 8, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: 1.1 } }
-      );
+      /* Keep the strong scroll-linked cube movement on roomy layouts only.
+         On stacked tablet/mobile heroes it can visually drift into the copy. */
+      if (window.matchMedia('(min-width: 981px)').matches) {
+        gsap.fromTo('.tech-cube-shell',
+          { y: -12, rotationZ: -5 },
+          { y: 58, rotationZ: 8, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: 1.1 } }
+        );
+      }
 
       /* Services enter like panels rotating into a digital workspace. */
       ScrollTrigger.batch('.service', {
@@ -508,7 +514,7 @@
     /* ------------------------------------------------------------
        Desktop 3D interactions
        ------------------------------------------------------------ */
-    mm.add('(min-width: 761px) and (hover: hover) and (pointer: fine)', function () {
+    mm.add('(min-width: 981px) and (hover: hover) and (pointer: fine)', function () {
       if (reduced) return;
 
       var cubeTween = gsap.to('.tech-cube', { rotationX: '+=360', rotationY: '+=540', duration: 24, repeat: -1, ease: 'none' });
@@ -686,15 +692,8 @@
     mm.add('(max-width: 760px)', function () {
       if (reduced) return;
 
-      gsap.from('.portrait-scene', {
-        rotationY: -8,
-        rotationX: 5,
-        y: 35,
-        transformPerspective: 900,
-        duration: 0.9,
-        ease: 'power3.out',
-        scrollTrigger: { trigger: '.portrait-scene', start: 'top 92%', once: true }
-      });
+      /* The hero intro already animates the portrait. Avoid a second 3D entrance
+         on phones, which could leave the hero looking tilted or misaligned. */
 
       gsap.utils.toArray('.featured .project-card').forEach(function (card, index) {
         gsap.from(card.querySelectorAll('.project-badge,.project-logo-panel,.project-title,.project-meta,.project-desc,.project-tags,.project-footer'), {
