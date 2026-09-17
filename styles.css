@@ -4842,3 +4842,93 @@ main h2 .word {
     padding-right: max(22px, env(safe-area-inset-right));
   }
 }
+
+/* ============================================================
+   V4.5 — mobile metric alignment correction
+   ============================================================ */
+@media (max-width:760px) {
+  .metric-deck {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .metric-card {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    padding: 20px;
+    transform-origin: center center;
+  }
+
+  .metric-index {
+    width: 100%;
+    line-height: 1;
+  }
+
+  .metric-value {
+    width: 100%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-start;
+    margin: 0 0 18px;
+    padding-top: 24px;
+    line-height: .9;
+  }
+
+  .metric-value .counter-digits {
+    display: inline-flex;
+    align-items: flex-end;
+  }
+
+  .metric-value .counter-affix {
+    align-self: flex-end;
+  }
+
+  .metric-value .counter-suffix {
+    position: relative;
+    top: -.015em;
+    margin-left: .07em;
+    transform: none;
+    line-height: 1;
+  }
+
+  .metric-card p {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+  }
+}
+
+@media (min-width:431px) and (max-width:560px) {
+  .metric-card {
+    min-height: 190px;
+    padding: 18px;
+  }
+
+  .metric-value {
+    padding-top: 22px;
+    font-size: clamp(48px, 13vw, 62px);
+  }
+}
+
+@media (max-width:430px) {
+  .metric-deck {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .metric-card {
+    padding: 20px;
+  }
+
+  .metric-value {
+    width: auto;
+    margin: 18px 0 0;
+    padding-top: 0;
+  }
+
+  .metric-card p {
+    width: auto;
+  }
+}
