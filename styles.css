@@ -103,9 +103,9 @@ section{position:relative;padding:clamp(90px,10vw,150px) 0}
 .button{position:relative;display:inline-flex;align-items:center;justify-content:center;overflow:hidden;padding:15px 22px;border:1px solid #2b91f6;border-radius:999px;background:var(--blue);color:#fff;text-decoration:none;font-size:12px;font-weight:600;box-shadow:0 12px 50px rgba(22,135,248,.18)}
 .button::before{content:"";position:absolute;inset:0;background:white;transform:translateY(102%);transition:transform .45s var(--ease)}.button:hover::before{transform:translateY(0)}.button:hover{color:#03101a}.button{isolation:isolate}.button>*{position:relative;z-index:1}
 .text-link{font-size:12px;text-decoration:none;color:#c1d2de}.text-link span{margin-left:10px;color:var(--blue-soft)}
-.portrait-card{position:relative;width:min(100%,430px);justify-self:end;overflow:hidden;margin:0;border:1px solid var(--line-strong);border-radius:clamp(14px,2vw,24px);background:#0a1824;box-shadow:0 34px 110px rgba(0,0,0,.36)}
+.portrait-card{--portrait-radius:clamp(14px,2vw,24px);position:relative;width:min(100%,430px);justify-self:end;overflow:hidden;margin:0;border:1px solid var(--line-strong);border-radius:var(--portrait-radius);background:#0a1824;box-shadow:0 34px 110px rgba(0,0,0,.36);clip-path:inset(0 round var(--portrait-radius));-webkit-clip-path:inset(0 round var(--portrait-radius));contain:paint;isolation:isolate;backface-visibility:hidden;-webkit-backface-visibility:hidden}
 .portrait-card::before{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;background:linear-gradient(180deg,transparent 55%,rgba(2,10,16,.62)),repeating-linear-gradient(0deg,rgba(255,255,255,.016) 0 1px,transparent 1px 4px)}
-.portrait-photo{width:100%;aspect-ratio:1/1.05;object-fit:cover;object-position:center 27%;filter:saturate(.82) contrast(1.04)}
+.portrait-photo{display:block;width:100%;aspect-ratio:1/1.05;object-fit:cover;object-position:center 27%;border-radius:var(--portrait-radius);filter:saturate(.82) contrast(1.04);backface-visibility:hidden;-webkit-backface-visibility:hidden}
 .portrait-hud{position:absolute;z-index:3;top:16px;left:16px;right:16px;display:flex;justify-content:space-between;font-size:9px;letter-spacing:.14em;color:#c9e4f5}
 .hud-live::before{content:"";display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--green);margin-right:7px;box-shadow:0 0 10px var(--green)}
 .portrait-caption{position:absolute;z-index:3;left:18px;right:18px;bottom:18px;display:flex;flex-direction:column;gap:3px}.portrait-caption strong{font-size:16px;font-weight:500}.portrait-caption span{font-size:10px;letter-spacing:.04em;color:#a9c0d1}
@@ -1977,4 +1977,23 @@ section{
 @media (max-width:980px){
   .about-grid{grid-template-columns:1fr;max-width:760px;margin-inline:auto}
   .about-copy{max-width:720px}
+}
+
+
+/* ================================================================
+   V5.0 — Hero portrait clipping fix
+   Keep rounded corners intact with nested 3D transforms in Chromium.
+   ================================================================ */
+.portrait-scene .portrait-card{
+  overflow:hidden;
+  border-radius:var(--portrait-radius);
+  clip-path:inset(0 round var(--portrait-radius));
+  -webkit-clip-path:inset(0 round var(--portrait-radius));
+  contain:paint;
+  isolation:isolate;
+}
+.portrait-scene .portrait-photo{
+  display:block;
+  width:100%;
+  border-radius:var(--portrait-radius);
 }
