@@ -105,7 +105,7 @@ section{position:relative;padding:clamp(90px,10vw,150px) 0}
 .text-link{font-size:12px;text-decoration:none;color:#c1d2de}.text-link span{margin-left:10px;color:var(--blue-soft)}
 .portrait-card{--portrait-radius:clamp(14px,2vw,24px);position:relative;width:min(100%,430px);justify-self:end;overflow:hidden;margin:0;border:1px solid var(--line-strong);border-radius:var(--portrait-radius);background:#0a1824;box-shadow:0 34px 110px rgba(0,0,0,.36);clip-path:inset(0 round var(--portrait-radius));-webkit-clip-path:inset(0 round var(--portrait-radius));contain:paint;isolation:isolate;backface-visibility:hidden;-webkit-backface-visibility:hidden}
 .portrait-card::before{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;background:linear-gradient(180deg,transparent 55%,rgba(2,10,16,.62)),repeating-linear-gradient(0deg,rgba(255,255,255,.016) 0 1px,transparent 1px 4px)}
-.portrait-photo{display:block;width:100%;border-radius:24px;aspect-ratio:1/1.05;object-fit:cover;object-position:center 27%;border-radius:var(--portrait-radius);filter:saturate(.82) contrast(1.04);backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.portrait-photo{display:block;width:100%;aspect-ratio:1/1.05;object-fit:cover;object-position:center 27%;border-radius:var(--portrait-radius);filter:saturate(.82) contrast(1.04);backface-visibility:hidden;-webkit-backface-visibility:hidden}
 .portrait-hud{position:absolute;z-index:3;top:16px;left:16px;right:16px;display:flex;justify-content:space-between;font-size:9px;letter-spacing:.14em;color:#c9e4f5}
 .hud-live::before{content:"";display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--green);margin-right:7px;box-shadow:0 0 10px var(--green)}
 .portrait-caption{position:absolute;z-index:3;left:18px;right:18px;bottom:18px;display:flex;flex-direction:column;gap:3px}.portrait-caption strong{font-size:16px;font-weight:500}.portrait-caption span{font-size:10px;letter-spacing:.04em;color:#a9c0d1}
@@ -150,7 +150,7 @@ section{position:relative;padding:clamp(90px,10vw,150px) 0}
 .project-title{font-size:24px;line-height:1.2;letter-spacing:-.045em;font-weight:500;margin-bottom:7px}.project-meta{font-size:10px;letter-spacing:.05em;color:#6f8a9e;margin-bottom:17px}.project-desc{font-size:13px;line-height:1.72;color:#9ab0c0;margin-bottom:18px}.project-tags{display:flex;flex-wrap:wrap;gap:7px;margin-top:auto}.project-tag{padding:5px 8px;border:1px solid rgba(255,255,255,.09);border-radius:4px;font-size:9px;color:#8eaabd;background:rgba(255,255,255,.018)}.project-footer{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:21px;padding-top:16px;border-top:1px solid var(--line);font-size:9px;letter-spacing:.04em;color:#71899b}.project-link{color:#dcedf8;text-decoration:none}.project-link:hover{color:var(--blue-soft)}
 
 /* archive */
-.archive{margin-top:72px;border-top:1px solid var(--line)}.archive summary{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:24px 10px;cursor:pointer;list-style:none;font-size:13px}.archive summary::-webkit-details-marker{display:none}.archive summary>span{font-size:10px;letter-spacing:.05em;color:#6e8798}.archive[open] summary span span{transform:none}
+.archive{margin-top:72px;border-top:1px solid var(--line)}.archive summary{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:24px 0;cursor:pointer;list-style:none;font-size:13px}.archive summary::-webkit-details-marker{display:none}.archive summary>span{font-size:10px;letter-spacing:.05em;color:#6e8798}.archive[open] summary span span{transform:none}
 .project-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;padding-bottom:30px}.project-grid .project-card{display:flex;flex-direction:column;min-width:0;padding:23px;border:1px solid var(--line);border-radius:12px;background:#081521;transition:transform .4s var(--ease),border-color .35s ease}.project-grid .project-card:hover{transform:translateY(-4px);border-color:var(--line-strong)}.project-grid .project-title{font-size:18px}.project-grid .project-desc{font-size:12px}.project-grid .project-logo-panel{min-height:76px}.project-grid .project-logo{height:42px}
 
 /* ---------------- About ---------------- */
@@ -1996,4 +1996,24 @@ section{
   display:block;
   width:100%;
   border-radius:var(--portrait-radius);
+}
+
+
+/* ================================================================
+   V5.1 — Square portrait treatment
+   Intentional rectangular frame: no rounded corners, solid border.
+   ================================================================ */
+.portrait-card,
+.portrait-scene .portrait-card{
+  --portrait-radius:0px;
+  overflow:hidden;
+  border:1px solid rgba(180,214,239,.30);
+  border-radius:0 !important;
+  clip-path:inset(0) !important;
+  -webkit-clip-path:inset(0) !important;
+  contain:paint;
+}
+.portrait-photo,
+.portrait-scene .portrait-photo{
+  border-radius:0 !important;
 }
