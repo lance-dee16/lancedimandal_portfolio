@@ -1,55 +1,116 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="color-scheme" content="dark">
-    <meta name="description" content="Lance Dimandal, a web developer in Pampanga, Philippines. Selected WordPress, Shopify, and agency development work.">
-    <title>Lance Dimandal — Web Developer</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=20260913-images-2">
-    <script src="script.js" defer>
-    </script>
-  </head>
-  <body>
-    <a class="skip" href="#main">Skip to content</a>
-    <nav aria-label="Main navigation">
-      <div class="wrap nav-inner">
-        <a class="logo" href="#">Lance Dimandal<span>.</span>
-        </a>
-        <div class="nav-links">
-          <a href="#portfolio">Work</a>
-          <a href="#about">About</a>
-          <a href="#services">Services</a>
-          <a href="#contact">Contact</a>
-          <a class="resume" href="https://drive.google.com/file/d/1T22HEiWWKxLp2SFb06r8ddfoEXbpNyEI/view?usp=sharing" target="_blank" rel="noopener noreferrer">Résumé ↗</a>
-        </div>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#061019">
+  <meta name="description"
+    content="Lance Dimandal, a web developer in Pampanga, Philippines. Selected WordPress, Shopify, and agency development work.">
+  <title>Lance Dimandal — Web Developer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css?v=20260917-3d-v4">
+  <script src="script.js?v=20260917-3d-v2" defer>
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.15.0/gsap.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.15.0/ScrollTrigger.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.15.0/ScrollSmoother.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.15.0/SplitText.min.js" defer></script>
+  <script src="animations.js?v=20260917-3d-v4" defer></script>
+</head>
+
+<body>
+  <div class="boot-screen" aria-hidden="true">
+    <div class="boot-screen__inner">
+      <div class="boot-screen__meta"><span>LD / PORTFOLIO</span><span>2026</span></div>
+      <div class="boot-screen__name">LANCE<br>DIMANDAL<span>.</span></div>
+      <div class="boot-screen__status"><span class="boot-dot"></span><span>INITIALIZING DIGITAL
+          EXPERIENCE</span><b>00</b></div>
+    </div>
+  </div>
+  <div class="page-wipe" aria-hidden="true"><span>LD</span></div>
+  <div class="cursor-orb" aria-hidden="true"><span>OPEN</span></div>
+  <a class="skip" href="#main">Skip to content</a>
+  <nav aria-label="Main navigation" id="site-nav">
+    <div class="nav-progress" aria-hidden="true"><span class="nav-progress-bar"></span></div>
+    <div class="wrap nav-inner">
+      <a class="logo" href="#">Lance Dimandal<span>.</span>
+      </a>
+      <div class="nav-links" id="primary-nav">
+        <a href="#portfolio"><span>01</span> Work</a>
+        <a href="#about"><span>02</span> About</a>
+        <a href="#services"><span>03</span> Services</a>
+        <a href="#contact"><span>04</span> Contact</a>
+        <a class="resume" href="https://drive.google.com/file/d/1T22HEiWWKxLp2SFb06r8ddfoEXbpNyEI/view?usp=sharing"
+          target="_blank" rel="noopener noreferrer">Résumé ↗</a>
       </div>
-    </nav>
-    <main id="main">
-      <header class="hero">
-        <div class="wrap">
-          <div class="hero-grid">
-            <div>
-              <div class="eyebrow">
-                <span class="dash">
-                </span> WordPress & Elementor developer</div>
-                <h1>Your next website,<br>
-                  <span>built with care.</span>
+      <button class="menu-toggle" type="button" aria-label="Open menu" aria-controls="mobile-menu"
+        aria-expanded="false"><span></span><span></span></button>
+    </div>
+  </nav>
+  <div class="mobile-menu" id="mobile-menu" aria-hidden="true">
+    <div class="mobile-menu__inner wrap">
+      <div class="mobile-menu__label">Navigation / 04</div>
+      <div class="mobile-menu__links">
+        <a href="#portfolio"><span>01</span> Work</a>
+        <a href="#about"><span>02</span> About</a>
+        <a href="#services"><span>03</span> Services</a>
+        <a href="#contact"><span>04</span> Contact</a>
+      </div>
+      <div class="mobile-menu__foot"><span>San Fernando, Pampanga</span><a href="mailto:dimandallance@gmail.com">Email
+          me ↗</a></div>
+    </div>
+  </div>
+  <div id="smooth-wrapper">
+    <div id="smooth-content">
+      <main id="main">
+        <header class="hero">
+          <div class="wrap">
+            <div class="hero-grid">
+              <div>
+                <div class="eyebrow">
+                  <span class="dash">
+                  </span> WordPress & Elementor developer
+                </div>
+                <div class="hero-kicker">DESIGN → CODE → DIGITAL</div>
+                <h1><span class="hero-line hero-line--light">I build websites</span><br>
+                  <span class="hero-line hero-line--accent">that move with intent.</span>
                 </h1>
-                <p class="hero-desc">Hi, I’m Lance — a web developer in Pampanga, Philippines. I turn designs into responsive WordPress websites with Elementor, and build Shopify stores that are easy to manage.</p>
+                <p class="hero-desc">Hi, I’m Lance — a web developer in Pampanga, Philippines. I translate design
+                  systems into responsive WordPress, Elementor, and Shopify experiences with clean structure, thoughtful
+                  motion, and maintainable builds.</p>
                 <div class="hero-actions">
                   <a class="button" href="#portfolio">Explore my work &nbsp; ↘</a>
                   <a class="text-link" href="mailto:dimandallance@gmail.com">Get in touch <span>↗</span>
                   </a>
                 </div>
               </div>
-              <aside class="portrait-card" aria-label="About Lance">
-  <img width="440" height="440" class="portrait-photo" src="images/lance-developer.jpg" alt="Lance Dimandal" fetchpriority="high" decoding="async">
-  <div class="portrait-caption"><strong>Lance Dimandal</strong><span>WordPress &amp; Elementor developer</span></div>
-</aside>
+              <div class="portrait-scene" data-speed="clamp(0.88)">
+                <div class="tech-cube-shell" aria-hidden="true">
+                  <div class="tech-orbit tech-orbit--a"></div>
+                  <div class="tech-orbit tech-orbit--b"></div>
+                  <div class="tech-cube">
+                    <span class="cube-face cube-face--front">WP</span>
+                    <span class="cube-face cube-face--back">JS</span>
+                    <span class="cube-face cube-face--right">GSAP</span>
+                    <span class="cube-face cube-face--left">SHOP</span>
+                    <span class="cube-face cube-face--top">CSS</span>
+                    <span class="cube-face cube-face--bottom">HUBL</span>
+                  </div>
+                </div>
+                <span class="depth-tag depth-tag--top" aria-hidden="true">Z + 048</span>
+                <span class="depth-tag depth-tag--bottom" aria-hidden="true">INTERACTIVE / 3D</span>
+                <aside class="portrait-card" aria-label="About Lance">
+                  <img width="440" height="440" class="portrait-photo" src="images/lance-developer.jpg"
+                    alt="Lance Dimandal" fetchpriority="high" decoding="async">
+                  <div class="portrait-hud"><span>DEV_01</span><span class="hud-live">LIVE</span></div>
+                  <div class="portrait-caption"><strong>Lance Dimandal</strong><span>WordPress / Shopify /
+                      Front-end</span></div>
+                </aside>
+              </div>
             </div>
             <div class="hero-foot">
               <span class="availability">Open to opportunities</span>
@@ -58,6 +119,14 @@
             </div>
           </div>
         </header>
+        <div class="signal-marquee" aria-hidden="true">
+          <div class="signal-marquee__track">
+            <span>WORDPRESS DEVELOPMENT</span><i>✦</i><span>SHOPIFY BUILDS</span><i>✦</i><span>FIGMA TO
+              CODE</span><i>✦</i><span>DIGITAL MOTION</span><i>✦</i><span>CMS MIGRATIONS</span><i>✦</i>
+            <span>WORDPRESS DEVELOPMENT</span><i>✦</i><span>SHOPIFY BUILDS</span><i>✦</i><span>FIGMA TO
+              CODE</span><i>✦</i><span>DIGITAL MOTION</span><i>✦</i><span>CMS MIGRATIONS</span><i>✦</i>
+          </div>
+        </div>
         <section id="services">
           <div class="wrap">
             <div class="section-top">
@@ -71,25 +140,40 @@
               <article class="service">
                 <div class="service-icon" aria-hidden="true">▤</div>
                 <h3>WordPress & Elementor</h3>
-                <p>Custom pages, reusable templates, and responsive layouts built from your Figma designs or project brief.</p>
+                <p>Custom pages, reusable templates, and responsive layouts built from your Figma designs or project
+                  brief.</p>
                 <div class="service-tools">Elementor · ACF · Custom CSS</div>
               </article>
               <article class="service">
                 <div class="service-icon" aria-hidden="true">↗</div>
                 <h3>Shopify development</h3>
-                <p>Theme customization, product pages, and platform migrations, including the details that make a store easier to use.</p>
+                <p>Theme customization, product pages, and platform migrations, including the details that make a store
+                  easier to use.</p>
                 <div class="service-tools">Shopify · Liquid · Migrations</div>
               </article>
               <article class="service">
                 <div class="service-icon" aria-hidden="true">⌘</div>
                 <h3>Website care & fixes</h3>
-                <p>Layout fixes, performance improvements, plugin updates, and content changes for the website you already have.</p>
+                <p>Layout fixes, performance improvements, plugin updates, and content changes for the website you
+                  already have.</p>
                 <div class="service-tools">Maintenance · Performance · SEO</div>
               </article>
             </div>
           </div>
         </section>
         <section id="portfolio">
+          <div class="stack-field" aria-hidden="true">
+            <span class="stack-token stack-token--html" data-depth="1"><b>HTML</b><small>&lt;/&gt;</small></span>
+            <span class="stack-token stack-token--css" data-depth="2"><b>CSS</b><small>#</small></span>
+            <span class="stack-token stack-token--js" data-depth="3"><b>JS</b><small>{ }</small></span>
+            <span class="stack-token stack-token--php" data-depth="2"><b>PHP</b><small>&lt;?&gt;</small></span>
+            <span class="stack-token stack-token--wp" data-depth="1"><b>WP</b><small>CMS</small></span>
+            <span class="stack-token stack-token--shopify" data-depth="3"><b>SHOP</b><small>Liquid</small></span>
+            <span class="stack-token stack-token--acf" data-depth="2"><b>ACF</b><small>CMS+</small></span>
+            <span class="stack-token stack-token--git" data-depth="1"><b>GIT</b><small>↗</small></span>
+            <span class="stack-token stack-token--gsap" data-depth="3"><b>GSAP</b><small>motion</small></span>
+          </div>
+          <div class="stack-field__grid" aria-hidden="true"></div>
           <div class="wrap">
             <div class="section-top">
               <div>
@@ -98,8 +182,11 @@
               </div>
               <p>Website builds, rebuilds, and migrations<br>with the team at Shore360 Agency.</p>
             </div>
+            <div class="work-interface" aria-hidden="true"><span>SELECTED / 03</span>
+              <div class="work-interface__line"><i></i></div><span class="work-interface__count">01</span>
+            </div>
             <div class="featured">
-              <div class="project-card">
+              <div class="project-card" data-cursor="WORK">
                 <div class="project-cover" aria-label="BYRONS project">
                   <div class="cover-top">
                     <span>PROJECT 01</span>
@@ -112,10 +199,12 @@
                   <div class="cover-bottom">ACF / Dynamic content</div>
                 </div>
                 <span class="project-badge badge-done">Live</span>
-                <div class="project-logo-panel"><img width="220" height="54" class="project-logo" src="images/BYRONS_Logo.webp" alt="BYRONS" loading="lazy" decoding="async"></div>
-<div class="project-title">BYRONS</div>
+                <div class="project-logo-panel"><img width="220" height="54" class="project-logo"
+                    src="images/BYRONS_Logo.webp" alt="BYRONS" loading="lazy" decoding="async"></div>
+                <div class="project-title">BYRONS</div>
                 <div class="project-meta">Jan – Oct 2024 · WordPress</div>
-                <div class="project-desc">First solo project — custom fields, dynamic single pages, taxonomy filtering for members and news. ACF and custom post types.</div>
+                <div class="project-desc">First solo project — custom fields, dynamic single pages, taxonomy filtering
+                  for members and news. ACF and custom post types.</div>
                 <div class="project-tags">
                   <span class="project-tag">WordPress</span>
                   <span class="project-tag">ACF</span>
@@ -125,10 +214,11 @@
                 <div class="project-footer">
                   <div class="project-agency">Shore360<span> Agency</span>
                   </div>
-                  <a href="https://byrons.com.au/" target="_blank" rel="noopener noreferrer" class="project-link">Live site →</a>
+                  <a href="https://byrons.com.au/" target="_blank" rel="noopener noreferrer" class="project-link"
+                    data-cursor="VISIT">Live site →</a>
                 </div>
               </div>
-              <div class="project-card">
+              <div class="project-card" data-cursor="WORK">
                 <div class="project-cover" aria-label="Squadron Energy project">
                   <div class="cover-top">
                     <span>PROJECT 02</span>
@@ -141,10 +231,12 @@
                   <div class="cover-bottom">Craft CMS → WordPress</div>
                 </div>
                 <span class="project-badge badge-done">Live</span>
-                <div class="project-logo-panel"><img width="220" height="54" class="project-logo" src="images/SquadronEnergy-logo.svg" alt="Squadron Energy" loading="lazy" decoding="async"></div>
-<div class="project-title">Squadron Energy</div>
+                <div class="project-logo-panel"><img width="220" height="54" class="project-logo"
+                    src="images/SquadronEnergy-logo.svg" alt="Squadron Energy" loading="lazy" decoding="async"></div>
+                <div class="project-title">Squadron Energy</div>
                 <div class="project-meta">Jul – Nov 2025 · WordPress</div>
-                <div class="project-desc">Craft CMS to WordPress migration. Reusable Elementor layouts with flexible templates and optimized form structures.</div>
+                <div class="project-desc">Craft CMS to WordPress migration. Reusable Elementor layouts with flexible
+                  templates and optimized form structures.</div>
                 <div class="project-tags">
                   <span class="project-tag">WordPress</span>
                   <span class="project-tag">Elementor</span>
@@ -153,10 +245,11 @@
                 <div class="project-footer">
                   <div class="project-agency">Shore360<span> Agency</span>
                   </div>
-                  <a href="https://squadronenergy.com/" target="_blank" rel="noopener noreferrer" class="project-link">Live site →</a>
+                  <a href="https://squadronenergy.com/" target="_blank" rel="noopener noreferrer" class="project-link"
+                    data-cursor="VISIT">Live site →</a>
                 </div>
               </div>
-              <div class="project-card">
+              <div class="project-card" data-cursor="WORK">
                 <div class="project-cover" aria-label="AWR Solutions project">
                   <div class="cover-top">
                     <span>PROJECT 03</span>
@@ -169,10 +262,12 @@
                   <div class="cover-bottom">Neto → Shopify</div>
                 </div>
                 <span class="project-badge badge-progress">In Progress</span>
-                <div class="project-logo-panel"><img width="220" height="54" class="project-logo" src="images/AWR_Logo.webp" alt="AWR Solutions" loading="lazy" decoding="async"></div>
-<div class="project-title">AWR Solutions</div>
+                <div class="project-logo-panel"><img width="220" height="54" class="project-logo"
+                    src="images/AWR_Logo.webp" alt="AWR Solutions" loading="lazy" decoding="async"></div>
+                <div class="project-title">AWR Solutions</div>
                 <div class="project-meta">Sep 2025 – Present · Shopify</div>
-                <div class="project-desc">Neto-to-Shopify migration with advanced product filtering, custom forms, payment gateway integration and optimized inventory management.</div>
+                <div class="project-desc">Neto-to-Shopify migration with advanced product filtering, custom forms,
+                  payment gateway integration and optimized inventory management.</div>
                 <div class="project-tags">
                   <span class="project-tag">Shopify</span>
                   <span class="project-tag">Liquid</span>
@@ -186,286 +281,384 @@
               </div>
             </div>
             <details class="archive">
-              <summary>More project work <span>16 projects <span aria-hidden="true">＋</span>
-              </span>
-            </summary>
-            <div class="project-grid">
-              <div class="project-card">
-                <span class="project-badge badge-progress">In Progress</span>
-                <!-- Add your logo to images/MYBOS-logo.png. -->
-                <div class="project-logo-panel"><img width="220" height="54" class="project-logo" src="images/MYBOS.svg" alt="MYBOS" loading="lazy" decoding="async"></div>
-                <div class="project-title">MYBOS</div>
-                <div class="project-meta">Aug 2026 – Present · WordPress to HubSpot Development</div>
-                <div class="project-desc">WordPress-to-HubSpot development using HubSpot CLI, HTML, HubL, CSS, and JavaScript.</div>
-                <div class="project-tags"><span class="project-tag">HubSpot CLI</span><span class="project-tag">HTML</span><span class="project-tag">HubL</span><span class="project-tag">CSS</span><span class="project-tag">JavaScript</span></div>
-              </div>
+              <summary class="archive-trigger" data-cursor="EXPLORE">
+                <span class="archive-trigger__copy">
+                  <span class="archive-trigger__kicker">Project archive / 04—19</span>
+                  <strong>More project work</strong>
+                </span>
+                <span class="archive-trigger__meta">
+                  <span class="archive-trigger__count">16 projects</span>
+                  <span class="archive-trigger__action">
+                    <span class="archive-trigger__action-label">View archive</span>
+                    <span class="archive-trigger__icon" aria-hidden="true"><i></i><i></i></span>
+                  </span>
+                </span>
+                <span class="archive-trigger__scan" aria-hidden="true"></span>
+              </summary>
+              <div class="archive-panel">
+                <div class="project-grid">
+                  <div class="project-card" data-cursor="WORK">
+                    <span class="project-badge badge-progress">In Progress</span>
+                    <!-- Add your logo to images/MYBOS-logo.png. -->
+                    <div class="project-logo-panel"><img width="220" height="54" class="project-logo"
+                        src="images/MYBOS.svg" alt="MYBOS" loading="lazy" decoding="async"></div>
+                    <div class="project-title">MYBOS</div>
+                    <div class="project-meta">Aug 2026 – Present · WordPress to HubSpot Development</div>
+                    <div class="project-desc">WordPress-to-HubSpot development using HubSpot CLI, HTML, HubL, CSS, and
+                      JavaScript.</div>
+                    <div class="project-tags"><span class="project-tag">HubSpot CLI</span><span
+                        class="project-tag">HTML</span><span class="project-tag">HubL</span><span
+                        class="project-tag">CSS</span><span class="project-tag">JavaScript</span></div>
+                  </div>
 
-              <div class="project-card">
-                <span class="project-badge badge-progress">In Progress</span>
-                <!-- Add your logo to images/Bolder-Group-logo.png. -->
-                <div class="project-logo-panel"><img width="220" height="54" class="project-logo" src="images/Bolder-Group.png" alt="Bolder Group" loading="lazy" decoding="async"></div>
-                <div class="project-title">Bolder Group</div>
-                <div class="project-meta">Jul 2026 – Present · WordPress Gutenberg Development</div>
-                <div class="project-desc">WordPress development with Gutenberg and custom templates, using WordPress CLI, GitHub, HTML, CSS, and JavaScript.</div>
-                <div class="project-tags"><span class="project-tag">WordPress</span><span class="project-tag">Gutenberg</span><span class="project-tag">WordPress CLI</span><span class="project-tag">GitHub</span><span class="project-tag">HTML</span><span class="project-tag">CSS</span><span class="project-tag">JavaScript</span><span class="project-tag">Custom Template</span></div>
-              </div>
-              <div class="project-card">
-                <span class="project-badge badge-progress">In Progress</span>
-                <div class="project-logo-panel"><img width="220" height="54" class="project-logo" src="images/SC-Logo.png" alt="Simple Claims" loading="lazy" decoding="async"></div>
-<div class="project-title">Simple Claims</div>
-                <div class="project-meta">Feb 2026 – Present · WordPress</div>
-                <div class="project-desc">New claims website for the AU market built with Elementor. Custom sections, responsive design, and SEO-friendly setup from day one.</div>
-                <div class="project-tags">
-                  <span class="project-tag">WordPress</span>
-                  <span class="project-tag">Elementor</span>
-                  <span class="project-tag">Custom CSS/JS</span>
-                </div>
-                <div class="project-footer">
-                  <div class="project-agency">Shore360<span> Agency</span>
+                  <div class="project-card" data-cursor="WORK">
+                    <span class="project-badge badge-progress">In Progress</span>
+                    <!-- Add your logo to images/Bolder-Group-logo.png. -->
+                    <div class="project-logo-panel"><img width="220" height="54" class="project-logo"
+                        src="images/Bolder-Group.png" alt="Bolder Group" loading="lazy" decoding="async"></div>
+                    <div class="project-title">Bolder Group</div>
+                    <div class="project-meta">Jul 2026 – Present · WordPress Gutenberg Development</div>
+                    <div class="project-desc">WordPress development with Gutenberg and custom templates, using WordPress
+                      CLI, GitHub, HTML, CSS, and JavaScript.</div>
+                    <div class="project-tags"><span class="project-tag">WordPress</span><span
+                        class="project-tag">Gutenberg</span><span class="project-tag">WordPress CLI</span><span
+                        class="project-tag">GitHub</span><span class="project-tag">HTML</span><span
+                        class="project-tag">CSS</span><span class="project-tag">JavaScript</span><span
+                        class="project-tag">Custom Template</span></div>
+                  </div>
+                  <div class="project-card" data-cursor="WORK">
+                    <span class="project-badge badge-progress">In Progress</span>
+                    <div class="project-logo-panel"><img width="220" height="54" class="project-logo"
+                        src="images/SC-Logo.png" alt="Simple Claims" loading="lazy" decoding="async"></div>
+                    <div class="project-title">Simple Claims</div>
+                    <div class="project-meta">Feb 2026 – Present · WordPress</div>
+                    <div class="project-desc">New claims website for the AU market built with Elementor. Custom
+                      sections, responsive design, and SEO-friendly setup from day one.</div>
+                    <div class="project-tags">
+                      <span class="project-tag">WordPress</span>
+                      <span class="project-tag">Elementor</span>
+                      <span class="project-tag">Custom CSS/JS</span>
+                    </div>
+                    <div class="project-footer">
+                      <div class="project-agency">Shore360<span> Agency</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="project-card" data-cursor="WORK">
+                    <span class="project-badge badge-progress">In Progress</span>
+                    <div class="project-logo-panel"><img width="220" height="54" class="project-logo"
+                        src="images/simtech-logo.png" alt="Simtech" loading="lazy" decoding="async"></div>
+                    <div class="project-title">Simtech</div>
+                    <div class="project-meta">Dec 2025 – Present · WordPress</div>
+                    <div class="project-desc">Multi-regional rebuild (Global, US, Asia, AU) using Elementor with custom
+                      layouts, improved design consistency and SEO across all regions.</div>
+                    <div class="project-tags">
+                      <span class="project-tag">WordPress</span>
+                      <span class="project-tag">Elementor</span>
+                      <span class="project-tag">Multi-region</span>
+                    </div>
+                    <div class="project-footer">
+                      <div class="project-agency">Shore360<span> Agency</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="project-card" data-cursor="WORK">
+                    <span class="project-badge badge-progress">In Progress</span>
+                    <div class="project-logo-panel"><img width="220" height="54" class="project-logo"
+                        src="images/Alvaro Logistics Logo - Official.avif" alt="Alvaro Logistics" loading="lazy"
+                        decoding="async"></div>
+                    <div class="project-title">Alvaro Logistics Group</div>
+                    <div class="project-meta">Nov 2025 – Present · WordPress</div>
+                    <div class="project-desc">Rebuilt with Elementor — custom sections, improved design consistency,
+                      responsive and SEO-friendly configurations.</div>
+                    <div class="project-tags">
+                      <span class="project-tag">WordPress</span>
+                      <span class="project-tag">Elementor</span>
+                      <span class="project-tag">Custom CSS</span>
+                    </div>
+                    <div class="project-footer">
+                      <div class="project-agency">Shore360<span> Agency</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="project-card" data-cursor="WORK">
+                    <span class="project-badge badge-progress">In Progress</span>
+                    <div class="project-logo-panel"><img width="220" height="54" class="project-logo"
+                        src="images/intm-logo-wide.svg" alt="Intermedia" loading="lazy" decoding="async"></div>
+                    <div class="project-title">Intermedia</div>
+                    <div class="project-meta">Oct 2025 – Present · HubSpot EDM</div>
+                    <div class="project-desc">Custom email templates developed in HubSpot with the lead designer,
+                      aligned to brand guidelines and marketing objectives — tested across Outlook, Gmail and Apple
+                      Mail.</div>
+                    <div class="project-tags">
+                      <span class="project-tag">HubSpot</span>
+                      <span class="project-tag">HubL</span>
+                      <span class="project-tag">HTML</span>
+                      <span class="project-tag">VML</span>
+                    </div>
+                    <div class="project-footer">
+                      <div class="project-agency">Shore360<span> Agency</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="project-card" data-cursor="WORK">
+                    <span class="project-badge badge-done">Live</span>
+                    <div class="project-logo-panel"><img width="220" height="54" class="project-logo"
+                        src="images/STEM Finance - Logo.avif" alt="STEM Finance" loading="lazy" decoding="async"></div>
+                    <div class="project-title">STEM Finance</div>
+                    <div class="project-meta">Oct 2025 · Wix Development</div>
+                    <div class="project-desc">Rebuilt with Wix Builder — custom section layouts, tailored styling to
+                      enhance design consistency and visual appeal.</div>
+                    <div class="project-tags">
+                      <span class="project-tag">Wix</span>
+                      <span class="project-tag">Custom CSS</span>
+                      <span class="project-tag">JavaScript</span>
+                    </div>
+                    <div class="project-footer">
+                      <div class="project-agency">Shore360<span> Agency</span>
+                      </div>
+                      <a href="https://www.stemfinance.com.au/" target="_blank" rel="noopener noreferrer"
+                        class="project-link" data-cursor="VISIT">Live site →</a>
+                    </div>
+                  </div>
+                  <div class="project-card" data-cursor="WORK">
+                    <span class="project-badge badge-done">Live</span>
+                    <div class="project-logo-panel"><img width="220" height="54" class="project-logo"
+                        src="images/Tailgate-Sports-Bar-Logo.webp" alt="Tailgate Sports Bar" loading="lazy"
+                        decoding="async"></div>
+                    <div class="project-title">Tailgate Sports Bar</div>
+                    <div class="project-meta">Sep 2025 · Squarespace</div>
+                    <div class="project-desc">Updated layouts, styling and custom integrations to enhance functionality
+                      and user experience on Squarespace.</div>
+                    <div class="project-tags">
+                      <span class="project-tag">Squarespace</span>
+                      <span class="project-tag">HTML/CSS</span>
+                      <span class="project-tag">Custom Integration</span>
+                    </div>
+                    <div class="project-footer">
+                      <div class="project-agency">Shore360<span> Agency</span>
+                      </div>
+                      <a href="https://www.tailgatesportsbar.com.au/" target="_blank" rel="noopener noreferrer"
+                        class="project-link" data-cursor="VISIT">Live site →</a>
+                    </div>
+                  </div>
+                  <div class="project-card" data-cursor="WORK">
+                    <span class="project-badge badge-done">Live</span>
+                    <div class="project-logo-panel"><img width="220" height="54" class="project-logo"
+                        src="images/shoreagency_logo.png" alt="Shore360 Agency" loading="lazy" decoding="async"></div>
+                    <div class="project-title">Shore360 Agency</div>
+                    <div class="project-meta">May – Nov 2025 · WordPress</div>
+                    <div class="project-desc">Designed and developed responsive WordPress site prioritizing SEO,
+                      accessibility, and optimized loading speeds.</div>
+                    <div class="project-tags">
+                      <span class="project-tag">WordPress</span>
+                      <span class="project-tag">Elementor</span>
+                      <span class="project-tag">SEO</span>
+                    </div>
+                    <div class="project-footer">
+                      <div class="project-agency">Shore360<span> Agency</span>
+                      </div>
+                      <a href="https://shore360agency.com/" target="_blank" rel="noopener noreferrer"
+                        class="project-link" data-cursor="VISIT">Live site →</a>
+                    </div>
+                  </div>
+                  <div class="project-card" data-cursor="WORK">
+                    <span class="project-badge badge-done">Live</span>
+                    <div class="project-logo-panel"><img width="220" height="54" class="project-logo"
+                        src="images/plumbing-estimators-logo.webp" alt="ePlumbing NZ" loading="lazy" decoding="async">
+                    </div>
+                    <div class="project-title">ePlumbing Estimators NZ</div>
+                    <div class="project-meta">Jun – Jul 2025 · WordPress</div>
+                    <div class="project-desc">NZ version rebuild with improved performance, structure and UI through
+                      custom Elementor sections and optimized templates.</div>
+                    <div class="project-tags">
+                      <span class="project-tag">WordPress</span>
+                      <span class="project-tag">Elementor</span>
+                    </div>
+                    <div class="project-footer">
+                      <div class="project-agency">Shore360<span> Agency</span>
+                      </div>
+                      <a href="https://plumbingestimators.co.nz/" target="_blank" rel="noopener noreferrer"
+                        class="project-link" data-cursor="VISIT">Live site →</a>
+                    </div>
+                  </div>
+                  <div class="project-card" data-cursor="WORK">
+                    <span class="project-badge badge-done">Live</span>
+                    <div class="project-logo-panel"><img width="220" height="54" class="project-logo"
+                        src="images/plumbing-estimators-logo.webp" alt="ePlumbing AU" loading="lazy" decoding="async">
+                    </div>
+                    <div class="project-title">ePlumbing Estimators AU</div>
+                    <div class="project-meta">Apr – Jun 2025 · WordPress</div>
+                    <div class="project-desc">AU redesign with optimized Elementor templates, responsive layouts, and
+                      modern UI translated from Figma.</div>
+                    <div class="project-tags">
+                      <span class="project-tag">WordPress</span>
+                      <span class="project-tag">Elementor</span>
+                      <span class="project-tag">Figma → WP</span>
+                    </div>
+                    <div class="project-footer">
+                      <div class="project-agency">Shore360<span> Agency</span>
+                      </div>
+                      <a href="https://plumbingestimators.com.au/" target="_blank" rel="noopener noreferrer"
+                        class="project-link" data-cursor="VISIT">Live site →</a>
+                    </div>
+                  </div>
+                  <div class="project-card" data-cursor="WORK">
+                    <span class="project-badge badge-done">Live</span>
+                    <div class="project-logo-panel"><img width="220" height="54" class="project-logo"
+                        src="images/Grace-Logo.webp" alt="Grace" loading="lazy" decoding="async"></div>
+                    <div class="project-title">Grace Website Rebuild</div>
+                    <div class="project-meta">Oct 2024 – Jun 2025 · WordPress</div>
+                    <div class="project-desc">Enhanced UX and visual hierarchy with Elementor. Improved navigation,
+                      accessibility, and Salesforce integration.</div>
+                    <div class="project-tags">
+                      <span class="project-tag">WordPress</span>
+                      <span class="project-tag">Elementor</span>
+                      <span class="project-tag">Salesforce</span>
+                      <span class="project-tag">JS</span>
+                    </div>
+                    <div class="project-footer">
+                      <div class="project-agency">Shore360<span> Agency</span>
+                      </div>
+                      <a href="https://www.grace.com.au/" target="_blank" rel="noopener noreferrer" class="project-link"
+                        data-cursor="VISIT">Live site →</a>
+                    </div>
+                  </div>
+                  <div class="project-card" data-cursor="WORK">
+                    <span class="project-badge badge-done">Live</span>
+                    <div class="project-logo-panel"><img width="220" height="54" class="project-logo"
+                        src="images/ICFT_Logo.svg" alt="I Can Fix That" loading="lazy" decoding="async"></div>
+                    <div class="project-title">I Can Fix That</div>
+                    <div class="project-meta">Sep – Oct 2024 · WordPress</div>
+                    <div class="project-desc">Service-focused WordPress site with SEO-optimized content using Elementor.
+                    </div>
+                    <div class="project-tags">
+                      <span class="project-tag">WordPress</span>
+                      <span class="project-tag">Elementor</span>
+                      <span class="project-tag">Booking</span>
+                    </div>
+                    <div class="project-footer">
+                      <div class="project-agency">Shore360<span> Agency</span>
+                      </div>
+                      <a href="https://icanfixthat.com.au/" target="_blank" rel="noopener noreferrer"
+                        class="project-link" data-cursor="VISIT">Live site →</a>
+                    </div>
+                  </div>
+                  <div class="project-card" data-cursor="WORK">
+                    <span class="project-badge badge-done">Live</span>
+                    <div class="project-logo-panel"><img width="220" height="54" class="project-logo"
+                        src="images/Netbank-logo-1.svg" alt="Netbank" loading="lazy" decoding="async"></div>
+                    <div class="project-title">Netbank Philippines</div>
+                    <div class="project-meta">Jul – Aug 2024 · WordPress</div>
+                    <div class="project-desc">Secure, financial-grade WordPress architecture with custom components,
+                      enhanced forms, and compliance-focused optimization.</div>
+                    <div class="project-tags">
+                      <span class="project-tag">WordPress</span>
+                      <span class="project-tag">Elementor</span>
+                      <span class="project-tag">Finance</span>
+                    </div>
+                    <div class="project-footer">
+                      <div class="project-agency">Shore360<span> Agency</span>
+                      </div>
+                      <a href="https://netbank.ph/" target="_blank" rel="noopener noreferrer" class="project-link"
+                        data-cursor="VISIT">Live site →</a>
+                    </div>
+                  </div>
+                  <div class="project-card" data-cursor="WORK">
+                    <span class="project-badge badge-done">Live</span>
+                    <div class="project-logo-panel"><img width="220" height="54" class="project-logo"
+                        src="images/Jobs360-logo.svg" alt="Jobs360" loading="lazy" decoding="async"></div>
+                    <div class="project-title">Jobs360 Website Rebuild</div>
+                    <div class="project-meta">Jul – Oct 2024 · WordPress</div>
+                    <div class="project-desc">Revamped job portal layout and filtering system — responsive,
+                      SEO-friendly, optimized for employers and applicants alike.</div>
+                    <div class="project-tags">
+                      <span class="project-tag">WordPress</span>
+                      <span class="project-tag">Elementor</span>
+                      <span class="project-tag">Dynamic Content</span>
+                    </div>
+                    <div class="project-footer">
+                      <div class="project-agency">Shore360<span> Agency</span>
+                      </div>
+                      <a href="https://www.jobs360.com.ph/" target="_blank" rel="noopener noreferrer"
+                        class="project-link" data-cursor="VISIT">Live site →</a>
+                    </div>
+                  </div>
+                  <div class="project-card" data-cursor="WORK">
+                    <span class="project-badge badge-done">Live</span>
+                    <div class="project-logo-panel"><img width="220" height="54" class="project-logo"
+                        src="images/Bahamas_Flores_Clinic_logo.webp" alt="Bahamas Flores Clinic" loading="lazy"
+                        decoding="async"></div>
+                    <div class="project-title">Bahamas Flores Clinic</div>
+                    <div class="project-meta">May 2024 · WordPress + Front-End</div>
+                    <div class="project-desc">Custom HTML, SCSS and JavaScript front-end integration for a WordPress
+                      site, with Git-based version control.</div>
+                    <div class="project-tags">
+                      <span class="project-tag">HTML5</span>
+                      <span class="project-tag">SCSS</span>
+                      <span class="project-tag">JS</span>
+                      <span class="project-tag">Git</span>
+                    </div>
+                    <div class="project-footer">
+                      <div class="project-agency">Shore360<span> Agency</span>
+                      </div>
+                      <a href="https://bahamasfibroidclinic.com/" target="_blank" rel="noopener noreferrer"
+                        class="project-link" data-cursor="VISIT">Live site →</a>
+                    </div>
                   </div>
                 </div>
               </div>
-              <div class="project-card">
-                <span class="project-badge badge-progress">In Progress</span>
-                <div class="project-logo-panel"><img width="220" height="54" class="project-logo" src="images/simtech-logo.png" alt="Simtech" loading="lazy" decoding="async"></div>
-<div class="project-title">Simtech</div>
-                <div class="project-meta">Dec 2025 – Present · WordPress</div>
-                <div class="project-desc">Multi-regional rebuild (Global, US, Asia, AU) using Elementor with custom layouts, improved design consistency and SEO across all regions.</div>
-                <div class="project-tags">
-                  <span class="project-tag">WordPress</span>
-                  <span class="project-tag">Elementor</span>
-                  <span class="project-tag">Multi-region</span>
-                </div>
-                <div class="project-footer">
-                  <div class="project-agency">Shore360<span> Agency</span>
-                  </div>
-                </div>
-              </div>
-              <div class="project-card">
-                <span class="project-badge badge-progress">In Progress</span>
-                <div class="project-logo-panel"><img width="220" height="54" class="project-logo" src="images/Alvaro Logistics Logo - Official.avif" alt="Alvaro Logistics" loading="lazy" decoding="async"></div>
-<div class="project-title">Alvaro Logistics Group</div>
-                <div class="project-meta">Nov 2025 – Present · WordPress</div>
-                <div class="project-desc">Rebuilt with Elementor — custom sections, improved design consistency, responsive and SEO-friendly configurations.</div>
-                <div class="project-tags">
-                  <span class="project-tag">WordPress</span>
-                  <span class="project-tag">Elementor</span>
-                  <span class="project-tag">Custom CSS</span>
-                </div>
-                <div class="project-footer">
-                  <div class="project-agency">Shore360<span> Agency</span>
-                  </div>
-                </div>
-              </div>
-              <div class="project-card">
-                <span class="project-badge badge-progress">In Progress</span>
-                <div class="project-logo-panel"><img width="220" height="54" class="project-logo" src="images/intm-logo-wide.svg" alt="Intermedia" loading="lazy" decoding="async"></div>
-<div class="project-title">Intermedia</div>
-                <div class="project-meta">Oct 2025 – Present · HubSpot EDM</div>
-                <div class="project-desc">Custom email templates developed in HubSpot with the lead designer, aligned to brand guidelines and marketing objectives — tested across Outlook, Gmail and Apple Mail.</div>
-                <div class="project-tags">
-                  <span class="project-tag">HubSpot</span>
-                  <span class="project-tag">HubL</span>
-                  <span class="project-tag">HTML</span>
-                  <span class="project-tag">VML</span>
-                </div>
-                <div class="project-footer">
-                  <div class="project-agency">Shore360<span> Agency</span>
-                  </div>
-                </div>
-              </div>
-              <div class="project-card">
-                <span class="project-badge badge-done">Live</span>
-                <div class="project-logo-panel"><img width="220" height="54" class="project-logo" src="images/STEM Finance - Logo.avif" alt="STEM Finance" loading="lazy" decoding="async"></div>
-<div class="project-title">STEM Finance</div>
-                <div class="project-meta">Oct 2025 · Wix Development</div>
-                <div class="project-desc">Rebuilt with Wix Builder — custom section layouts, tailored styling to enhance design consistency and visual appeal.</div>
-                <div class="project-tags">
-                  <span class="project-tag">Wix</span>
-                  <span class="project-tag">Custom CSS</span>
-                  <span class="project-tag">JavaScript</span>
-                </div>
-                <div class="project-footer">
-                  <div class="project-agency">Shore360<span> Agency</span>
-                  </div>
-                  <a href="https://www.stemfinance.com.au/" target="_blank" rel="noopener noreferrer" class="project-link">Live site →</a>
-                </div>
-              </div>
-              <div class="project-card">
-                <span class="project-badge badge-done">Live</span>
-                <div class="project-logo-panel"><img width="220" height="54" class="project-logo" src="images/Tailgate-Sports-Bar-Logo.webp" alt="Tailgate Sports Bar" loading="lazy" decoding="async"></div>
-<div class="project-title">Tailgate Sports Bar</div>
-                <div class="project-meta">Sep 2025 · Squarespace</div>
-                <div class="project-desc">Updated layouts, styling and custom integrations to enhance functionality and user experience on Squarespace.</div>
-                <div class="project-tags">
-                  <span class="project-tag">Squarespace</span>
-                  <span class="project-tag">HTML/CSS</span>
-                  <span class="project-tag">Custom Integration</span>
-                </div>
-                <div class="project-footer">
-                  <div class="project-agency">Shore360<span> Agency</span>
-                  </div>
-                  <a href="https://www.tailgatesportsbar.com.au/" target="_blank" rel="noopener noreferrer" class="project-link">Live site →</a>
-                </div>
-              </div>
-              <div class="project-card">
-                <span class="project-badge badge-done">Live</span>
-                <div class="project-logo-panel"><img width="220" height="54" class="project-logo" src="images/shoreagency_logo.png" alt="Shore360 Agency" loading="lazy" decoding="async"></div>
-<div class="project-title">Shore360 Agency</div>
-                <div class="project-meta">May – Nov 2025 · WordPress</div>
-                <div class="project-desc">Designed and developed responsive WordPress site prioritizing SEO, accessibility, and optimized loading speeds.</div>
-                <div class="project-tags">
-                  <span class="project-tag">WordPress</span>
-                  <span class="project-tag">Elementor</span>
-                  <span class="project-tag">SEO</span>
-                </div>
-                <div class="project-footer">
-                  <div class="project-agency">Shore360<span> Agency</span>
-                  </div>
-                  <a href="https://shore360agency.com/" target="_blank" rel="noopener noreferrer" class="project-link">Live site →</a>
-                </div>
-              </div>
-              <div class="project-card">
-                <span class="project-badge badge-done">Live</span>
-                <div class="project-logo-panel"><img width="220" height="54" class="project-logo" src="images/plumbing-estimators-logo.webp" alt="ePlumbing NZ" loading="lazy" decoding="async"></div>
-<div class="project-title">ePlumbing Estimators NZ</div>
-                <div class="project-meta">Jun – Jul 2025 · WordPress</div>
-                <div class="project-desc">NZ version rebuild with improved performance, structure and UI through custom Elementor sections and optimized templates.</div>
-                <div class="project-tags">
-                  <span class="project-tag">WordPress</span>
-                  <span class="project-tag">Elementor</span>
-                </div>
-                <div class="project-footer">
-                  <div class="project-agency">Shore360<span> Agency</span>
-                  </div>
-                  <a href="https://plumbingestimators.co.nz/" target="_blank" rel="noopener noreferrer" class="project-link">Live site →</a>
-                </div>
-              </div>
-              <div class="project-card">
-                <span class="project-badge badge-done">Live</span>
-                <div class="project-logo-panel"><img width="220" height="54" class="project-logo" src="images/plumbing-estimators-logo.webp" alt="ePlumbing AU" loading="lazy" decoding="async"></div>
-<div class="project-title">ePlumbing Estimators AU</div>
-                <div class="project-meta">Apr – Jun 2025 · WordPress</div>
-                <div class="project-desc">AU redesign with optimized Elementor templates, responsive layouts, and modern UI translated from Figma.</div>
-                <div class="project-tags">
-                  <span class="project-tag">WordPress</span>
-                  <span class="project-tag">Elementor</span>
-                  <span class="project-tag">Figma → WP</span>
-                </div>
-                <div class="project-footer">
-                  <div class="project-agency">Shore360<span> Agency</span>
-                  </div>
-                  <a href="https://plumbingestimators.com.au/" target="_blank" rel="noopener noreferrer" class="project-link">Live site →</a>
-                </div>
-              </div>
-              <div class="project-card">
-                <span class="project-badge badge-done">Live</span>
-                <div class="project-logo-panel"><img width="220" height="54" class="project-logo" src="images/Grace-Logo.webp" alt="Grace" loading="lazy" decoding="async"></div>
-<div class="project-title">Grace Website Rebuild</div>
-                <div class="project-meta">Oct 2024 – Jun 2025 · WordPress</div>
-                <div class="project-desc">Enhanced UX and visual hierarchy with Elementor. Improved navigation, accessibility, and Salesforce integration.</div>
-                <div class="project-tags">
-                  <span class="project-tag">WordPress</span>
-                  <span class="project-tag">Elementor</span>
-                  <span class="project-tag">Salesforce</span>
-                  <span class="project-tag">JS</span>
-                </div>
-                <div class="project-footer">
-                  <div class="project-agency">Shore360<span> Agency</span>
-                  </div>
-                  <a href="https://www.grace.com.au/" target="_blank" rel="noopener noreferrer" class="project-link">Live site →</a>
-                </div>
-              </div>
-              <div class="project-card">
-                <span class="project-badge badge-done">Live</span>
-                <div class="project-logo-panel"><img width="220" height="54" class="project-logo" src="images/ICFT_Logo.svg" alt="I Can Fix That" loading="lazy" decoding="async"></div>
-<div class="project-title">I Can Fix That</div>
-                <div class="project-meta">Sep – Oct 2024 · WordPress</div>
-                <div class="project-desc">Service-focused WordPress site with SEO-optimized content using Elementor.</div>
-                <div class="project-tags">
-                  <span class="project-tag">WordPress</span>
-                  <span class="project-tag">Elementor</span>
-                  <span class="project-tag">Booking</span>
-                </div>
-                <div class="project-footer">
-                  <div class="project-agency">Shore360<span> Agency</span>
-                  </div>
-                  <a href="https://icanfixthat.com.au/" target="_blank" rel="noopener noreferrer" class="project-link">Live site →</a>
-                </div>
-              </div>
-              <div class="project-card">
-                <span class="project-badge badge-done">Live</span>
-                <div class="project-logo-panel"><img width="220" height="54" class="project-logo" src="images/Netbank-logo-1.svg" alt="Netbank" loading="lazy" decoding="async"></div>
-<div class="project-title">Netbank Philippines</div>
-                <div class="project-meta">Jul – Aug 2024 · WordPress</div>
-                <div class="project-desc">Secure, financial-grade WordPress architecture with custom components, enhanced forms, and compliance-focused optimization.</div>
-                <div class="project-tags">
-                  <span class="project-tag">WordPress</span>
-                  <span class="project-tag">Elementor</span>
-                  <span class="project-tag">Finance</span>
-                </div>
-                <div class="project-footer">
-                  <div class="project-agency">Shore360<span> Agency</span>
-                  </div>
-                  <a href="https://netbank.ph/" target="_blank" rel="noopener noreferrer" class="project-link">Live site →</a>
-                </div>
-              </div>
-              <div class="project-card">
-                <span class="project-badge badge-done">Live</span>
-                <div class="project-logo-panel"><img width="220" height="54" class="project-logo" src="images/Jobs360-logo.svg" alt="Jobs360" loading="lazy" decoding="async"></div>
-<div class="project-title">Jobs360 Website Rebuild</div>
-                <div class="project-meta">Jul – Oct 2024 · WordPress</div>
-                <div class="project-desc">Revamped job portal layout and filtering system — responsive, SEO-friendly, optimized for employers and applicants alike.</div>
-                <div class="project-tags">
-                  <span class="project-tag">WordPress</span>
-                  <span class="project-tag">Elementor</span>
-                  <span class="project-tag">Dynamic Content</span>
-                </div>
-                <div class="project-footer">
-                  <div class="project-agency">Shore360<span> Agency</span>
-                  </div>
-                  <a href="https://www.jobs360.com.ph/" target="_blank" rel="noopener noreferrer" class="project-link">Live site →</a>
-                </div>
-              </div>
-              <div class="project-card">
-                <span class="project-badge badge-done">Live</span>
-                <div class="project-logo-panel"><img width="220" height="54" class="project-logo" src="images/Bahamas_Flores_Clinic_logo.webp" alt="Bahamas Flores Clinic" loading="lazy" decoding="async"></div>
-<div class="project-title">Bahamas Flores Clinic</div>
-                <div class="project-meta">May 2024 · WordPress + Front-End</div>
-                <div class="project-desc">Custom HTML, SCSS and JavaScript front-end integration for a WordPress site, with Git-based version control.</div>
-                <div class="project-tags">
-                  <span class="project-tag">HTML5</span>
-                  <span class="project-tag">SCSS</span>
-                  <span class="project-tag">JS</span>
-                  <span class="project-tag">Git</span>
-                </div>
-                <div class="project-footer">
-                  <div class="project-agency">Shore360<span> Agency</span>
-                  </div>
-                  <a href="https://bahamasfibroidclinic.com/" target="_blank" rel="noopener noreferrer" class="project-link">Live site →</a>
-                </div>
-              </div>
+            </details>
+          </div>
+        </section>
+        <div class="digital-break" aria-hidden="true">
+          <div class="digital-break__track">
+            <span>SCROLL / EXPLORE / BUILD / SHIP / ITERATE / CREATE /</span>
+            <span>SCROLL / EXPLORE / BUILD / SHIP / ITERATE / CREATE /</span>
+          </div>
+        </div>
+        <section id="about">
+          <div class="wrap about-grid">
+            <div>
+              <div class="eyebrow">About me</div>
+              <h2>The person<br>behind the pages.</h2>
             </div>
-          </details>
-        </div>
-      </section>
-      <section id="about">
-        <div class="wrap about-grid">
-          <div>
-            <div class="eyebrow">About me</div>
-            <h2>The person<br>behind the pages.</h2>
+            <div class="about-copy">
+              <p>I’m a web developer based in San Fernando, Pampanga. At Shore360 Agency, I work on websites for
+                Australian and international clients, translating Figma designs into WordPress and Shopify builds.</p>
+              <p>My work includes custom templates, CMS migrations, responsive layouts, and ongoing maintenance. I work
+                with designers, project managers, and QA to get the details right before a site goes live.</p>
+              <div class="about-note">B.S. Information Technology, 2023<br>City College of San Fernando Pampanga</div>
+            </div>
           </div>
-          <div class="about-copy">
-            <p>I’m a web developer based in San Fernando, Pampanga. At Shore360 Agency, I work on websites for Australian and international clients, translating Figma designs into WordPress and Shopify builds.</p>
-            <p>My work includes custom templates, CMS migrations, responsive layouts, and ongoing maintenance. I work with designers, project managers, and QA to get the details right before a site goes live.</p>
-            <div class="about-note">B.S. Information Technology, 2023<br>City College of San Fernando Pampanga</div>
+          <div class="wrap metric-deck" aria-label="Selected development metrics">
+            <article class="metric-card metric-card--primary">
+              <span class="metric-index">M01</span>
+              <div class="metric-value" data-counter data-target="20" data-suffix="+">20+</div>
+              <p>Websites developed and maintained across client work.</p>
+            </article>
+            <article class="metric-card">
+              <span class="metric-index">M02</span>
+              <div class="metric-value" data-counter data-target="50" data-suffix="%">50%</div>
+              <p>Upper end of recorded PageSpeed / Lighthouse improvement.</p>
+            </article>
+            <article class="metric-card">
+              <span class="metric-index">M03</span>
+              <div class="metric-value" data-counter data-target="3" data-pad="2">03</div>
+              <p>Core ecosystems: WordPress, Shopify, and HubSpot.</p>
+            </article>
+            <article class="metric-card">
+              <span class="metric-index">M04</span>
+              <div class="metric-value" data-counter data-target="2" data-pad="2" data-suffix="+">02+</div>
+              <p>Years working in agency web development.</p>
+            </article>
           </div>
-        </div>
-      </section>
-      <section id="experience" >
-        <div class="wrap">
-          <div class="sheet-label">
-            <span class="num">02</span> Experience</div>
+        </section>
+        <section id="experience">
+          <div class="wrap">
+            <div class="sheet-label">
+              <span class="num">02</span> Experience
+            </div>
             <div class="exp-grid">
               <div>
                 <h2 class="exp-heading">Career</h2>
@@ -475,12 +668,17 @@
                     <div class="tl-content">
                       <div class="tl-org">
                         <div>
-                          <div class="organization-logo-panel"><img width="44" height="44" class="organization-logo" src="images/shore360.webp" alt="Shore360" loading="lazy" decoding="async"></div>
-<div class="tl-role">Junior Web Developer</div>
+                          <div class="organization-logo-panel"><img width="44" height="44" class="organization-logo"
+                              src="images/shore360.webp" alt="Shore360" loading="lazy" decoding="async"></div>
+                          <div class="tl-role">Junior Web Developer</div>
                           <div class="tl-company">Shore360 Agency · Shore360, Inc.</div>
                         </div>
                       </div>
-                      <div class="tl-desc">Developed and maintained 20+ WordPress and Shopify websites for AU and international clients. Converted Figma designs into pixel-perfect sites and HubSpot EDMs using HTML, SCSS, JS, PHP and Liquid, boosting PageSpeed/Lighthouse scores up to 30–50% and collaborating with designers, PMs and QA via ClickUp.</div>
+                      <div class="tl-desc">Developed and maintained <span class="count-up" data-counter-inline
+                          data-target="20" data-suffix="+">20+</span> WordPress and Shopify websites for AU and
+                        international clients. Converted Figma designs into pixel-perfect sites and HubSpot EDMs using
+                        HTML, SCSS, JS, PHP and Liquid, boosting PageSpeed/Lighthouse scores up to 30–50% and
+                        collaborating with designers, PMs and QA via ClickUp.</div>
                     </div>
                   </div>
                   <div class="tl-item">
@@ -488,12 +686,15 @@
                     <div class="tl-content">
                       <div class="tl-org">
                         <div>
-                          <div class="organization-logo-panel"><img width="44" height="44" class="organization-logo" src="images/dost_r3.webp" alt="DOST Region 3" loading="lazy" decoding="async"></div>
-<div class="tl-role">Student Trainee (Intern)</div>
+                          <div class="organization-logo-panel"><img width="44" height="44" class="organization-logo"
+                              src="images/dost_r3.webp" alt="DOST Region 3" loading="lazy" decoding="async"></div>
+                          <div class="tl-role">Student Trainee (Intern)</div>
                           <div class="tl-company">DOST — Region 3</div>
                         </div>
                       </div>
-                      <div class="tl-desc">Assisted in maintaining and troubleshooting internal network systems, researched emerging technologies for project planning, and produced multimedia content and documentation supporting IT solutions.</div>
+                      <div class="tl-desc">Assisted in maintaining and troubleshooting internal network systems,
+                        researched emerging technologies for project planning, and produced multimedia content and
+                        documentation supporting IT solutions.</div>
                     </div>
                   </div>
                 </div>
@@ -506,12 +707,16 @@
                     <div class="tl-content">
                       <div class="tl-org">
                         <div>
-                          <div class="organization-logo-panel"><img width="44" height="44" class="organization-logo" src="images/ccsfp.png" alt="City College of San Fernando Pampanga" loading="lazy" decoding="async"></div>
-<div class="tl-role">B.S. Information Technology</div>
+                          <div class="organization-logo-panel"><img width="44" height="44" class="organization-logo"
+                              src="images/ccsfp.png" alt="City College of San Fernando Pampanga" loading="lazy"
+                              decoding="async"></div>
+                          <div class="tl-role">B.S. Information Technology</div>
                           <div class="tl-company">City College of San Fernando Pampanga</div>
                         </div>
                       </div>
-                      <div class="tl-desc">Four-year program covering software development, web technologies, databases, networking and information systems. Dean's List 2020–2022; graduated with a focus on practical application through capstone projects.</div>
+                      <div class="tl-desc">Four-year program covering software development, web technologies, databases,
+                        networking and information systems. Dean's List 2020–2022; graduated with a focus on practical
+                        application through capstone projects.</div>
                     </div>
                   </div>
                   <div class="tl-item">
@@ -519,12 +724,14 @@
                     <div class="tl-content">
                       <div class="tl-org">
                         <div>
-                          <div class="organization-logo-panel"><img width="44" height="44" class="organization-logo" src="images/phs.jpg" alt="Pampanga High School" loading="lazy" decoding="async"></div>
-<div class="tl-role">Academic Track — GAS Strand</div>
+                          <div class="organization-logo-panel"><img width="44" height="44" class="organization-logo"
+                              src="images/phs.jpg" alt="Pampanga High School" loading="lazy" decoding="async"></div>
+                          <div class="tl-role">Academic Track — GAS Strand</div>
                           <div class="tl-company">Pampanga High School</div>
                         </div>
                       </div>
-                      <div class="tl-desc">Completed senior high school under the General Academic Strand with a foundation in humanities, social sciences, and applied technology subjects.</div>
+                      <div class="tl-desc">Completed senior high school under the General Academic Strand with a
+                        foundation in humanities, social sciences, and applied technology subjects.</div>
                     </div>
                   </div>
                 </div>
@@ -533,162 +740,195 @@
           </div>
         </section>
         <section id="skills" aria-labelledby="skills-heading">
-  <div class="wrap">
-    <div class="section-top">
-      <div>
-        <div class="eyebrow">My toolkit</div>
-        <h2 id="skills-heading">Skills &amp; tools</h2>
-      </div>
-      <p>The platforms and tools I use<br>to build, refine, and maintain websites.</p>
-    </div>
-    <div class="toolkit-grid">
-      <article class="toolkit-card">
-        <h3>CMS & page builders</h3>
-        <ul class="toolkit-list">
-          <li>WordPress</li>
-          <li>Elementor</li>
-          <li>Gutenberg</li>
-          <li>Divi</li>
-          <li>Shopify</li>
-          <li>Liquid</li>
-          <li>Shopify CLI</li>
-          <li>HubSpot EDM</li>
-          <li>Wix</li>
-          <li>Squarespace</li>
-        </ul>
-      </article>
-      <article class="toolkit-card">
-        <h3>Web development</h3>
-        <ul class="toolkit-list">
-          <li>HTML5</li>
-          <li>CSS3</li>
-          <li>SCSS/SASS</li>
-          <li>Bootstrap</li>
-          <li>JavaScript</li>
-          <li>jQuery</li>
-          <li>PHP</li>
-          <li>MySQL</li>
-        </ul>
-      </article>
-      <article class="toolkit-card">
-        <h3>SEO & analytics</h3>
-        <ul class="toolkit-list">
-          <li>Yoast SEO</li>
-          <li>Rank Math</li>
-          <li>All in One SEO</li>
-          <li>Google Search Console</li>
-          <li>GTM</li>
-          <li>Schema Markup</li>
-        </ul>
-      </article>
-      <article class="toolkit-card">
-        <h3>Performance & optimization</h3>
-        <ul class="toolkit-list">
-          <li>Lighthouse</li>
-          <li>PageSpeed</li>
-          <li>GTmetrix</li>
-          <li>WP Rocket</li>
-          <li>Image Optim.</li>
-          <li>Digital Shield</li>
-        </ul>
-      </article>
-      <article class="toolkit-card">
-        <h3>Design & collaboration</h3>
-        <ul class="toolkit-list">
-          <li>Figma</li>
-          <li>Adobe Photoshop</li>
-          <li>Canva</li>
-          <li>VS Code</li>
-          <li>Chrome DevTools</li>
-          <li>Jira</li>
-          <li>ClickUp</li>
-          <li>Trello</li>
-          <li>Slack</li>
-        </ul>
-      </article>
-      <article class="toolkit-card">
-        <h3>Custom CMS development</h3>
-        <ul class="toolkit-list">
-          <li>ACF</li>
-          <li>Custom Post Types</li>
-          <li>Dynamic Content</li>
-          <li>WooCommerce</li>
-          <li>HubL</li>
-        </ul>
-      </article>
-      <article class="toolkit-card">
-        <h3>Version control & deployment</h3>
-        <ul class="toolkit-list">
-          <li>Git</li>
-          <li>GitHub</li>
-          <li>Git Bash</li>
-          <li>FTP/SFTP</li>
-        </ul>
-      </article>
-      <article class="toolkit-card">
-        <h3>AI-assisted development</h3>
-        <ul class="toolkit-list">
-          <li>ChatGPT</li>
-          <li>Claude</li>
-          <li>Gemini</li>
-          <li>Codex</li>
-          <li>DeepSeek</li>
-        </ul>
-      </article>
+          <div class="toolkit-space" aria-hidden="true">
+            <span class="toolkit-float tf-1"><b>&lt;/&gt;</b><i>HTML</i></span>
+            <span class="toolkit-float tf-2"><b>{ }</b><i>JS</i></span>
+            <span class="toolkit-float tf-3"><b>#</b><i>CSS</i></span>
+            <span class="toolkit-float tf-4"><b>W</b><i>WP</i></span>
+            <span class="toolkit-float tf-5"><b>⌘</b><i>CLI</i></span>
+            <span class="toolkit-float tf-6"><b>git</b><i>VCS</i></span>
+            <span class="toolkit-float tf-7"><b>AI</b><i>+</i></span>
+            <span class="toolkit-float tf-8"><b>⚡</b><i>PERF</i></span>
+          </div>
+          <div class="toolkit-space__rings" aria-hidden="true"></div>
+          <div class="wrap">
+            <div class="section-top">
+              <div>
+                <div class="eyebrow">My toolkit</div>
+                <h2 id="skills-heading">Skills &amp; tools</h2>
+              </div>
+              <p>The platforms and tools I use<br>to build, refine, and maintain websites.</p>
+            </div>
+            <div class="toolkit-grid">
+              <article class="toolkit-card">
+                <h3>CMS & page builders</h3>
+                <ul class="toolkit-list">
+                  <li>WordPress</li>
+                  <li>Elementor</li>
+                  <li>Gutenberg</li>
+                  <li>Divi</li>
+                  <li>Shopify</li>
+                  <li>Liquid</li>
+                  <li>Shopify CLI</li>
+                  <li>HubSpot EDM</li>
+                  <li>Wix</li>
+                  <li>Squarespace</li>
+                </ul>
+              </article>
+              <article class="toolkit-card">
+                <h3>Web development</h3>
+                <ul class="toolkit-list">
+                  <li>HTML5</li>
+                  <li>CSS3</li>
+                  <li>SCSS/SASS</li>
+                  <li>Bootstrap</li>
+                  <li>JavaScript</li>
+                  <li>jQuery</li>
+                  <li>PHP</li>
+                  <li>MySQL</li>
+                </ul>
+              </article>
+              <article class="toolkit-card">
+                <h3>SEO & analytics</h3>
+                <ul class="toolkit-list">
+                  <li>Yoast SEO</li>
+                  <li>Rank Math</li>
+                  <li>All in One SEO</li>
+                  <li>Google Search Console</li>
+                  <li>GTM</li>
+                  <li>Schema Markup</li>
+                </ul>
+              </article>
+              <article class="toolkit-card">
+                <h3>Performance & optimization</h3>
+                <ul class="toolkit-list">
+                  <li>Lighthouse</li>
+                  <li>PageSpeed</li>
+                  <li>GTmetrix</li>
+                  <li>WP Rocket</li>
+                  <li>Image Optim.</li>
+                  <li>Digital Shield</li>
+                </ul>
+              </article>
+              <article class="toolkit-card">
+                <h3>Design & collaboration</h3>
+                <ul class="toolkit-list">
+                  <li>Figma</li>
+                  <li>Adobe Photoshop</li>
+                  <li>Canva</li>
+                  <li>VS Code</li>
+                  <li>Chrome DevTools</li>
+                  <li>Jira</li>
+                  <li>ClickUp</li>
+                  <li>Trello</li>
+                  <li>Slack</li>
+                </ul>
+              </article>
+              <article class="toolkit-card">
+                <h3>Custom CMS development</h3>
+                <ul class="toolkit-list">
+                  <li>ACF</li>
+                  <li>Custom Post Types</li>
+                  <li>Dynamic Content</li>
+                  <li>WooCommerce</li>
+                  <li>HubL</li>
+                </ul>
+              </article>
+              <article class="toolkit-card">
+                <h3>Version control & deployment</h3>
+                <ul class="toolkit-list">
+                  <li>Git</li>
+                  <li>GitHub</li>
+                  <li>Git Bash</li>
+                  <li>FTP/SFTP</li>
+                </ul>
+              </article>
+              <article class="toolkit-card">
+                <h3>AI-assisted development</h3>
+                <ul class="toolkit-list">
+                  <li>ChatGPT</li>
+                  <li>Claude</li>
+                  <li>Gemini</li>
+                  <li>Codex</li>
+                  <li>DeepSeek</li>
+                </ul>
+              </article>
+            </div>
+          </div>
+        </section>
+        <section id="athletic">
+          <div class="disc-flight" aria-hidden="true">
+            <div class="flying-disc">
+              <span class="disc-rim"></span>
+              <span class="disc-core"></span>
+              <span class="disc-mark">ULTIMATE</span>
+            </div>
+            <span class="disc-trail disc-trail--1"></span>
+            <span class="disc-trail disc-trail--2"></span>
+            <span class="disc-trail disc-trail--3"></span>
+          </div>
+          <div class="wrap">
+            <div class="sheet-label">
+              <span class="num">06</span> Athletic
+            </div>
+            <h2 class="inline-layout-3">Away from the screen.</h2>
+            <p class="inline-layout-4">
+              I play Ultimate Frisbee with the Pampanga Ultimate Community. Before that, I captained ASLAG Ultimate in
+              college. Outside of Ultimate, I also spend time bouldering and training.
+            </p>
+            <div class="athletic-grid">
+              <div class="ath-card">
+                <div>
+                  <div class="organization-logo-panel"><img width="44" height="44" class="organization-logo"
+                      src="images/PUC_logo.webp" alt="Pampanga Ultimate Community" loading="lazy" decoding="async">
+                  </div>
+                  <div class="ath-name">Pampanga Ultimate Community</div>
+                  <div class="ath-role">Active Member</div>
+                  <div class="ath-desc">Community-based Ultimate Frisbee team in Pampanga. Active member representing
+                    the team in regional tournaments and local competitions.</div>
+                  <div class="ath-period">Jan 2025 – Present</div>
+                </div>
+              </div>
+              <div class="ath-card">
+                <div>
+                  <div class="organization-logo-panel"><img width="44" height="44" class="organization-logo"
+                      src="images/ASLAG_Ultimate_Logo.webp" alt="ASLAG Ultimate" loading="lazy" decoding="async"></div>
+                  <div class="ath-name">ASLAG Ultimate</div>
+                  <div class="ath-role">Team Captain</div>
+                  <div class="ath-desc">Led the college Ultimate team at City College of San Fernando Pampanga.
+                    Developed leadership, communication and strategic thinking through competitive play.</div>
+                  <div class="ath-period">Aug 2019 – Sep 2023</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section id="contact" class="contact">
+          <div class="wrap">
+            <div class="eyebrow">Get in touch</div>
+            <h2>Have a website in mind?</h2>
+            <a class="contact-email" data-cursor="EMAIL" href="mailto:dimandallance@gmail.com">dimandallance@gmail.com
+              ↗</a>
+            <div class="contact-bottom">
+              <p>For a new build, a rebuild, or help with an existing site.</p>
+              <div class="contact-links">
+                <a href="https://www.linkedin.com/in/lncdmndl/" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a>
+                <a href="https://drive.google.com/file/d/1T22HEiWWKxLp2SFb06r8ddfoEXbpNyEI/view?usp=sharing"
+                  target="_blank" rel="noopener noreferrer">Résumé ↗</a>
+                <a href="tel:+639052800332">+63 905 280 0332</a>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+      <footer>
+        <div class="wrap">
+          <span>© <span id="copyright-year">2026</span> Lance Dimandal</span>
+          <a href="#">Back to top ↑</a>
+        </div>
+      </footer>
     </div>
   </div>
-</section>
-          <section id="athletic" >
-            <div class="wrap">
-              <div class="sheet-label">
-                <span class="num">06</span> Athletic</div>
-                <h2 class="inline-layout-3">Away from the screen.</h2>
-                <p class="inline-layout-4">
-                  I play Ultimate Frisbee with the Pampanga Ultimate Community. Before that, I captained ASLAG Ultimate in college. Outside of Ultimate, I also spend time bouldering and training.
-                </p>
-                <div class="athletic-grid">
-                  <div class="ath-card">
-                    <div>
-                      <div class="organization-logo-panel"><img width="44" height="44" class="organization-logo" src="images/PUC_logo.webp" alt="Pampanga Ultimate Community" loading="lazy" decoding="async"></div>
-<div class="ath-name">Pampanga Ultimate Community</div>
-                      <div class="ath-role">Active Member</div>
-                      <div class="ath-desc">Community-based Ultimate Frisbee team in Pampanga. Active member representing the team in regional tournaments and local competitions.</div>
-                      <div class="ath-period">Jan 2025 – Present</div>
-                    </div>
-                  </div>
-                  <div class="ath-card">
-                    <div>
-                      <div class="organization-logo-panel"><img width="44" height="44" class="organization-logo" src="images/ASLAG_Ultimate_Logo.webp" alt="ASLAG Ultimate" loading="lazy" decoding="async"></div>
-<div class="ath-name">ASLAG Ultimate</div>
-                      <div class="ath-role">Team Captain</div>
-                      <div class="ath-desc">Led the college Ultimate team at City College of San Fernando Pampanga. Developed leadership, communication and strategic thinking through competitive play.</div>
-                      <div class="ath-period">Aug 2019 – Sep 2023</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </section>
-            <section id="contact" class="contact">
-              <div class="wrap">
-                <div class="eyebrow">Get in touch</div>
-                <h2>Have a website in mind?</h2>
-                <a class="contact-email" href="mailto:dimandallance@gmail.com">dimandallance@gmail.com ↗</a>
-                <div class="contact-bottom">
-                  <p>For a new build, a rebuild, or help with an existing site.</p>
-                  <div class="contact-links">
-                    <a href="https://www.linkedin.com/in/lncdmndl/" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a>
-                    <a href="https://drive.google.com/file/d/1T22HEiWWKxLp2SFb06r8ddfoEXbpNyEI/view?usp=sharing" target="_blank" rel="noopener noreferrer">Résumé ↗</a>
-                    <a href="tel:+639052800332">+63 905 280 0332</a>
-                  </div>
-                </div>
-              </div>
-            </section>
-          </main>
-          <footer>
-            <div class="wrap">
-              <span>© <span id="copyright-year">2026</span> Lance Dimandal</span>
-              <a href="#">Back to top ↑</a>
-            </div>
-          </footer>
-        </body>
-      </html>
+</body>
+
+</html>
