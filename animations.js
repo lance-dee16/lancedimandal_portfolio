@@ -12,17 +12,360 @@
     gsap.registerPlugin(ScrollTrigger);
     var hasSplitText = !!window.SplitText;
     var hasSmoother = !!window.ScrollSmoother;
+    var hasDrawSVG = !!window.DrawSVGPlugin;
     if (hasSplitText) gsap.registerPlugin(SplitText);
     if (hasSmoother) gsap.registerPlugin(ScrollSmoother);
+    if (hasDrawSVG) gsap.registerPlugin(DrawSVGPlugin);
 
     var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     var isTouch = window.matchMedia('(hover: none), (pointer: coarse)').matches;
+    var compactMotion = window.matchMedia('(max-width: 980px)').matches;
+    var mobileMotion = window.matchMedia('(max-width: 760px)').matches;
     var mm = gsap.matchMedia();
     var nav = document.getElementById('site-nav');
     var progress = document.querySelector('.nav-progress-bar');
     var menu = document.getElementById('mobile-menu');
     var menuToggle = document.querySelector('.menu-toggle');
     var menuOpen = false;
+
+
+
+    /* ------------------------------------------------------------
+       V6.1 — Motion signatures
+       One visual language, several distinct drawing behaviors:
+       routing, schematics, measurement, constellation, trajectory,
+       and interface framing. The goal is variation without chaos.
+       ------------------------------------------------------------ */
+    function svgScene(className, viewBox, body) {
+      return '<svg class="digital-drawing ' + className + '" viewBox="' + viewBox + '" preserveAspectRatio="none" aria-hidden="true" focusable="false">' + body + '</svg>';
+    }
+
+    function mountScene(selector, className, viewBox, body, datum) {
+      var target = document.querySelector(selector);
+      if (!target || target.querySelector(':scope > .' + className)) return null;
+      target.insertAdjacentHTML('afterbegin', svgScene(className, viewBox, body));
+      if (datum) {
+        var tag = document.createElement('span');
+        tag.className = 'draw-datum';
+        tag.setAttribute('aria-hidden', 'true');
+        tag.textContent = datum;
+        target.appendChild(tag);
+      }
+      return target.querySelector(':scope > .' + className);
+    }
+
+    function mountHeadingSignature(selector, variant, body) {
+      var heading = document.querySelector(selector);
+      if (!heading || (heading.nextElementSibling && heading.nextElementSibling.classList.contains('drawing-signature'))) return;
+      var signature = document.createElement('div');
+      signature.className = 'drawing-signature drawing-signature--' + variant;
+      signature.setAttribute('aria-hidden', 'true');
+      signature.innerHTML = '<svg viewBox="0 0 360 22" preserveAspectRatio="none">' + body + '</svg>';
+      heading.insertAdjacentElement('afterend', signature);
+    }
+
+    function mountServiceSchematics() {
+      document.querySelectorAll('.service').forEach(function (card, index) {
+        if (card.querySelector(':scope > .service-schematic')) return;
+        var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svg.setAttribute('class', 'service-schematic service-schematic--' + ((index % 3) + 1));
+        svg.setAttribute('viewBox', '0 0 100 100');
+        svg.setAttribute('preserveAspectRatio', 'none');
+        svg.setAttribute('aria-hidden', 'true');
+        var drawings = [
+          '<path class="service-schematic__line" d="M3 78 V98 H33 M67 2 H97 V22"/><circle class="service-schematic__port" cx="33" cy="98" r="1.8"/>',
+          '<path class="service-schematic__line" d="M3 24 V3 H30 M70 97 H97 V74"/><path class="service-schematic__signal" d="M58 3 H70"/>',
+          '<path class="service-schematic__line" d="M3 72 V97 H27 M73 3 H97 V28"/><path class="service-schematic__signal" d="M3 60 V72"/>'
+        ];
+        svg.innerHTML = drawings[index % drawings.length];
+        card.appendChild(svg);
+      });
+    }
+
+    function mountMetricDials() {
+      document.querySelectorAll('.metric-card').forEach(function (card, index) {
+        if (card.querySelector(':scope > .metric-dial')) return;
+        var dial = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        dial.setAttribute('class', 'metric-dial metric-dial--' + ((index % 4) + 1));
+        dial.setAttribute('viewBox', '0 0 180 180');
+        dial.setAttribute('aria-hidden', 'true');
+        dial.innerHTML =
+          '<path class="metric-dial__ghost" d="M36 132 A68 68 0 0 1 143 48"/>' +
+          '<path class="metric-dial__arc" d="M36 132 A68 68 0 0 1 143 48"/>' +
+          '<path class="metric-dial__tick" d="M40 132 l-8 5 M61 104 l-8 1 M91 91 v-8 M121 97 l5 -7 M141 50 l7 -5"/>';
+        card.appendChild(dial);
+      });
+    }
+
+    function mountWorkTraces() {
+      document.querySelectorAll('.featured .project-card').forEach(function (card) {
+        if (card.querySelector(':scope > .work-draw-trace')) return;
+        var trace = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        trace.setAttribute('class', 'work-draw-trace');
+        trace.setAttribute('viewBox', '0 0 100 100');
+        trace.setAttribute('preserveAspectRatio', 'none');
+        trace.setAttribute('aria-hidden', 'true');
+        trace.innerHTML = '<path d="M1 18 V1 H18"/><path d="M82 1 H99 V18"/><path d="M99 82 V99 H82"/><path d="M18 99 H1 V82"/>';
+        card.appendChild(trace);
+      });
+    }
+
+    function mountDigitalDrawings() {
+      var heroScene = mountScene('.hero', 'digital-drawing--hero', '0 0 1200 760',
+        '<path class="draw-path draw-path--ghost" d="M45 168 H210 V112 H520 V72 H808"/>' +
+        '<path class="draw-path draw-path--primary draw-hero-route" d="M45 168 H210 V112 H520 V72 H808 V118 H1040 V202 H1160"/>' +
+        '<path class="draw-path draw-pulse draw-pulse--hero" d="M45 168 H210 V112 H520 V72 H808 V118 H1040 V202 H1160"/>' +
+        '<path class="draw-path draw-path--accent draw-hero-route" d="M82 552 H246 V622 H488 V690 H874 V642 H1125"/>' +
+        '<path class="draw-cross" d="M200 100 h20 M210 90 v20 M1030 190 h20 M1040 180 v20 M236 610 h18 M245 601 v18"/>' +
+        '<path class="draw-node draw-node--hot" d="M204 112 a6 6 0 1 0 12 0 a6 6 0 1 0 -12 0 M802 72 a6 6 0 1 0 12 0 a6 6 0 1 0 -12 0"/>',
+        'vector field / hero_01');
+
+      var portfolioScene = mountScene('#portfolio', 'digital-drawing--portfolio', '0 0 1200 980',
+        '<path class="draw-path draw-path--ghost" d="M56 184 H212 L264 236 H496 L556 296 H786 L848 356 H1144"/>' +
+        '<path class="draw-path draw-path--primary draw-project-route" d="M56 184 H212 L264 236 H496 L556 296 H786 L848 356 H1144"/>' +
+        '<path class="draw-path draw-project-branch" d="M264 236 V440 H386 M556 296 V564 H716 M848 356 V706 H1088"/>' +
+        '<path class="draw-path draw-pulse draw-pulse--project" d="M56 184 H212 L264 236 H496 L556 296 H786 L848 356 H1144"/>' +
+        '<path class="draw-node draw-node--project" d="M258 236 a6 6 0 1 0 12 0 a6 6 0 1 0 -12 0 M550 296 a6 6 0 1 0 12 0 a6 6 0 1 0 -12 0 M842 356 a6 6 0 1 0 12 0 a6 6 0 1 0 -12 0"/>',
+        'route map / projects_01—03');
+
+      var experienceScene = mountScene('#experience', 'digital-drawing--experience', '0 0 1200 760',
+        '<path class="draw-path draw-exp-rail" d="M78 154 V676"/>' +
+        '<path class="draw-path draw-exp-rail" d="M628 154 V676"/>' +
+        '<path class="draw-exp-ticks" d="M68 220 H88 M68 410 H88 M68 594 H88 M618 220 H638 M618 410 H638 M618 594 H638"/>' +
+        '<path class="draw-node draw-exp-node" d="M73 220 a5 5 0 1 0 10 0 a5 5 0 1 0 -10 0 M623 220 a5 5 0 1 0 10 0 a5 5 0 1 0 -10 0"/>',
+        null);
+
+      var skillsScene = mountScene('#skills', 'digital-drawing--skills', '0 0 1200 850',
+        '<path class="draw-network-line" d="M600 390 L205 182 M600 390 L1010 172 M600 390 L152 610 M600 390 L1038 615 M600 390 L600 760"/>' +
+        '<path class="draw-network-line draw-network-line--secondary" d="M205 182 L408 112 L600 390 L797 118 L1010 172 M152 610 L342 696 L600 390 L866 704 L1038 615"/>' +
+        '<path class="draw-network-orbit" d="M450 390 a150 150 0 1 0 300 0 a150 150 0 1 0 -300 0"/>' +
+        '<path class="draw-pulse draw-pulse--network" d="M205 182 L600 390 L1038 615"/>' +
+        '<path class="draw-node draw-node--hot draw-network-node" d="M594 390 a6 6 0 1 0 12 0 a6 6 0 1 0 -12 0"/>' +
+        '<path class="draw-node draw-network-node" d="M199 182 a6 6 0 1 0 12 0 a6 6 0 1 0 -12 0 M1004 172 a6 6 0 1 0 12 0 a6 6 0 1 0 -12 0 M146 610 a6 6 0 1 0 12 0 a6 6 0 1 0 -12 0 M1032 615 a6 6 0 1 0 12 0 a6 6 0 1 0 -12 0"/>',
+        'tool constellation / live');
+
+      var athleticScene = mountScene('#athletic', 'digital-drawing--athletic', '0 0 1200 720',
+        '<path class="draw-path draw-flight-ghost" d="M-30 520 C170 342 346 206 560 326 S905 566 1230 198"/>' +
+        '<path class="draw-path draw-flight-live draw-flight-route" d="M-30 520 C170 342 346 206 560 326 S905 566 1230 198"/>' +
+        '<path class="draw-path draw-pulse draw-flight-pulse" d="M-30 520 C170 342 346 206 560 326 S905 566 1230 198"/>' +
+        '<path class="draw-cross" d="M154 357 h24 M166 345 v24 M548 314 h24 M560 302 v24 M995 408 h24 M1007 396 v24"/>',
+        null);
+
+      var contactScene = mountScene('#contact .wrap', 'digital-drawing--contact', '0 0 1000 560',
+        '<path class="draw-path draw-path--primary draw-contact-route" d="M38 120 V38 H278 M722 38 H962 V120"/>' +
+        '<path class="draw-path draw-path--primary draw-contact-route" d="M38 440 V522 H278 M722 522 H962 V440"/>' +
+        '<path class="draw-path draw-path--accent draw-contact-route" d="M38 280 H96 M904 280 H962"/>' +
+        '<path class="draw-cross draw-contact-cross" d="M88 270 h20 M98 260 v20 M892 270 h20 M902 260 v20"/>',
+        null);
+
+      mountHeadingSignature('#services .section-top h2', 'schematic',
+        '<path class="signature-main" d="M1 12 H92 L104 4 H214 L226 12 H358"/><path class="signature-accent" d="M1 18 H74"/>');
+      mountHeadingSignature('#portfolio .section-top h2', 'route',
+        '<path class="signature-main" d="M1 11 H88 V5 H194 V16 H304 L318 11 H358"/><circle class="signature-node" cx="194" cy="16" r="2.8"/>');
+      mountHeadingSignature('#about h2', 'measure',
+        '<path class="signature-main" d="M8 4 V18 M8 11 H302 M302 4 V18"/><path class="signature-accent" d="M320 11 H358"/>');
+
+      mountServiceSchematics();
+      mountMetricDials();
+      mountWorkTraces();
+
+      return [heroScene, portfolioScene, experienceScene, skillsScene, athleticScene, contactScene].filter(Boolean);
+    }
+
+    var drawingScenes = mountDigitalDrawings();
+
+    function startSignalPulse(selector, triggerSelector, duration, opacity) {
+      var pulse = document.querySelector(selector);
+      var trigger = document.querySelector(triggerSelector);
+      if (!pulse || !trigger || reduced) return;
+
+      /*
+       * V6.2 continuous signal rail:
+       * Normalize every route to a virtual 100-unit path, then move one
+       * repeating dash pattern through exactly 100 units. The first and last
+       * frames are mathematically identical, so there is no repeat pause,
+       * no DrawSVG reset jump, and no dead stop at route corners.
+       */
+      pulse.setAttribute('pathLength', '100');
+      gsap.set(pulse, {
+        drawSVG: hasDrawSVG ? '100%' : null,
+        opacity: opacity,
+        strokeDasharray: '7 93',
+        strokeDashoffset: 0
+      });
+
+      var tween = gsap.to(pulse, {
+        strokeDashoffset: -100,
+        duration: duration,
+        repeat: -1,
+        ease: 'none',
+        paused: true
+      });
+
+      ScrollTrigger.create({
+        trigger: trigger,
+        start: 'top 98%',
+        end: 'bottom 2%',
+        onEnter: function () { tween.play(); },
+        onEnterBack: function () { tween.play(); },
+        onLeave: function () { tween.pause(); },
+        onLeaveBack: function () { tween.pause(); }
+      });
+    }
+
+    function initDrawSVGAnimations() {
+      var allDrawables = document.querySelectorAll(
+        '.digital-drawing .draw-path,.digital-drawing .draw-cross,.digital-drawing .draw-node,' +
+        '.digital-drawing .draw-network-line,.digital-drawing .draw-network-orbit,.digital-drawing .draw-exp-ticks,' +
+        '.drawing-signature path,.drawing-signature circle,.service-schematic path,.service-schematic circle,.metric-dial path,.work-draw-trace path'
+      );
+
+      if (!hasDrawSVG) {
+        document.documentElement.classList.add('drawsvg-fallback');
+        return;
+      }
+
+      if (reduced) {
+        gsap.set(allDrawables, { drawSVG: '100%' });
+        return;
+      }
+
+      /* HERO — circuit routing. */
+      var heroRoutes = document.querySelectorAll('.digital-drawing--hero .draw-hero-route,.digital-drawing--hero .draw-cross,.digital-drawing--hero .draw-node');
+      gsap.set(heroRoutes, { drawSVG: '0%' });
+      gsap.to(heroRoutes, {
+        drawSVG: '100%',
+        duration: compactMotion ? 1.05 : 1.55,
+        stagger: compactMotion ? .055 : .085,
+        delay: bootWillPlay ? 1.86 : .2,
+        ease: 'power2.inOut'
+      });
+
+      /* SERVICES — each card gets a different little schematic rather than a universal border trace. */
+      document.querySelectorAll('.service-schematic').forEach(function (svg, index) {
+        var parts = svg.querySelectorAll('path,circle');
+        gsap.set(parts, { drawSVG: '0%' });
+        gsap.to(parts, {
+          drawSVG: '100%',
+          duration: .6,
+          stagger: .08,
+          delay: index * .04,
+          ease: 'power2.out',
+          scrollTrigger: { trigger: svg.parentElement, start: 'top 87%', once: true }
+        });
+      });
+
+      /* PORTFOLIO — one continuous route map scrubs with the work instead of replaying a generic reveal. */
+      var projectRoute = document.querySelectorAll('.draw-project-route,.draw-project-branch,.draw-node--project');
+      gsap.set(projectRoute, { drawSVG: '0%' });
+      gsap.to(projectRoute, {
+        drawSVG: '100%',
+        stagger: .08,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '#portfolio',
+          start: compactMotion ? 'top 92%' : 'top 84%',
+          end: compactMotion ? '55% 58%' : '70% 48%',
+          scrub: compactMotion ? .45 : .9,
+          invalidateOnRefresh: true
+        }
+      });
+
+      /* ABOUT / METRICS — measurement arcs calibrate around the counters. */
+      document.querySelectorAll('.metric-dial').forEach(function (dial, index) {
+        var ghost = dial.querySelector('.metric-dial__ghost');
+        var arc = dial.querySelector('.metric-dial__arc');
+        var ticks = dial.querySelector('.metric-dial__tick');
+        if (ghost) gsap.set(ghost, { drawSVG: '100%', opacity: .28 });
+        gsap.set([arc, ticks].filter(Boolean), { drawSVG: '0%' });
+        gsap.to([arc, ticks].filter(Boolean), {
+          drawSVG: '100%',
+          duration: .78,
+          stagger: .12,
+          delay: index * .055,
+          ease: 'power3.out',
+          scrollTrigger: { trigger: dial.parentElement, start: 'top 88%', once: true }
+        });
+      });
+
+      /* EXPERIENCE — vertical rails establish the timeline before entries appear. */
+      var expRail = document.querySelectorAll('.draw-exp-rail,.draw-exp-ticks,.draw-exp-node');
+      gsap.set(expRail, { drawSVG: '0%' });
+      gsap.to(expRail, {
+        drawSVG: '100%',
+        duration: compactMotion ? .85 : 1.3,
+        stagger: .07,
+        ease: 'power2.inOut',
+        scrollTrigger: { trigger: '#experience', start: 'top 82%', once: true }
+      });
+
+      /* TOOLKIT — constellation activates from the center outward. */
+      var networkLines = document.querySelectorAll('.draw-network-line,.draw-network-orbit');
+      var networkNodes = document.querySelectorAll('.draw-network-node');
+      gsap.set(networkLines, { drawSVG: '0%' });
+      gsap.set(networkNodes, { drawSVG: '0%', opacity: 0 });
+      gsap.timeline({ scrollTrigger: { trigger: '#skills', start: 'top 82%', once: true } })
+        .to(networkLines, { drawSVG: '100%', duration: compactMotion ? .72 : 1.05, stagger: { each: .08, from: 'center' }, ease: 'power2.inOut' })
+        .to(networkNodes, { drawSVG: '100%', opacity: 1, duration: .35, stagger: .06, ease: 'power2.out' }, '-=.28');
+
+      /* ATHLETIC — trajectory sketches once, then the disc motion owns the section. */
+      var flight = document.querySelector('.draw-flight-route');
+      var flightCross = document.querySelectorAll('.digital-drawing--athletic .draw-cross');
+      if (flight) {
+        gsap.set([flight].concat(Array.prototype.slice.call(flightCross)), { drawSVG: '0%' });
+        gsap.to([flight].concat(Array.prototype.slice.call(flightCross)), {
+          drawSVG: '100%', duration: compactMotion ? .95 : 1.45, stagger: .075, ease: 'power2.inOut',
+          scrollTrigger: { trigger: '#athletic', start: 'top 85%', once: true }
+        });
+      }
+
+      /* CONTACT — frame first; copy follows in its own coordinated sequence later. */
+      var contactRoutes = document.querySelectorAll('.draw-contact-route,.draw-contact-cross');
+      if (contactRoutes.length) {
+        gsap.set(contactRoutes, { drawSVG: compactMotion ? '0%' : '50% 50%' });
+        gsap.to(contactRoutes, {
+          drawSVG: '0% 100%', duration: compactMotion ? .82 : 1.18, stagger: .065, ease: 'power3.inOut',
+          scrollTrigger: { trigger: '#contact', start: 'top 87%', once: true }
+        });
+      }
+
+      /* Three headings, three signatures — no global repetitive underline. */
+      document.querySelectorAll('.drawing-signature').forEach(function (signature) {
+        var main = signature.querySelector('.signature-main');
+        var accent = signature.querySelector('.signature-accent');
+        var node = signature.querySelector('.signature-node');
+        var variant = signature.className;
+
+        if (main) gsap.set(main, { drawSVG: variant.indexOf('--measure') > -1 ? '50% 50%' : '0%' });
+        if (accent) gsap.set(accent, { drawSVG: '0%' });
+        if (node) gsap.set(node, { drawSVG: '0%', opacity: 0 });
+
+        var sigTl = gsap.timeline({ scrollTrigger: { trigger: signature, start: 'top 93%', once: true } });
+        sigTl.to(main, { drawSVG: variant.indexOf('--measure') > -1 ? '0% 100%' : '100%', duration: .68, ease: 'power2.out' });
+        if (accent) sigTl.to(accent, { drawSVG: '100%', duration: .34, ease: 'power2.out' }, '-=.22');
+        if (node) sigTl.to(node, { drawSVG: '100%', opacity: 1, duration: .25, ease: 'power2.out' }, '-=.18');
+      });
+
+      /* Work cards keep the drafting-corner interaction; other card families deliberately do not. */
+      if (!isTouch && window.matchMedia('(hover:hover) and (pointer:fine)').matches) {
+        document.querySelectorAll('.work-draw-trace').forEach(function (trace) {
+          var card = trace.parentElement;
+          var corners = trace.querySelectorAll('path');
+          gsap.set(corners, { drawSVG: '0%' });
+          card.addEventListener('mouseenter', function () {
+            gsap.to(corners, { drawSVG: '100%', duration: .44, stagger: .04, ease: 'power2.out', overwrite: true });
+          });
+          card.addEventListener('mouseleave', function () {
+            gsap.to(corners, { drawSVG: '0%', duration: .24, stagger: { each: .02, from: 'end' }, ease: 'power2.in', overwrite: true });
+          });
+        });
+      }
+
+      startSignalPulse('.draw-pulse--hero', '.hero', compactMotion ? 3.8 : 3.05, compactMotion ? .42 : .82);
+      startSignalPulse('.draw-pulse--project', '#portfolio', compactMotion ? 4.4 : 3.55, compactMotion ? .36 : .72);
+      startSignalPulse('.draw-pulse--network', '#skills', compactMotion ? 4.8 : 3.8, compactMotion ? .32 : .66);
+      startSignalPulse('.draw-flight-pulse', '#athletic', compactMotion ? 4.0 : 3.2, compactMotion ? .38 : .78);
+    }
 
     /* ------------------------------------------------------------
        Digital rolling counters
@@ -169,6 +512,7 @@
     var boot = document.querySelector('.boot-screen');
     var bootWillPlay = !!boot && !reduced && !sessionStorage.getItem('ld-booted');
     var bootCount = document.querySelector('.boot-screen__status b');
+    initDrawSVGAnimations();
     if (boot) {
       if (!bootWillPlay) {
         boot.remove();
@@ -293,19 +637,72 @@
     else heroIntro();
 
     if (!reduced) {
-      /* Headline / section reveals. */
-      document.querySelectorAll('.section-top h2,.exp-heading,#about h2,#athletic h2,.contact h2').forEach(function (h) {
-        if (hasSplitText) {
-          var split = SplitText.create(h, { type: 'lines', mask: 'lines', autoSplit: true });
-          gsap.from(split.lines, { yPercent: 110, rotate: 1.5, duration: 0.85, stagger: 0.08, ease: 'power4.out', scrollTrigger: { trigger: h, start: 'top 86%' } });
-        } else {
-          gsap.from(h, { y: 35, opacity: 0, duration: 0.75, ease: 'power3.out', scrollTrigger: { trigger: h, start: 'top 88%' } });
+      /* Section headings have different motion signatures instead of one repeated reveal. */
+      function revealLines(selector, profile) {
+        var h = document.querySelector(selector);
+        if (!h) return;
+        var trigger = { trigger: h, start: compactMotion ? 'top 91%' : 'top 86%', once: true };
+
+        if (!hasSplitText || profile === 'wipe') {
+          var vars = { opacity: 0, duration: compactMotion ? .58 : .72, ease: 'power3.out', scrollTrigger: trigger };
+          if (profile === 'route') Object.assign(vars, { x: compactMotion ? -14 : -30 });
+          else if (profile === 'wipe') Object.assign(vars, { clipPath: 'inset(0 100% 0 0)', x: -8 });
+          else if (profile === 'flight') Object.assign(vars, { x: compactMotion ? -12 : -24, y: 12 });
+          else Object.assign(vars, { y: compactMotion ? 18 : 30 });
+          gsap.from(h, vars);
+          return;
         }
+
+        var split = SplitText.create(h, { type: 'lines', mask: 'lines', autoSplit: true });
+        var fromVars = { opacity: 1 };
+        var toVars = {
+          xPercent: 0,
+          yPercent: 0,
+          rotate: 0,
+          opacity: 1,
+          duration: compactMotion ? .68 : .84,
+          stagger: compactMotion ? .05 : .075,
+          ease: 'power4.out',
+          scrollTrigger: trigger
+        };
+
+        if (profile === 'route') Object.assign(fromVars, { xPercent: -14, opacity: 0 });
+        else if (profile === 'flight') Object.assign(fromVars, { xPercent: -8, yPercent: 70, rotate: -1.5, opacity: 0 });
+        else if (profile === 'measure') Object.assign(fromVars, { yPercent: 65, opacity: 0 });
+        else Object.assign(fromVars, { yPercent: compactMotion ? 72 : 105, rotate: compactMotion ? 0 : 1.2 });
+
+        gsap.fromTo(split.lines, fromVars, toVars);
+      }
+
+      revealLines('#services .section-top h2', 'assemble');
+      revealLines('#portfolio .section-top h2', 'route');
+      revealLines('#about h2', 'measure');
+      revealLines('#skills h2', 'wipe');
+      revealLines('#athletic h2', 'flight');
+
+      document.querySelectorAll('.exp-heading').forEach(function (h, index) {
+        gsap.from(h, {
+          x: compactMotion ? 0 : (index === 0 ? -24 : 24),
+          y: compactMotion ? 16 : 0,
+          opacity: 0,
+          duration: compactMotion ? .58 : .72,
+          ease: 'power3.out',
+          clearProps: compactMotion ? 'transform' : '',
+          scrollTrigger: { trigger: h, start: compactMotion ? 'top 92%' : 'top 87%', once: true }
+        });
       });
 
-      gsap.utils.toArray('.section-top .eyebrow,.section-top p,.sheet-label,#athletic .inline-layout-4,#about .eyebrow,.contact .eyebrow').forEach(function (el) {
-        gsap.from(el, { opacity: 0, y: 16, duration: 0.6, ease: 'power3.out', scrollTrigger: { trigger: el, start: 'top 90%' } });
+      gsap.utils.toArray('.section-top .eyebrow,.section-top p,.sheet-label,#athletic .inline-layout-4,#about .eyebrow').forEach(function (el) {
+        gsap.from(el, {
+          opacity: 0,
+          y: compactMotion ? 10 : 14,
+          duration: compactMotion ? .44 : .56,
+          ease: 'power3.out',
+          clearProps: compactMotion ? 'transform' : '',
+          scrollTrigger: { trigger: el, start: compactMotion ? 'top 94%' : 'top 90%', once: true }
+        });
       });
+
 
       /* Marquees move in opposing directions. */
       gsap.to('.signal-marquee__track', { xPercent: -50, ease: 'none', duration: 24, repeat: -1 });
@@ -323,32 +720,58 @@
         );
       }
 
-      /* Services enter like panels rotating into a digital workspace. */
+      /* V6.3 — stable service-card entrance. The card transform is owned by GSAP only. */
       ScrollTrigger.batch('.service', {
-        start: 'top 88%',
-        onEnter: function (batch) {
-          gsap.fromTo(batch,
-            { y: 52, opacity: 0, rotationX: -13, rotationY: 5, transformPerspective: 900, clipPath: 'inset(12% 0 0 0)' },
-            { y: 0, opacity: 1, rotationX: 0, rotationY: 0, clipPath: 'inset(0% 0 0 0)', duration: 0.82, stagger: 0.09, ease: 'power3.out' }
-          );
+        start: compactMotion ? 'top 92%' : 'top 88%',
+        once: true,
+        onEnter: function (items) {
+          items.forEach(function (card, index) {
+            var icon = card.querySelector('.service-icon');
+            var content = card.querySelectorAll('h3,p,.service-tools');
+            var tl = gsap.timeline({ delay: index * .045 });
+            tl.fromTo(card,
+              { y: compactMotion ? 18 : 26, autoAlpha: 0, scale: compactMotion ? 1 : .988 },
+              { y: 0, autoAlpha: 1, scale: 1, duration: compactMotion ? .52 : .68, ease: 'power3.out',
+                onComplete: function () { gsap.set(card, { clearProps: 'transform,opacity,visibility' }); card.classList.add('card-ready'); } }
+            );
+            if (icon) tl.fromTo(icon,
+              { y: 8, scale: .86, opacity: 0 },
+              { y: 0, scale: 1, opacity: 1, duration: .36, ease: 'back.out(1.45)' }, '-=.40');
+            if (content.length) tl.fromTo(content,
+              { y: 8, opacity: 0 },
+              { y: 0, opacity: 1, duration: .34, stagger: .035, ease: 'power2.out', clearProps: 'transform,opacity' }, '-=.28');
+          });
         }
       });
 
-      /* Portfolio project scenes. */
+
+      /* Portfolio cards resolve from a soft camera-focus state while the route map scrubs behind them. */
       var featured = gsap.utils.toArray('.featured .project-card');
       featured.forEach(function (card, index) {
         var cover = card.querySelector('.project-cover');
+        var cardTrigger = {
+          trigger: card,
+          start: compactMotion ? 'top 91%' : 'top 88%',
+          once: true
+        };
+
         gsap.fromTo(card,
-          { y: 74, opacity: 0, rotationX: 8, rotationY: index % 2 ? -7 : 7, transformPerspective: 1400, clipPath: 'inset(8% 0 8% 0 round 18px)' },
-          { y: 0, opacity: 1, rotationX: 0, rotationY: 0, clipPath: 'inset(0% 0 0% 0 round 18px)', duration: 1.05, ease: 'power4.out', scrollTrigger: { trigger: card, start: 'top 90%' } }
+          { y: compactMotion ? 22 : 38, autoAlpha: 0, scale: compactMotion ? 1 : .985 },
+          { y: 0, autoAlpha: 1, scale: 1, duration: compactMotion ? .60 : .82, ease: 'power3.out', scrollTrigger: cardTrigger,
+            onComplete: function () { gsap.set(card, { clearProps: 'transform,opacity,visibility' }); card.classList.add('card-ready'); } }
         );
+
         if (cover) {
-          gsap.fromTo(cover, { backgroundPosition: '50% 0%' }, { backgroundPosition: '50% 100%', ease: 'none', scrollTrigger: { trigger: card, start: 'top bottom', end: 'bottom top', scrub: 1 } });
+          gsap.fromTo(cover,
+            { backgroundPosition: '50% 0%' },
+            { backgroundPosition: '50% 100%', ease: 'none', scrollTrigger: { trigger: card, start: 'top bottom', end: 'bottom top', scrub: .9, invalidateOnRefresh: true } }
+          );
         }
+
         ScrollTrigger.create({
           trigger: card,
-          start: 'top 55%',
-          end: 'bottom 45%',
+          start: 'top 56%',
+          end: 'bottom 44%',
           onEnter: function () { updateWork(index); },
           onEnterBack: function () { updateWork(index); }
         });
@@ -358,63 +781,102 @@
         var c = document.querySelector('.work-interface__count');
         var bar = document.querySelector('.work-interface__line i');
         if (c) swapReadout(c, String(index + 1).padStart(2, '0'));
-        if (bar) gsap.to(bar, { scaleX: (index + 1) / featured.length, duration: 0.45, ease: 'power3.out', transformOrigin: 'left' });
+        if (bar) gsap.to(bar, { scaleX: (index + 1) / featured.length, duration: .4, ease: 'power3.out', transformOrigin: 'left', overwrite: true });
       }
       updateWork(0);
 
-      /* Metrics arrive from depth on larger screens; mobile gets a cheaper lateral reveal below. */
-      mm.add('(min-width: 761px)', function () {
-        gsap.from('.metric-card', {
-          y: 48,
-          z: -120,
-          rotationX: 18,
-          opacity: 0,
-          transformPerspective: 1000,
-          duration: 0.85,
-          stagger: 0.1,
-          ease: 'power4.out',
-          scrollTrigger: { trigger: '.metric-deck', start: 'top 86%' }
+
+      /* Metrics calibrate with a short vertical reveal; no card-level 3D rotation. */
+      mm.add('(min-width: 981px)', function () {
+        gsap.fromTo('.metric-card',
+          { y: 20, autoAlpha: 0, scale: .988 },
+          { y: 0, autoAlpha: 1, scale: 1, duration: .62, stagger: .07, ease: 'power3.out',
+            onComplete: function () { document.querySelectorAll('.metric-card').forEach(function (c) { gsap.set(c, { clearProps: 'transform,opacity,visibility' }); c.classList.add('card-ready'); }); },
+            scrollTrigger: { trigger: '.metric-deck', start: 'top 87%', once: true } }
+        );
+      });
+      mm.add('(min-width: 761px) and (max-width: 980px)', function () {
+        gsap.fromTo('.metric-card',
+          { y: 18, autoAlpha: 0 },
+          { y: 0, autoAlpha: 1, duration: .52, stagger: .055, ease: 'power3.out',
+            onComplete: function () { document.querySelectorAll('.metric-card').forEach(function (c) { gsap.set(c, { clearProps: 'transform,opacity,visibility' }); c.classList.add('card-ready'); }); },
+            scrollTrigger: { trigger: '.metric-deck', start: 'top 91%', once: true } }
+        );
+      });
+
+
+      /* Ambient 3D technology fields stay scroll-linked on desktop only.
+         Tablet/mobile use static depth layers so they never drift across copy. */
+      if (!compactMotion) {
+        gsap.utils.toArray('.stack-token').forEach(function (token, i) {
+          var depth = Number(token.dataset.depth || 1);
+          gsap.fromTo(token,
+            { x: i % 2 ? -14 : 14, rotationX: i % 2 ? -9 : 8, rotationY: i % 3 ? 7 : -8 },
+            { x: (i % 2 ? 1 : -1) * (18 + depth * 8), rotationX: i % 2 ? 10 : -8, rotationY: i % 3 ? -9 : 10, ease: 'none', scrollTrigger: { trigger: '#portfolio', start: 'top bottom', end: 'bottom top', scrub: 1.3 } }
+          );
         });
-      });
-
-      /* Ambient 3D technology fields — scroll depth without competing with content. */
-      gsap.utils.toArray('.stack-token').forEach(function (token, i) {
-        var depth = Number(token.dataset.depth || 1);
-        gsap.fromTo(token,
-          { x: i % 2 ? -14 : 14, rotationX: i % 2 ? -9 : 8, rotationY: i % 3 ? 7 : -8 },
-          { x: (i % 2 ? 1 : -1) * (18 + depth * 8), rotationX: i % 2 ? 10 : -8, rotationY: i % 3 ? -9 : 10, ease: 'none', scrollTrigger: { trigger: '#portfolio', start: 'top bottom', end: 'bottom top', scrub: 1.3 } }
-        );
-      });
-      gsap.utils.toArray('.toolkit-float').forEach(function (icon, i) {
-        gsap.fromTo(icon,
-          { x: i % 2 ? 10 : -10, rotationZ: i % 2 ? 8 : -8, rotationY: i % 3 ? 12 : -12 },
-          { x: i % 2 ? -18 : 18, rotationZ: i % 2 ? -10 : 11, rotationY: i % 3 ? -15 : 15, ease: 'none', scrollTrigger: { trigger: '#skills', start: 'top bottom', end: 'bottom top', scrub: 1.2 } }
-        );
-      });
-
-      /* Archive cards, skills, timeline, athletics. */
-      function batch(selector, vars) {
-        ScrollTrigger.batch(selector, {
-          start: 'top 91%',
-          onEnter: function (items) {
-            gsap.fromTo(items,
-              { y: 30, opacity: 0, rotationY: selector.indexOf('toolkit') > -1 ? -8 : 0, transformPerspective: 850 },
-              Object.assign({ y: 0, opacity: 1, rotationY: 0, duration: 0.65, stagger: 0.06, ease: 'power3.out' }, vars || {})
-            );
-          }
+        gsap.utils.toArray('.toolkit-float').forEach(function (icon, i) {
+          gsap.fromTo(icon,
+            { x: i % 2 ? 10 : -10, rotationZ: i % 2 ? 8 : -8, rotationY: i % 3 ? 12 : -12 },
+            { x: i % 2 ? -18 : 18, rotationZ: i % 2 ? -10 : 11, rotationY: i % 3 ? -15 : 15, ease: 'none', scrollTrigger: { trigger: '#skills', start: 'top bottom', end: 'bottom top', scrub: 1.2 } }
+          );
         });
       }
-      /* Archive project cards animate through the controlled archive timeline below. */
-      batch('.toolkit-card');
-      batch('.ath-card');
 
-      document.querySelectorAll('.timeline').forEach(function (t) {
-        var items = t.querySelectorAll('.tl-item');
-        gsap.from(items, { x: -22, opacity: 0, rotationY: -5, transformPerspective: 900, duration: 0.65, stagger: 0.1, ease: 'power3.out', scrollTrigger: { trigger: t, start: 'top 84%' } });
+      /* Toolkit cards use a clean stagger; constellation motion stays in the background. */
+      ScrollTrigger.batch('.toolkit-card', {
+        start: 'top 91%',
+        once: true,
+        onEnter: function (items) {
+          gsap.fromTo(items,
+            { y: compactMotion ? 16 : 22, autoAlpha: 0, scale: compactMotion ? 1 : .988 },
+            { y: 0, autoAlpha: 1, scale: 1, duration: compactMotion ? .48 : .60, stagger: .045, ease: 'power3.out',
+              onComplete: function () { items.forEach(function (c) { gsap.set(c, { clearProps: 'transform,opacity,visibility' }); c.classList.add('card-ready'); }); } }
+          );
+        }
+      });
+
+      /* Athletic cards rise into place; the frisbee/trajectory carries the lateral motion. */
+      ScrollTrigger.batch('.ath-card', {
+        start: 'top 91%',
+        once: true,
+        onEnter: function (items) {
+          gsap.fromTo(items,
+            { y: compactMotion ? 18 : 24, autoAlpha: 0, scale: compactMotion ? 1 : .99 },
+            { y: 0, autoAlpha: 1, scale: 1, duration: compactMotion ? .50 : .62, stagger: .065, ease: 'power3.out',
+              onComplete: function () { items.forEach(function (c) { gsap.set(c, { clearProps: 'transform,opacity,visibility' }); c.classList.add('card-ready'); }); } }
+          );
+        }
+      });
+
+      /* Experience items emerge away from the newly drawn timeline rails. */
+      document.querySelectorAll('.timeline').forEach(function (timeline, timelineIndex) {
+        var items = timeline.querySelectorAll('.tl-item');
+        gsap.from(items,
+          compactMotion
+            ? { y: 18, opacity: 0, duration: .54, stagger: .07, ease: 'power3.out', clearProps: 'transform', scrollTrigger: { trigger: timeline, start: 'top 89%', once: true } }
+            : { x: timelineIndex === 0 ? -18 : 18, opacity: 0, duration: .62, stagger: .09, ease: 'power3.out', scrollTrigger: { trigger: timeline, start: 'top 84%', once: true } }
+        );
       });
 
       var about = document.querySelector('.about-copy');
-      if (about) gsap.from(about, { y: 40, opacity: 0, duration: 0.9, ease: 'power3.out', scrollTrigger: { trigger: about, start: 'top 82%' } });
+      if (about) {
+        gsap.fromTo(about,
+          { opacity: 0, clipPath: 'inset(0 0 18% 0)', y: compactMotion ? 16 : 26 },
+          { opacity: 1, clipPath: 'inset(0 0 0% 0)', y: 0, duration: compactMotion ? .62 : .82, ease: 'power3.out', clearProps: compactMotion ? 'transform' : '', scrollTrigger: { trigger: about, start: compactMotion ? 'top 90%' : 'top 83%', once: true } }
+        );
+      }
+
+      /* Contact copy waits for the technical frame so the ending feels composed, not simultaneous. */
+      var contact = document.querySelector('#contact');
+      if (contact) {
+        var contactParts = contact.querySelectorAll('.eyebrow,h2,.contact-email,.contact-bottom');
+        gsap.fromTo(contactParts,
+          { y: 18, opacity: 0 },
+          { y: 0, opacity: 1, duration: compactMotion ? .5 : .62, stagger: .07, ease: 'power3.out', clearProps: compactMotion ? 'transform' : '', scrollTrigger: { trigger: contact, start: 'top 84%', once: true } }
+        );
+      }
+
     }
 
     /* Project archive: controlled expand/collapse + staggered scene transition. */
@@ -452,12 +914,15 @@
           d.open = true;
           updateArchiveUI(true);
           gsap.set(panel, { display: 'block', height: 0, opacity: 0, overflow: 'hidden' });
-          gsap.set(cards, { opacity: 0, y: 34, rotationX: 9, rotationY: -2, scale: .975, transformPerspective: 1000 });
+          gsap.set(cards, compactMotion
+            ? { opacity: 0, y: 24, scale: .99 }
+            : { opacity: 0, y: 34, rotationX: 8, rotationY: -2, scale: .975, transformPerspective: 1000 });
 
           var openTl = gsap.timeline({
             defaults: { ease: 'power3.out' },
             onComplete: function () {
               gsap.set(panel, { height: 'auto', overflow: 'visible' });
+              cards.forEach(function (c) { c.classList.add('card-ready'); });
               d.dataset.busy = 'false';
               ScrollTrigger.refresh();
             }
@@ -465,7 +930,9 @@
           openTl
             .to(panel, { height: 'auto', opacity: 1, duration: .72, ease: 'power4.inOut' }, 0)
             .fromTo(summary, { '--archive-flash': 0 }, { '--archive-flash': 1, duration: .42, yoyo: true, repeat: 1 }, 0)
-            .to(cards, { opacity: 1, y: 0, rotationX: 0, rotationY: 0, scale: 1, duration: isTouch ? .52 : .66, stagger: { each: isTouch ? .025 : .045, from: 'start' }, clearProps: 'transform', ease: 'power3.out' }, .18);
+            .to(cards, compactMotion
+              ? { opacity: 1, y: 0, scale: 1, duration: .48, stagger: { each: .024, from: 'start' }, clearProps: 'transform', ease: 'power3.out' }
+              : { opacity: 1, y: 0, rotationX: 0, rotationY: 0, scale: 1, duration: .64, stagger: { each: .042, from: 'start' }, clearProps: 'transform', ease: 'power3.out' }, .18);
         } else {
           d.classList.add('is-closing');
           var closeTl = gsap.timeline({
@@ -475,12 +942,13 @@
               updateArchiveUI(false);
               gsap.set(panel, { height: 0, opacity: 0, overflow: 'hidden', clearProps: 'display' });
               gsap.set(cards, { clearProps: 'opacity,transform' });
+              cards.forEach(function (c) { c.classList.add('card-ready'); });
               d.dataset.busy = 'false';
               ScrollTrigger.refresh();
             }
           });
           closeTl
-            .to(cards, { opacity: 0, y: -16, scale: .985, duration: isTouch ? .2 : .24, stagger: { each: isTouch ? .01 : .018, from: 'end' }, ease: 'power2.in' }, 0)
+            .to(cards, { opacity: 0, y: compactMotion ? -10 : -16, scale: compactMotion ? .995 : .985, duration: compactMotion ? .18 : .24, stagger: { each: compactMotion ? .009 : .018, from: 'end' }, ease: 'power2.in' }, 0)
             .to(panel, { height: 0, opacity: 0, duration: .5, ease: 'power4.inOut' }, .08);
         }
       });
@@ -573,74 +1041,62 @@
         });
       }
 
-      /* Project cards use nested depth layers, not just a flat tilt. */
-      document.querySelectorAll('.featured .project-card').forEach(function (card) {
-        var rx = gsap.quickTo(card, 'rotationX', { duration: 0.55, ease: 'power3' });
-        var ry = gsap.quickTo(card, 'rotationY', { duration: 0.55, ease: 'power3' });
-        var lift = gsap.quickTo(card, 'y', { duration: 0.55, ease: 'power3' });
-        var cover = card.querySelector('.project-cover');
-        var logo = card.querySelector('.project-logo-panel');
-        var coverX = cover ? gsap.quickTo(cover, 'x', { duration: 0.7, ease: 'power3' }) : null;
-        var coverY = cover ? gsap.quickTo(cover, 'y', { duration: 0.7, ease: 'power3' }) : null;
-        var logoX = logo ? gsap.quickTo(logo, 'x', { duration: 0.8, ease: 'power3' }) : null;
-        var logoY = logo ? gsap.quickTo(logo, 'y', { duration: 0.8, ease: 'power3' }) : null;
+      /* V6.3 — stable card interaction system.
+         Card containers are animated only by GSAP. CSS owns glow/border/child-detail states. */
+      var cardMotionController = new AbortController();
+      var cardSignal = cardMotionController.signal;
 
-        card.addEventListener('mousemove', function (e) {
-          var r = card.getBoundingClientRect();
-          var x = (e.clientX - r.left) / r.width;
-          var y = (e.clientY - r.top) / r.height;
-          var ox = x - 0.5;
-          var oy = y - 0.5;
-          ry(ox * 7);
-          rx(-oy * 7);
-          lift(-6);
-          if (coverX) coverX(ox * -9);
-          if (coverY) coverY(oy * -9);
-          if (logoX) logoX(ox * 5);
-          if (logoY) logoY(oy * 5);
-          card.style.setProperty('--mx', (x * 100) + '%');
-          card.style.setProperty('--my', (y * 100) + '%');
-        });
-        card.addEventListener('mouseleave', function () {
-          rx(0); ry(0); lift(0);
-          if (coverX) coverX(0);
-          if (coverY) coverY(0);
-          if (logoX) logoX(0);
-          if (logoY) logoY(0);
-        });
-      });
-
-      function addTilt(selector, maxTilt) {
-        document.querySelectorAll(selector).forEach(function (card) {
-          var rx = gsap.quickTo(card, 'rotationX', { duration: 0.5, ease: 'power3' });
-          var ry = gsap.quickTo(card, 'rotationY', { duration: 0.5, ease: 'power3' });
-          var lift = gsap.quickTo(card, 'y', { duration: 0.45, ease: 'power3' });
-          var scale = gsap.quickTo(card, 'scale', { duration: 0.45, ease: 'power3' });
-          card.addEventListener('mousemove', function (e) {
-            var r = card.getBoundingClientRect();
-            var px = (e.clientX - r.left) / r.width;
-            var py = (e.clientY - r.top) / r.height;
-            var x = px - 0.5;
-            var y = py - 0.5;
-            card.style.setProperty('--card-x', (px * 100) + '%');
-            card.style.setProperty('--card-y', (py * 100) + '%');
-            rx(-y * maxTilt);
-            ry(x * maxTilt);
-            lift(-5);
-            scale(1.012);
-          });
-          card.addEventListener('mouseleave', function () {
-            rx(0); ry(0); lift(0); scale(1);
-            card.style.setProperty('--card-x', '50%');
-            card.style.setProperty('--card-y', '50%');
-          });
-        });
+      function canInteract(card) {
+        return card.classList.contains('card-ready') || ScrollTrigger.isInViewport(card, .15);
       }
-      addTilt('.service', 5);
-      addTilt('.metric-card', 6);
-      addTilt('.toolkit-card', 4);
-      addTilt('.project-grid .project-card', 3.5);
-      addTilt('.ath-card', 3.5);
+
+      function bindTilt(card, maxTilt, liftAmount, scaleAmount) {
+        gsap.set(card, { transformPerspective: 1200, transformOrigin: '50% 50%' });
+        var rx = gsap.quickTo(card, 'rotationX', { duration: .42, ease: 'power3.out', overwrite: 'auto' });
+        var ry = gsap.quickTo(card, 'rotationY', { duration: .42, ease: 'power3.out', overwrite: 'auto' });
+        var lift = gsap.quickTo(card, 'y', { duration: .36, ease: 'power3.out', overwrite: 'auto' });
+        var scale = gsap.quickTo(card, 'scale', { duration: .36, ease: 'power3.out', overwrite: 'auto' });
+
+        card.addEventListener('pointermove', function (e) {
+          if (!canInteract(card)) return;
+          var r = card.getBoundingClientRect();
+          var px = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width));
+          var py = Math.max(0, Math.min(1, (e.clientY - r.top) / r.height));
+          rx((.5 - py) * maxTilt);
+          ry((px - .5) * maxTilt);
+          lift(liftAmount);
+          scale(scaleAmount);
+          card.style.setProperty('--mx', (px * 100) + '%');
+          card.style.setProperty('--my', (py * 100) + '%');
+          card.style.setProperty('--card-x', (px * 100) + '%');
+          card.style.setProperty('--card-y', (py * 100) + '%');
+        }, { signal: cardSignal });
+
+        card.addEventListener('pointerleave', function () {
+          rx(0); ry(0); lift(0); scale(1);
+          card.style.setProperty('--mx', '50%');
+          card.style.setProperty('--my', '50%');
+          card.style.setProperty('--card-x', '50%');
+          card.style.setProperty('--card-y', '50%');
+        }, { signal: cardSignal });
+      }
+
+      function bindLift(card, liftAmount, scaleAmount) {
+        var lift = gsap.quickTo(card, 'y', { duration: .34, ease: 'power3.out', overwrite: 'auto' });
+        var scale = gsap.quickTo(card, 'scale', { duration: .34, ease: 'power3.out', overwrite: 'auto' });
+        card.addEventListener('pointerenter', function () {
+          if (!canInteract(card)) return;
+          lift(liftAmount); scale(scaleAmount);
+        }, { signal: cardSignal });
+        card.addEventListener('pointerleave', function () { lift(0); scale(1); }, { signal: cardSignal });
+      }
+
+      document.querySelectorAll('.featured .project-card').forEach(function (card) { bindTilt(card, 3.2, -7, 1.008); });
+      document.querySelectorAll('.project-grid .project-card').forEach(function (card) { bindTilt(card, 2.0, -5, 1.006); });
+      document.querySelectorAll('.service').forEach(function (card) { bindLift(card, -6, 1.006); });
+      document.querySelectorAll('.metric-card').forEach(function (card) { bindLift(card, -4, 1.004); });
+      document.querySelectorAll('.toolkit-card').forEach(function (card) { bindLift(card, -5, 1.006); });
+      document.querySelectorAll('.ath-card').forEach(function (card) { bindLift(card, -5, 1.005); });
 
       /* Slow autonomous float keeps background layers alive while the user is idle. */
       var ambientTweens = [];
@@ -680,6 +1136,7 @@
       }
 
       return function () {
+        if (cardMotionController) cardMotionController.abort();
         if (cubeTween) cubeTween.kill();
         if (discFlight) discFlight.kill();
         if (ambientTweens) ambientTweens.forEach(function (t) { t.kill(); });
@@ -695,29 +1152,17 @@
       /* The hero intro already animates the portrait. Avoid a second 3D entrance
          on phones, which could leave the hero looking tilted or misaligned. */
 
-      gsap.utils.toArray('.featured .project-card').forEach(function (card, index) {
-        gsap.from(card.querySelectorAll('.project-badge,.project-logo-panel,.project-title,.project-meta,.project-desc,.project-tags,.project-footer'), {
-          y: 15,
-          opacity: 0,
-          duration: 0.42,
-          stagger: 0.035,
-          ease: 'power2.out',
-          scrollTrigger: { trigger: card, start: 'top 80%', once: true }
-        });
-      });
+      /* Featured cards already receive the shared compact entrance above; avoid a second child-level reveal. */
 
       /* Mobile metrics stay locked to the grid horizontally.
          A vertical reveal avoids the staggered left/right misalignment that
          occurred while later cards were still completing an x-axis tween. */
-      gsap.from('.metric-card', {
-        y: 22,
-        opacity: 0,
-        duration: 0.5,
-        stagger: 0.07,
-        ease: 'power3.out',
-        clearProps: 'transform',
-        scrollTrigger: { trigger: '.metric-deck', start: 'top 90%', once: true }
-      });
+      gsap.fromTo('.metric-card',
+        { y: 18, autoAlpha: 0 },
+        { y: 0, autoAlpha: 1, duration: .48, stagger: .055, ease: 'power3.out',
+          onComplete: function () { document.querySelectorAll('.metric-card').forEach(function (c) { gsap.set(c, { clearProps: 'transform,opacity,visibility' }); c.classList.add('card-ready'); }); },
+          scrollTrigger: { trigger: '.metric-deck', start: 'top 91%', once: true } }
+      );
 
       /* Mobile Ultimate disc: a visible looping throw that only runs while Athletic is onscreen. */
       var mobileDisc = document.querySelector('.flying-disc');
@@ -748,20 +1193,18 @@
       };
     });
 
-    /* Micro page-wipe on outbound links. */
-    var wipe = document.querySelector('.page-wipe');
-    if (wipe && !reduced) {
-      document.querySelectorAll('a[target="_blank"]').forEach(function (link) {
-        link.addEventListener('click', function () {
-          gsap.timeline()
-            .set(wipe, { pointerEvents: 'none' })
-            .fromTo(wipe, { yPercent: 102 }, { yPercent: 72, duration: 0.28, ease: 'power3.out' })
-            .to(wipe, { yPercent: -102, duration: 0.48, ease: 'power4.inOut' })
-            .set(wipe, { yPercent: 102 });
-        });
-      });
+    /* Outbound links open normally; no full-screen transition/wipe. */
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(function () { ScrollTrigger.refresh(); });
     }
-
     window.addEventListener('load', function () { ScrollTrigger.refresh(); });
+
+    /* Orientation / responsive changes can alter section heights substantially.
+       Debounce refreshes so ScrollTrigger measurements remain precise without jank. */
+    var refreshTimer;
+    window.addEventListener('resize', function () {
+      clearTimeout(refreshTimer);
+      refreshTimer = setTimeout(function () { ScrollTrigger.refresh(); }, 180);
+    }, { passive: true });
   });
 })();
