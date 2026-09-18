@@ -2017,3 +2017,583 @@ section{
 .portrait-scene .portrait-photo{
   border-radius:0 !important;
 }
+\n\n/* ================================================================
+   V5.2 — Responsive stability + hero footer cleanup
+   ================================================================ */
+
+/* Outbound transition was intentionally removed in V5.2. */
+.page-wipe{display:none!important}
+
+/* Keep decorative layers inside their own sections. */
+.hero,#portfolio,#skills,#athletic{overflow:clip}
+#portfolio>.wrap,#skills>.wrap,#athletic>.wrap{position:relative;z-index:3}
+.stack-field,.stack-field__grid,.toolkit-space,.disc-flight{pointer-events:none}
+
+/* Hero footer / availability status: readable and independent of portrait depth. */
+.availability{
+  display:inline-flex;
+  align-items:center;
+  width:max-content;
+  min-height:30px;
+  padding:0 11px;
+  border:1px solid rgba(127,224,181,.18);
+  background:rgba(7,27,29,.52);
+  color:#a9dbc4;
+  border-radius:999px;
+  font-weight:600;
+  white-space:nowrap;
+}
+.availability::before{flex:0 0 auto}
+
+/* Tablet/mobile: flatten only the hero's layout transforms. Decorative cube can
+   still animate internally, but the portrait itself remains in normal flow. */
+@media (max-width:980px){
+  .hero-grid,.hero-grid>*{min-width:0}
+  .portrait-scene{
+    transform:none!important;
+    transform-style:flat;
+    will-change:auto;
+    margin-bottom:0;
+  }
+  .portrait-scene .portrait-card,
+  .portrait-scene .portrait-photo,
+  .portrait-scene .portrait-hud,
+  .portrait-scene .portrait-caption{
+    transform:none!important;
+  }
+  .hero-foot{
+    position:relative;
+    z-index:6;
+    margin-top:56px;
+    padding-top:20px;
+    border-top-color:rgba(180,214,239,.17);
+  }
+  .work-interface{
+    position:relative;
+    top:auto;
+    z-index:4;
+  }
+  .stack-token,.toolkit-float{will-change:auto}
+}
+
+@media (min-width:761px) and (max-width:980px){
+  .hero-foot{
+    grid-template-columns:max-content minmax(0,1fr);
+    align-items:center;
+    column-gap:24px;
+    row-gap:10px;
+  }
+  .hero-foot span:nth-child(2){text-align:right;line-height:1.55}
+  .portrait-scene{margin-top:4px}
+  .section-top,.about-grid,.exp-grid,.athletic-grid,.toolkit-grid,.service-grid,.metric-deck{min-width:0}
+}
+
+@media (max-width:760px){
+  .hero{padding-bottom:36px}
+  .hero-grid{gap:34px}
+  .portrait-scene{
+    width:min(100%,430px);
+    margin-inline:auto;
+  }
+  .portrait-card{box-shadow:0 24px 70px rgba(0,0,0,.30)}
+  .hero-foot{
+    grid-template-columns:1fr;
+    gap:12px;
+    margin-top:52px;
+    padding-top:18px;
+    font-size:8px;
+  }
+  .hero-foot span:nth-child(2){
+    max-width:390px;
+    text-align:left;
+    line-height:1.65;
+    color:#7891a3;
+  }
+  .availability{
+    min-height:32px;
+    padding-inline:12px;
+    font-size:8px;
+    letter-spacing:.08em;
+  }
+  .tech-cube-shell{z-index:-1}
+  .stack-field{opacity:.18}
+  .toolkit-space{opacity:.24}
+  .section-top,.featured,.project-grid,.service-grid,.toolkit-grid,.metric-deck,.athletic-grid,.about-grid,.exp-grid{
+    min-width:0;
+  }
+  section{scroll-margin-top:78px}
+}
+
+@media (max-width:480px){
+  .hero-grid{gap:30px}
+  .hero-foot{margin-top:46px}
+  .availability{font-size:7.5px}
+  .hero-foot span:nth-child(2){font-size:7.5px}
+}
+
+
+/* ================================================================
+   V6.0 — DIGITAL DRAWING SYSTEM / GSAP DrawSVG
+   Technical drafting lines, circuit routes, hover traces and signals.
+   ================================================================ */
+
+/* Section drawing canvases */
+.digital-drawing{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  z-index:1;
+  pointer-events:none;
+  overflow:visible;
+  opacity:.74;
+  mix-blend-mode:screen;
+}
+.digital-drawing *{vector-effect:non-scaling-stroke}
+.digital-drawing .draw-path{
+  fill:none;
+  stroke:rgba(120,194,238,.20);
+  stroke-width:1;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+.digital-drawing .draw-path--primary{
+  stroke:rgba(119,207,255,.40);
+  stroke-width:1.05;
+}
+.digital-drawing .draw-path--accent{
+  stroke:rgba(22,135,248,.52);
+  stroke-width:1.1;
+}
+.digital-drawing .draw-path--ghost{
+  stroke:rgba(142,232,255,.12);
+  stroke-dasharray:2 9;
+}
+.digital-drawing .draw-pulse{
+  stroke:rgba(170,239,255,.95);
+  stroke-width:1.7;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  vector-effect:non-scaling-stroke;
+  filter:drop-shadow(0 0 5px rgba(90,205,255,.72));
+  will-change:stroke-dashoffset;
+}
+.digital-drawing .draw-node{
+  fill:none;
+  stroke:rgba(142,232,255,.38);
+  stroke-width:1;
+}
+.digital-drawing .draw-node--hot{
+  stroke:rgba(127,224,181,.65);
+  filter:drop-shadow(0 0 4px rgba(127,224,181,.45));
+}
+.digital-drawing .draw-cross{
+  fill:none;
+  stroke:rgba(142,232,255,.28);
+  stroke-width:1;
+}
+
+.digital-drawing--hero{z-index:1;opacity:.70}
+.digital-drawing--portfolio{z-index:1;opacity:.62}
+.digital-drawing--skills{z-index:1;opacity:.60}
+.digital-drawing--athletic{z-index:1;opacity:.72}
+.digital-drawing--contact{z-index:0;opacity:.78}
+
+.hero>.wrap,#portfolio>.wrap,#skills>.wrap,#athletic>.wrap{position:relative;z-index:3}
+.contact>.wrap{position:relative;isolation:isolate;overflow:hidden}
+.contact>.wrap>:not(.digital-drawing){position:relative;z-index:2}
+
+/* The drawn frisbee trajectory gets a slightly softer technical look. */
+.digital-drawing--athletic .draw-flight-ghost{
+  stroke:rgba(142,232,255,.13);
+  stroke-width:1;
+  stroke-dasharray:4 10;
+}
+.digital-drawing--athletic .draw-flight-live{
+  stroke:rgba(142,232,255,.55);
+  stroke-width:1.35;
+  filter:drop-shadow(0 0 6px rgba(22,135,248,.28));
+}
+
+/* Drawn signature rules beneath section headings. */
+.drawing-rule{
+  position:relative;
+  width:min(360px,72%);
+  height:18px;
+  margin-top:12px;
+  overflow:visible;
+  pointer-events:none;
+}
+.drawing-rule svg{display:block;width:100%;height:100%;overflow:visible}
+.drawing-rule path{
+  fill:none;
+  stroke:rgba(121,204,249,.42);
+  stroke-width:1;
+  stroke-linecap:round;
+  vector-effect:non-scaling-stroke;
+}
+.drawing-rule .drawing-rule__accent{
+  stroke:rgba(142,232,255,.76);
+  filter:drop-shadow(0 0 4px rgba(22,135,248,.18));
+}
+
+/* Hover-driven corner drawing for interactive cards. */
+.service,.metric-card,.toolkit-card,.ath-card,.featured .project-card,.project-grid .project-card{
+  position:relative;
+}
+.card-draw-trace{
+  position:absolute;
+  inset:0;
+  z-index:15;
+  width:100%;
+  height:100%;
+  overflow:visible;
+  pointer-events:none;
+  opacity:.92;
+}
+.card-draw-trace path{
+  fill:none;
+  stroke:rgba(142,232,255,.74);
+  stroke-width:1.1;
+  stroke-linecap:square;
+  vector-effect:non-scaling-stroke;
+  filter:drop-shadow(0 0 3px rgba(22,135,248,.15));
+}
+.card-draw-trace path:nth-child(2n){stroke:rgba(22,135,248,.70)}
+
+/* A tiny drafting index makes the effect feel engineered rather than ornamental. */
+.draw-datum{
+  position:absolute;
+  z-index:2;
+  display:flex;
+  align-items:center;
+  gap:7px;
+  font-size:7px;
+  line-height:1;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:rgba(126,169,198,.54);
+  pointer-events:none;
+  white-space:nowrap;
+}
+.draw-datum::before{content:"";width:18px;height:1px;background:rgba(94,190,244,.34)}
+.hero .draw-datum{left:max(var(--pad),calc((100vw - var(--wrap))/2));top:21%}
+#portfolio .draw-datum{right:max(var(--pad),calc((100vw - var(--wrap))/2));top:9%}
+#skills .draw-datum{left:max(var(--pad),calc((100vw - var(--wrap))/2));bottom:8%}
+
+/* Desktop hover: subtle trace brightness, content remains dominant. */
+@media (hover:hover) and (pointer:fine){
+  .service:hover,.metric-card:hover,.toolkit-card:hover,.ath-card:hover,
+  .featured .project-card:hover,.project-grid .project-card:hover{
+    --trace-opacity:1;
+  }
+}
+
+/* Tablet — keep the architectural line work but lower visual density. */
+@media (max-width:980px){
+  .digital-drawing{opacity:.46}
+  .digital-drawing .draw-path--ghost{opacity:.55}
+  .draw-datum{display:none}
+  .drawing-rule{width:min(300px,68%);height:16px;margin-top:10px}
+  .card-draw-trace{display:none}
+}
+
+/* Mobile — retain the reveal language without crowding small screens. */
+@media (max-width:760px){
+  .digital-drawing{opacity:.32}
+  .digital-drawing--hero{opacity:.27}
+  .digital-drawing--portfolio,.digital-drawing--skills{opacity:.28}
+  .digital-drawing--athletic{opacity:.48}
+  .digital-drawing .draw-path--ghost{display:none}
+  .digital-drawing .draw-node:not(.draw-node--hot){opacity:.55}
+  .drawing-rule{width:190px;max-width:58vw;height:14px;margin-top:9px}
+}
+
+@media (max-width:480px){
+  .digital-drawing--hero{opacity:.22}
+  .digital-drawing--portfolio,.digital-drawing--skills{opacity:.22}
+  .drawing-rule{width:158px;max-width:52vw}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .digital-drawing .draw-pulse{display:none}
+  .card-draw-trace{display:none}
+}
+
+/* ================================================================
+   V6.1 — MOTION SIGNATURES
+   Distinct drawing behavior per section: schematic / route / measure /
+   timeline / constellation / trajectory / frame.
+   ================================================================ */
+
+/* Experience has its own drafting rail on roomy layouts. */
+#experience{position:relative;isolation:isolate;overflow:clip}
+#experience>.wrap{position:relative;z-index:3}
+.digital-drawing--experience{z-index:1;opacity:.38;mix-blend-mode:screen}
+.digital-drawing .draw-exp-rail,
+.digital-drawing .draw-exp-ticks{
+  fill:none;
+  stroke:rgba(116,197,241,.24);
+  stroke-width:1;
+  stroke-linecap:round;
+}
+.digital-drawing .draw-exp-ticks{stroke:rgba(142,232,255,.18)}
+.digital-drawing .draw-exp-node{stroke:rgba(127,224,181,.46)}
+
+/* Toolkit uses a constellation, visually distinct from the orthogonal hero/project routes. */
+.digital-drawing .draw-network-line,
+.digital-drawing .draw-network-orbit{
+  fill:none;
+  stroke:rgba(115,196,241,.26);
+  stroke-width:1;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+.digital-drawing .draw-network-line--secondary{
+  stroke:rgba(115,196,241,.13);
+  stroke-dasharray:3 9;
+}
+.digital-drawing .draw-network-orbit{
+  stroke:rgba(142,232,255,.16);
+  stroke-dasharray:2 7;
+}
+.digital-drawing--skills{opacity:.55}
+.digital-drawing--portfolio .draw-project-branch{
+  stroke:rgba(83,170,224,.18);
+  stroke-dasharray:3 8;
+}
+
+/* Only selected headings get signatures, and each signature has a different geometry. */
+.drawing-signature{
+  position:relative;
+  width:min(360px,74%);
+  height:22px;
+  margin-top:12px;
+  pointer-events:none;
+  overflow:visible;
+}
+.drawing-signature svg{display:block;width:100%;height:100%;overflow:visible}
+.drawing-signature path,
+.drawing-signature circle{
+  fill:none;
+  stroke:rgba(121,204,249,.44);
+  stroke-width:1;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  vector-effect:non-scaling-stroke;
+}
+.drawing-signature .signature-accent{
+  stroke:rgba(142,232,255,.78);
+  filter:drop-shadow(0 0 4px rgba(22,135,248,.16));
+}
+.drawing-signature .signature-node{
+  stroke:rgba(127,224,181,.72);
+  filter:drop-shadow(0 0 4px rgba(127,224,181,.28));
+}
+.drawing-signature--schematic{width:min(330px,69%)}
+.drawing-signature--route{width:min(390px,78%)}
+.drawing-signature--measure{width:min(310px,66%)}
+
+/* Service cards use small corner schematics instead of the same hover border on every card. */
+.service{isolation:isolate}
+.service-schematic{
+  position:absolute;
+  inset:8px;
+  z-index:1;
+  width:calc(100% - 16px);
+  height:calc(100% - 16px);
+  pointer-events:none;
+  overflow:visible;
+  opacity:.52;
+  transition:opacity .35s ease,filter .35s ease;
+}
+.service-schematic path,
+.service-schematic circle{
+  fill:none;
+  stroke:rgba(126,211,255,.38);
+  stroke-width:1;
+  vector-effect:non-scaling-stroke;
+}
+.service-schematic .service-schematic__signal{stroke:rgba(22,135,248,.72)}
+.service-schematic .service-schematic__port{stroke:rgba(127,224,181,.68)}
+.service:hover .service-schematic{
+  opacity:.9;
+  filter:drop-shadow(0 0 5px rgba(55,173,239,.14));
+}
+.service-icon,.service h3,.service p,.service-tools{z-index:2}
+
+/* Metric cards now calibrate with partial measurement arcs. */
+.metric-card::before{opacity:.16}
+.metric-dial{
+  position:absolute;
+  right:-24px;
+  bottom:-28px;
+  z-index:1;
+  width:150px;
+  height:150px;
+  pointer-events:none;
+  overflow:visible;
+  opacity:.56;
+  transform:rotate(var(--metric-dial-rotation,0deg));
+  transition:opacity .4s ease,transform .55s var(--ease);
+}
+.metric-dial path{
+  fill:none;
+  stroke-linecap:round;
+  vector-effect:non-scaling-stroke;
+}
+.metric-dial__ghost{stroke:rgba(142,232,255,.12);stroke-width:1}
+.metric-dial__arc{stroke:rgba(128,217,255,.52);stroke-width:1.15;filter:drop-shadow(0 0 4px rgba(22,135,248,.18))}
+.metric-dial__tick{stroke:rgba(142,232,255,.34);stroke-width:1}
+.metric-dial--1{--metric-dial-rotation:-7deg}
+.metric-dial--2{--metric-dial-rotation:8deg}
+.metric-dial--3{--metric-dial-rotation:-13deg}
+.metric-dial--4{--metric-dial-rotation:12deg}
+.metric-card:hover .metric-dial{opacity:.86;transform:rotate(var(--metric-dial-rotation,0deg)) scale(1.035)}
+.metric-index,.metric-value,.metric-card p{z-index:3}
+
+/* Featured work alone keeps the drafted-corner hover trace. */
+.work-draw-trace{
+  position:absolute;
+  inset:0;
+  z-index:16;
+  width:100%;
+  height:100%;
+  pointer-events:none;
+  overflow:visible;
+  opacity:0;
+  transition:opacity .22s ease;
+}
+.work-draw-trace path{
+  fill:none;
+  stroke:rgba(142,232,255,.72);
+  stroke-width:1.05;
+  stroke-linecap:square;
+  vector-effect:non-scaling-stroke;
+  filter:drop-shadow(0 0 3px rgba(22,135,248,.16));
+}
+.work-draw-trace path:nth-child(2n){stroke:rgba(22,135,248,.74)}
+@media (hover:hover) and (pointer:fine){
+  .featured .project-card:hover .work-draw-trace{opacity:.95}
+  .project-grid .project-card:hover{
+    box-shadow:0 24px 65px rgba(0,0,0,.2),0 0 0 1px rgba(142,232,255,.025) inset;
+  }
+}
+
+/* Contact remains readable while its outer frame draws. */
+#contact .digital-drawing--contact{opacity:.68}
+#contact .eyebrow,#contact h2,#contact .contact-email,#contact .contact-bottom{position:relative;z-index:3}
+
+/* Stable compositing for reveal effects — important when 3D and clip-path meet. */
+.service,.metric-card,.toolkit-card,.ath-card,.featured .project-card,.about-copy,.tl-item{
+  backface-visibility:hidden;
+  -webkit-backface-visibility:hidden;
+}
+
+/* DrawSVG network fallback: drawings remain useful if the CDN/plugin is unavailable. */
+.drawsvg-fallback .digital-drawing,
+.drawsvg-fallback .drawing-signature,
+.drawsvg-fallback .service-schematic,
+.drawsvg-fallback .metric-dial{opacity:.46}
+.drawsvg-fallback .work-draw-trace{display:none}
+
+/* Tablet: simplify topology and remove desktop-only rail alignment assumptions. */
+@media (max-width:980px){
+  .digital-drawing--experience{display:none}
+  .drawing-signature{height:18px;margin-top:10px}
+  .drawing-signature--schematic{width:min(285px,66%)}
+  .drawing-signature--route{width:min(315px,72%)}
+  .drawing-signature--measure{width:min(260px,62%)}
+  .service-schematic{opacity:.34}
+  .metric-dial{width:124px;height:124px;right:-20px;bottom:-24px;opacity:.42}
+  .work-draw-trace{display:none}
+  .digital-drawing .draw-network-line--secondary{opacity:.45}
+}
+
+/* Mobile: preserve the signature of each scene without over-drawing the page. */
+@media (max-width:760px){
+  .drawing-signature{height:16px;margin-top:9px}
+  .drawing-signature--schematic{width:190px;max-width:54vw}
+  .drawing-signature--route{width:210px;max-width:60vw}
+  .drawing-signature--measure{width:176px;max-width:50vw}
+  .service-schematic{inset:7px;width:calc(100% - 14px);height:calc(100% - 14px);opacity:.26}
+  .metric-dial{width:104px;height:104px;right:-17px;bottom:-18px;opacity:.34}
+  .digital-drawing--skills{opacity:.28}
+  .digital-drawing--skills .draw-network-line--secondary,
+  .digital-drawing--skills .draw-network-orbit{display:none}
+  .digital-drawing--portfolio .draw-project-branch{opacity:.35}
+}
+
+@media (max-width:480px){
+  .drawing-signature--schematic{width:168px}
+  .drawing-signature--route{width:185px}
+  .drawing-signature--measure{width:154px}
+  .metric-dial{width:92px;height:92px;opacity:.3}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .service-schematic,.metric-dial,.work-draw-trace{transition:none!important}
+}
+
+
+/* ================================================================
+   V6.3 — STABLE CARD MOTION
+   GSAP owns card-container transforms. CSS owns visual hover details.
+   This removes transform fights between entrances, hover CSS and tilt JS.
+   ================================================================ */
+@media (hover:hover) and (pointer:fine){
+  .service,.metric-card,.toolkit-card,.ath-card,
+  .featured .project-card,.project-grid .project-card{
+    transition:border-color .32s ease,box-shadow .38s ease,background-color .38s ease,background .38s ease;
+    transform-style:preserve-3d;
+  }
+
+  /* Neutralize legacy card-level transform hover rules. GSAP supplies lift/tilt inline. */
+  .service:hover,.metric-card:hover,.toolkit-card:hover,.ath-card:hover,
+  .featured .project-card:hover,.project-grid .project-card:hover{
+    transform:none;
+  }
+
+  .card-ready{will-change:transform}
+
+  /* Service: schematic becomes the motion signature, not a large card tilt. */
+  .service:hover{border-color:rgba(142,220,255,.30);box-shadow:0 24px 64px rgba(0,0,0,.20)}
+  .service:hover .service-icon{transform:translate3d(0,-3px,26px) rotate(5deg) scale(1.045)}
+  .service:hover h3{transform:translate3d(2px,0,16px)}
+  .service:hover p{transform:translate3d(0,-1px,10px)}
+  .service:hover .service-tools{transform:translate3d(2px,0,14px)}
+
+  /* Metrics: restrained lift; the number and calibration dial do the visual work. */
+  .metric-card:hover{border-color:rgba(142,220,255,.26);box-shadow:0 22px 58px rgba(0,0,0,.18)}
+  .metric-card:hover .metric-value{transform:translate3d(0,-3px,30px) scale(1.015)}
+  .metric-card:hover .metric-index{transform:translate3d(2px,-1px,12px)}
+  .metric-card:hover p{transform:translate3d(1px,-1px,12px)}
+
+  /* Toolkit: chips separate slightly in depth without moving the entire grid around. */
+  .toolkit-card:hover{border-color:rgba(142,220,255,.28);box-shadow:0 24px 62px rgba(0,0,0,.20)}
+  .toolkit-card:hover h3{transform:translate3d(2px,-2px,18px)}
+  .toolkit-card:hover .toolkit-list li{transform:translate3d(0,-1px,10px)}
+  .toolkit-card:hover .toolkit-list li:nth-child(2n){transform:translate3d(0,-2px,15px)}
+  .toolkit-card:hover .toolkit-list li:nth-child(3n){transform:translate3d(0,0,7px)}
+
+  /* Athletic: content depth only; flight motion remains in the background disc. */
+  .ath-card:hover{border-color:rgba(142,220,255,.28);box-shadow:0 25px 66px rgba(0,0,0,.21)}
+  .ath-card:hover .organization-logo-panel{transform:translate3d(0,-3px,22px) rotate(-2deg) scale(1.035)}
+  .ath-card:hover .ath-name{transform:translate3d(2px,-1px,16px)}
+  .ath-card:hover .ath-role{transform:translate3d(2px,0,13px)}
+  .ath-card:hover .ath-desc{transform:translate3d(0,-1px,9px)}
+  .ath-card:hover .ath-period{transform:translate3d(-1px,1px,8px)}
+
+  /* Featured/archive work keeps the strongest pointer response, but at a calmer amplitude. */
+  .featured .project-card:hover{border-color:rgba(142,220,255,.34);box-shadow:0 30px 80px rgba(0,0,0,.26),0 0 36px rgba(22,135,248,.03)}
+  .project-grid .project-card:hover{border-color:rgba(142,220,255,.27);box-shadow:0 22px 58px rgba(0,0,0,.19)}
+}
+
+/* Touch devices never inherit desktop transform hover states. */
+@media (hover:none),(pointer:coarse){
+  .service,.metric-card,.toolkit-card,.ath-card,
+  .featured .project-card,.project-grid .project-card{
+    transform-style:flat;
+    will-change:auto;
+  }
+}
