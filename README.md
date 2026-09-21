@@ -18,6 +18,14 @@ I enjoy transforming designs into fully functional websites and continuously exp
 
 ---
 
+## Personal Project — ForgePress
+
+**ForgePress** is my ongoing Gutenberg-native WordPress framework and visual-building system. It is designed to provide Elementor-level flexibility while staying aligned with native WordPress architecture and avoiding proprietary builder lock-in.
+
+The architecture separates responsibilities across a parent theme, child theme, and ForgePress Core plugin. Current and planned capabilities include responsive container controls, Grid/Flex/Stack layouts, theme.json-based design tokens, custom Gutenberg blocks, scalable navigation and mega menus, dynamic data, REST foundations, plus a planned ACF-like data layer for custom fields, post types, taxonomies, relationships, queries, forms, and integrations.
+
+---
+
 ## Work Experience
 
 My professional experience includes working in an agency environment where I handle website development, maintenance, landing pages, performance improvements, responsive implementation, and ongoing client website updates.
