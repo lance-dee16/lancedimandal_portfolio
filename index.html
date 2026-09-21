@@ -5,12 +5,12 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="dark">
     <meta name="theme-color" content="#061019">
-    <meta name="description" content="Lance Dimandal, a web developer in Pampanga, Philippines. Selected WordPress, Shopify, and agency development work.">
+    <meta name="description" content="Lance Dimandal, a web developer in Pampanga, Philippines. ForgePress creator with selected WordPress, Shopify, HubSpot, and agency development work.">
     <title>Lance Dimandal — Web Developer</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=20260918-3d-v6-3">
+    <link rel="stylesheet" href="styles.css?v=20260921-forgepress-v6-4">
     <script src="script.js?v=20260917-3d-v2" defer>
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.15.0/gsap.min.js" defer></script>
@@ -18,7 +18,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.15.0/ScrollTrigger.min.js" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.15.0/ScrollSmoother.min.js" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.15.0/SplitText.min.js" defer></script>
-    <script src="animations.js?v=20260918-3d-v6-3" defer></script>
+    <script src="animations.js?v=20260921-forgepress-v6-4" defer></script>
   </head>
   <body>
     <div class="boot-screen" aria-hidden="true">
@@ -164,9 +164,92 @@
             <div class="section-top">
               <div>
                 <div class="eyebrow">Selected work</div>
-                <h2>Websites I’ve worked on.</h2>
+                <h2>Things I’ve built &amp; worked on.</h2>
               </div>
-              <p>Website builds, rebuilds, and migrations<br>with the team at Shore360 Agency.</p>
+              <p>Personal product development alongside selected client builds, rebuilds, migrations, and platform work.</p>
+            </div>
+
+            <div class="personal-project-heading">
+              <span>Personal project / 01</span>
+              <span>Active development</span>
+            </div>
+
+            <article class="forgepress-showcase" id="forgepress">
+              <div class="forgepress-copy">
+                <div class="forgepress-brandline">
+                  <div class="forgepress-mark" aria-hidden="true"><span>F</span><span>P</span></div>
+                  <div>
+                    <span class="forgepress-kicker">Personal R&amp;D / WordPress Systems</span>
+                    <strong class="forgepress-name">ForgePress</strong>
+                  </div>
+                  <span class="forgepress-status"><i></i> In development</span>
+                </div>
+                <h3>A Gutenberg-native framework for building WordPress without builder lock-in.</h3>
+                <p class="forgepress-desc">ForgePress is my ongoing WordPress framework and visual-building system: the parent theme owns the design system, templates, responsive behavior and editor experience; the child theme handles project-level overrides; and ForgePress Core owns portable blocks, dynamic content and reusable data features.</p>
+                <div class="forgepress-points">
+                  <span>Responsive Containers</span>
+                  <span>Grid / Flex / Stack</span>
+                  <span>theme.json v3</span>
+                  <span>Navigation + Mega Menu</span>
+                  <span>Dynamic Data</span>
+                  <span>Custom Gutenberg Blocks</span>
+                  <span>REST Foundation</span>
+                  <span>Data Layer Roadmap</span>
+                </div>
+                <div class="forgepress-foot">
+                  <span>Built as an independent Gutenberg implementation</span>
+                  <span>Elementor-level flexibility → native WordPress</span>
+                </div>
+              </div>
+
+              <div class="forgepress-builder" aria-label="Stylized ForgePress builder interface preview">
+                <div class="fp-windowbar">
+                  <span class="fp-windowbar__brand">FORGEPRESS / BUILDER</span>
+                  <span class="fp-windowbar__mode">DESKTOP&nbsp;&nbsp; TABLET&nbsp;&nbsp; MOBILE</span>
+                  <span class="fp-windowbar__live"><i></i> LIVE</span>
+                </div>
+                <div class="fp-workspace">
+                  <div class="fp-toolbar">
+                    <span>+</span><span>▦</span><span>◇</span><span>↕</span><span>⌘</span>
+                  </div>
+                  <div class="fp-canvas">
+                    <div class="fp-canvas__meta"><span>PAGE / HOME</span><span>1200 PX</span></div>
+                    <div class="fp-section fp-section--hero">
+                      <span class="fp-handle">SECTION</span>
+                      <div class="fp-wire fp-wire--eyebrow"></div>
+                      <div class="fp-wire fp-wire--title"></div>
+                      <div class="fp-wire fp-wire--title fp-wire--title-short"></div>
+                      <div class="fp-wire fp-wire--copy"></div>
+                      <div class="fp-wire fp-wire--button"></div>
+                    </div>
+                    <div class="fp-section fp-section--grid">
+                      <span class="fp-handle">GRID / 3</span>
+                      <div class="fp-grid-cards"><i></i><i></i><i></i></div>
+                    </div>
+                    <div class="fp-cursor-target" aria-hidden="true"><span>+</span></div>
+                  </div>
+                  <div class="fp-inspector">
+                    <div class="fp-inspector__title">LAYOUT</div>
+                    <div class="fp-control"><span>Content width</span><b>1200</b></div>
+                    <div class="fp-control"><span>Columns</span><b>3</b></div>
+                    <div class="fp-control"><span>Gap</span><b>24</b></div>
+                    <div class="fp-control fp-control--switch"><span>Full width BG</span><i></i></div>
+                    <div class="fp-inspector__title">RESPONSIVE</div>
+                    <div class="fp-breakpoints"><span>D</span><span>T</span><span>M</span></div>
+                    <div class="fp-inspector__title">DYNAMIC</div>
+                    <div class="fp-control"><span>Source</span><b>POST</b></div>
+                  </div>
+                </div>
+                <div class="fp-builder-footer"><span>BLOCKS / TOKENS / DATA / MOTION</span><span>v0.6.4</span></div>
+              </div>
+            </article>
+
+            <div class="client-work-heading">
+              <div>
+                <span>Client &amp; agency work</span>
+                <strong>Selected website projects</strong>
+              </div>
+              <span>03 featured</span>
             </div>
             <div class="work-interface" aria-hidden="true"><span>SELECTED / 03</span><div class="work-interface__line"><i></i></div><span class="work-interface__count">01</span></div>
             <div class="featured">
