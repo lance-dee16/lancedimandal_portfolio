@@ -745,6 +745,46 @@
       });
 
 
+
+      /* ForgePress personal project — the builder assembles like a live editor rather than another project card. */
+      var forgepress = document.querySelector('.forgepress-showcase');
+      if (forgepress) {
+        var fpCopy = forgepress.querySelectorAll('.forgepress-brandline,.forgepress-copy h3,.forgepress-desc,.forgepress-points,.forgepress-foot');
+        var fpBuilder = forgepress.querySelector('.forgepress-builder');
+        var fpSections = forgepress.querySelectorAll('.fp-section');
+        var fpWires = forgepress.querySelectorAll('.fp-wire,.fp-grid-cards i');
+        var fpControls = forgepress.querySelectorAll('.fp-toolbar span,.fp-control,.fp-breakpoints span');
+        var fpTl = gsap.timeline({
+          scrollTrigger: { trigger: forgepress, start: compactMotion ? 'top 92%' : 'top 84%', once: true }
+        });
+        fpTl.fromTo(forgepress,
+          { y: compactMotion ? 18 : 34, autoAlpha: 0, clipPath: compactMotion ? 'inset(0 0 8% 0)' : 'inset(0 0 14% 0)' },
+          { y: 0, autoAlpha: 1, clipPath: 'inset(0 0 0% 0)', duration: compactMotion ? .58 : .82, ease: 'power3.out' }
+        )
+        .fromTo(fpCopy,
+          { y: 12, opacity: 0 },
+          { y: 0, opacity: 1, duration: .48, stagger: .045, ease: 'power3.out', clearProps: 'transform,opacity' }, compactMotion ? '-=.35' : '-=.55');
+        if (fpBuilder) fpTl.fromTo(fpBuilder,
+          compactMotion ? { y: 14, opacity: 0 } : { y: 24, opacity: 0, scale: .975, rotationX: 3 },
+          { y: 0, opacity: 1, scale: 1, rotationX: 0, duration: compactMotion ? .52 : .72, ease: 'power3.out', clearProps: 'transform,opacity' }, '-=.42');
+        if (fpSections.length) fpTl.fromTo(fpSections,
+          { scaleY: .86, opacity: .25, transformOrigin: 'top center' },
+          { scaleY: 1, opacity: 1, duration: .36, stagger: .08, ease: 'power2.out', clearProps: 'transform,opacity' }, '-=.42');
+        if (fpWires.length) fpTl.fromTo(fpWires,
+          { scaleX: .15, opacity: .2, transformOrigin: 'left center' },
+          { scaleX: 1, opacity: 1, duration: .34, stagger: .022, ease: 'power2.out', clearProps: 'transform,opacity' }, '-=.28');
+        if (fpControls.length) fpTl.fromTo(fpControls,
+          { x: 6, opacity: 0 },
+          { x: 0, opacity: 1, duration: .28, stagger: .018, ease: 'power2.out', clearProps: 'transform,opacity' }, '-=.30');
+
+        if (!compactMotion && fpBuilder) {
+          gsap.to('.fp-cursor-target', {
+            x: 12, y: -8, duration: 2.4, yoyo: true, repeat: -1, ease: 'sine.inOut',
+            scrollTrigger: { trigger: forgepress, start: 'top bottom', end: 'bottom top', toggleActions: 'play pause resume pause' }
+          });
+        }
+      }
+
       /* Portfolio cards resolve from a soft camera-focus state while the route map scrubs behind them. */
       var featured = gsap.utils.toArray('.featured .project-card');
       featured.forEach(function (card, index) {
