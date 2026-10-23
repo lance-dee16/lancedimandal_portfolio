@@ -692,7 +692,7 @@
         });
       });
 
-      gsap.utils.toArray('.section-top .eyebrow,.section-top p,.sheet-label,#athletic .inline-layout-4,#about .eyebrow').forEach(function (el) {
+      gsap.utils.toArray('.section-top .eyebrow,.section-top p,.sheet-label,#athletic .athletic-intro,#about .eyebrow').forEach(function (el) {
         gsap.from(el, {
           opacity: 0,
           y: compactMotion ? 10 : 14,
@@ -932,7 +932,7 @@
       function updateArchiveUI(open) {
         d.classList.toggle('is-open', open);
         if (label) label.textContent = open ? 'Close archive' : 'View archive';
-        if (count) count.textContent = open ? 'Archive open / 16' : '16 projects';
+        if (count) count.textContent = open ? 'Archive open / ' + cards.length : cards.length + ' projects';
       }
 
       if (!d.open) gsap.set(panel, { height: 0, opacity: 0, overflow: 'hidden' });

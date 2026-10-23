@@ -119,6 +119,27 @@ Desktop users receive richer 3D interactions and pointer-based effects, while ta
 
 ---
 
+## Project Structure
+
+```
+index.html              Single-page site (Hero → Work → Services → About → Experience → Skills → Athletic → Contact)
+css/
+  styles.css            All styles, grouped into numbered sections (see the table of contents at the top)
+js/
+  main.js               Small non-animation helpers (footer year)
+  animations.js         GSAP motion: boot screen, scroll reveals, counters, DrawSVG line work, 3D card interactions
+images/
+  profile/              Portrait photo
+  clients/              Client and project logos used in the Work section
+  organizations/        Employer, school and team logos (Experience & Athletic)
+```
+
+**Adding a project:** copy an existing `.project-card` inside `.project-grid` in `index.html` and put its logo in `images/clients/` (lowercase, hyphenated file name). The archive's project count updates automatically.
+
+**Cache busting:** when you change `css/styles.css` or a file in `js/`, bump the `?v=` date on its `<link>`/`<script>` tag in `index.html`.
+
+---
+
 ## Selected Work
 
 The portfolio contains selected websites and development projects that I have worked on professionally.
