@@ -11,15 +11,15 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css?v=2026-10-23">
+  <link rel="stylesheet" href="css/styles.css?v=2026-10-23-3d">
 
-  <script src="js/main.js?v=2026-10-23" defer></script>
+  <script src="js/main.js?v=2026-10-23-3d" defer></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.15.0/gsap.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/DrawSVGPlugin.min.js" defer></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.15.0/ScrollTrigger.min.js" defer></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.15.0/ScrollSmoother.min.js" defer></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.15.0/SplitText.min.js" defer></script>
-  <script src="js/animations.js?v=2026-10-23" defer></script>
+  <script src="js/animations.js?v=2026-10-23-3d" defer></script>
 </head>
 <body>
   <!-- Boot screen (first visit per tab session) -->
@@ -29,6 +29,12 @@
       <div class="boot-screen__name">LANCE<br>DIMANDAL<span>.</span></div>
       <div class="boot-screen__status"><span class="boot-dot"></span><span>INITIALIZING DIGITAL EXPERIENCE</span><b>00</b></div>
     </div>
+  </div>
+
+  <!-- 3D world: perspective grid floor the page travels over -->
+  <div class="world" aria-hidden="true">
+    <div class="world__horizon"></div>
+    <div class="world__floor"><div class="world__grid"></div></div>
   </div>
 
   <div class="cursor-orb" aria-hidden="true"><span>OPEN</span></div>

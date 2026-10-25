@@ -711,6 +711,53 @@
         gsap.to(breakTrack, { xPercent: -50, duration: 20, repeat: -1, ease: 'none' });
       }
 
+      /* Scroll-driven 3D: blocks stand up out of the floor as they enter (hinged on
+         their bottom edge), and the hero tips back into the world as you leave it.
+         These containers are never animated elsewhere, so nothing fights over them. */
+      var rise = mobileMotion ? { rotationX: 9, z: -30 } : compactMotion ? { rotationX: 13, z: -70 } : { rotationX: 20, z: -120 };
+      /* Start/end come from layout offsets: the tilt itself moves the block on screen,
+         so measuring its transformed rect would push the trigger points too late. */
+      function layoutTop(el) {
+        var y = 0;
+        for (var n = el; n; n = n.offsetParent) y += n.offsetTop;
+        return y;
+      }
+      gsap.utils.toArray('.forgepress-builder .fp-workspace,.featured,.service-grid,.metric-deck,.exp-grid,.toolkit-grid,.athletic-grid,#contact > .wrap').forEach(function (block) {
+        // Tall blocks get a smaller angle so their top edge doesn't swing far out of place.
+        var damp = Math.max(.3, Math.min(1, 520 / Math.max(1, block.offsetHeight)));
+        gsap.fromTo(block,
+          { rotationX: rise.rotationX * damp, z: rise.z, transformPerspective: 1400, transformOrigin: '50% 100%' },
+          { rotationX: 0, z: 0, ease: 'none', scrollTrigger: {
+            trigger: block,
+            start: function () { return layoutTop(block) - window.innerHeight; },
+            end: function () { return layoutTop(block) - window.innerHeight * .58; },
+            scrub: compactMotion ? .5 : .9,
+            invalidateOnRefresh: true
+          } }
+        );
+      });
+
+      gsap.to('.hero > .wrap', {
+        rotationX: compactMotion ? 8 : 16,
+        z: compactMotion ? -60 : -180,
+        autoAlpha: .25,
+        transformPerspective: 1400,
+        transformOrigin: '50% 100%',
+        ease: 'none',
+        scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true }
+      });
+
+      /* World grid: the floor scrolls toward the viewer, one 120px cell per loop. */
+      var worldGrid = document.querySelector('.world__grid');
+      if (worldGrid) {
+        var setWorldY = gsap.quickSetter(worldGrid, 'y', 'px');
+        ScrollTrigger.create({
+          start: 0,
+          end: 'max',
+          onUpdate: function (self) { setWorldY((self.scroll() * .55) % 120); }
+        });
+      }
+
       /* Keep the strong scroll-linked cube movement on roomy layouts only.
          On stacked tablet/mobile heroes it can visually drift into the copy. */
       if (window.matchMedia('(min-width: 981px)').matches) {
@@ -1090,20 +1137,45 @@
         return card.classList.contains('card-ready') || ScrollTrigger.isInViewport(card, .15);
       }
 
+      /* 3D depth cards: the card tilts toward the cursor, its inner layers rise on Z
+         (CSS reads --lift), and the edge extrudes away from the cursor (--ex / --ey). */
+      var depthCards = [];
+
       function bindTilt(card, maxTilt, liftAmount, scaleAmount) {
         gsap.set(card, { transformPerspective: 1200, transformOrigin: '50% 50%' });
+        card.classList.add('is-3d');
+        if (!card.querySelector(':scope > .card-glare') && !card.matches('.project-card')) {
+          var glare = document.createElement('span');
+          glare.className = 'card-glare';
+          glare.setAttribute('aria-hidden', 'true');
+          card.appendChild(glare);
+        }
+        depthCards.push(card);
+
         var rx = gsap.quickTo(card, 'rotationX', { duration: .42, ease: 'power3.out', overwrite: 'auto' });
         var ry = gsap.quickTo(card, 'rotationY', { duration: .42, ease: 'power3.out', overwrite: 'auto' });
         var lift = gsap.quickTo(card, 'y', { duration: .36, ease: 'power3.out', overwrite: 'auto' });
         var scale = gsap.quickTo(card, 'scale', { duration: .36, ease: 'power3.out', overwrite: 'auto' });
+        var ex = gsap.quickTo(card, '--ex', { duration: .42, ease: 'power3.out' });
+        var ey = gsap.quickTo(card, '--ey', { duration: .42, ease: 'power3.out' });
+
+        // Lift on the first eligible move (not pointerenter), so a pointer that arrives
+        // while the card is still entering still gets depth once the card is ready.
+        var lifted = false;
 
         card.addEventListener('pointermove', function (e) {
           if (!canInteract(card)) return;
+          if (!lifted) {
+            lifted = true;
+            gsap.to(card, { '--lift': 1, duration: .55, ease: 'power3.out', overwrite: 'auto' });
+          }
           var r = card.getBoundingClientRect();
           var px = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width));
           var py = Math.max(0, Math.min(1, (e.clientY - r.top) / r.height));
           rx((.5 - py) * maxTilt);
           ry((px - .5) * maxTilt);
+          ex((.5 - px) * 2);
+          ey((.5 - py) * 2);
           lift(liftAmount);
           scale(scaleAmount);
           card.style.setProperty('--mx', (px * 100) + '%');
@@ -1113,7 +1185,9 @@
         }, { signal: cardSignal });
 
         card.addEventListener('pointerleave', function () {
-          rx(0); ry(0); lift(0); scale(1);
+          rx(0); ry(0); ex(0); ey(0); lift(0); scale(1);
+          lifted = false;
+          gsap.to(card, { '--lift': 0, duration: .45, ease: 'power3.out', overwrite: 'auto' });
           card.style.setProperty('--mx', '50%');
           card.style.setProperty('--my', '50%');
           card.style.setProperty('--card-x', '50%');
@@ -1121,22 +1195,24 @@
         }, { signal: cardSignal });
       }
 
-      function bindLift(card, liftAmount, scaleAmount) {
-        var lift = gsap.quickTo(card, 'y', { duration: .34, ease: 'power3.out', overwrite: 'auto' });
-        var scale = gsap.quickTo(card, 'scale', { duration: .34, ease: 'power3.out', overwrite: 'auto' });
-        card.addEventListener('pointerenter', function () {
-          if (!canInteract(card)) return;
-          lift(liftAmount); scale(scaleAmount);
-        }, { signal: cardSignal });
-        card.addEventListener('pointerleave', function () { lift(0); scale(1); }, { signal: cardSignal });
-      }
+      document.querySelectorAll('.featured .project-card').forEach(function (card) { bindTilt(card, 7, -8, 1.01); });
+      document.querySelectorAll('.project-grid .project-card').forEach(function (card) { bindTilt(card, 6, -6, 1.008); });
+      document.querySelectorAll('.service').forEach(function (card) { bindTilt(card, 7, -6, 1.008); });
+      document.querySelectorAll('.metric-card').forEach(function (card) { bindTilt(card, 6, -4, 1.006); });
+      document.querySelectorAll('.toolkit-card').forEach(function (card) { bindTilt(card, 6, -5, 1.008); });
+      document.querySelectorAll('.ath-card').forEach(function (card) { bindTilt(card, 5, -5, 1.006); });
 
-      document.querySelectorAll('.featured .project-card').forEach(function (card) { bindTilt(card, 3.2, -7, 1.008); });
-      document.querySelectorAll('.project-grid .project-card').forEach(function (card) { bindTilt(card, 2.0, -5, 1.006); });
-      document.querySelectorAll('.service').forEach(function (card) { bindLift(card, -6, 1.006); });
-      document.querySelectorAll('.metric-card').forEach(function (card) { bindLift(card, -4, 1.004); });
-      document.querySelectorAll('.toolkit-card').forEach(function (card) { bindLift(card, -5, 1.006); });
-      document.querySelectorAll('.ath-card').forEach(function (card) { bindLift(card, -5, 1.005); });
+      /* WebGL hero crystal replaces the CSS cube on roomy pointer screens. */
+      var heroScene = null;
+      var heroEl = document.querySelector('.hero');
+      var portraitCard = document.querySelector('.portrait-card');
+      if (heroEl && portraitCard) {
+        import('./hero-scene.js?v=2026-10-23-3d').then(function (mod) {
+          if (!cardMotionController.signal.aborted) {
+            heroScene = mod.createHeroScene({ hero: heroEl, anchor: portraitCard, gsap: gsap, ScrollTrigger: ScrollTrigger, delay: bootWillPlay ? 1.9 : 0.35 });
+          }
+        }).catch(function () { /* keep the CSS cube */ });
+      }
 
       /* Slow autonomous float keeps background layers alive while the user is idle. */
       var ambientTweens = [];
@@ -1177,6 +1253,11 @@
 
       return function () {
         if (cardMotionController) cardMotionController.abort();
+        if (heroScene) heroScene.destroy();
+        depthCards.forEach(function (card) {
+          card.classList.remove('is-3d');
+          gsap.set(card, { '--lift': 0, '--ex': 0, '--ey': 0 });
+        });
         if (cubeTween) cubeTween.kill();
         if (discFlight) discFlight.kill();
         if (ambientTweens) ambientTweens.forEach(function (t) { t.kill(); });

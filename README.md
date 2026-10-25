@@ -127,7 +127,8 @@ css/
   styles.css            All styles, grouped into numbered sections (see the table of contents at the top)
 js/
   main.js               Small non-animation helpers (footer year)
-  animations.js         GSAP motion: boot screen, scroll reveals, counters, DrawSVG line work, 3D card interactions
+  animations.js         GSAP motion: boot screen, scroll reveals, counters, DrawSVG line work, 3D cards, scroll 3D
+  hero-scene.js         Three.js crystal in the hero (desktop only; loaded on demand by animations.js)
 images/
   profile/              Portrait photo
   clients/              Client and project logos used in the Work section
