@@ -546,7 +546,19 @@
 
     /* Smooth desktop only. Native scrolling wins on touch devices. */
     var smoother = null;
+    var heroSection = document.querySelector('.hero');
     if (!reduced && !isTouch && hasSmoother && document.getElementById('smooth-wrapper')) {
+      /* The sticky nav normally takes up its own height in the page flow. ScrollSmoother
+         pins the content wrapper to the top of the viewport instead, so add the nav height
+         to the hero's top padding (its background still runs up under the nav) or the hero
+         copy slides under the nav on narrower screens. */
+      var syncNavOffset = function () {
+        if (!nav || !heroSection) return;
+        heroSection.style.paddingTop = '';
+        heroSection.style.paddingTop = (parseFloat(getComputedStyle(heroSection).paddingTop) + nav.offsetHeight) + 'px';
+      };
+      syncNavOffset();
+      window.addEventListener('resize', syncNavOffset, { passive: true });
       smoother = ScrollSmoother.create({
         smooth: 1.05,
         effects: true,
@@ -737,14 +749,17 @@
         );
       });
 
+      /* The exit starts once the hero's bottom reaches the viewport bottom. On desktop the
+         hero is about one screen tall, so it begins immediately; on phones the stacked hero
+         is taller, and the portrait stays fully visible until you have scrolled past it. */
       gsap.to('.hero > .wrap', {
         rotationX: compactMotion ? 8 : 16,
         z: compactMotion ? -60 : -180,
-        autoAlpha: .25,
+        autoAlpha: .3,
         transformPerspective: 1400,
         transformOrigin: '50% 100%',
         ease: 'none',
-        scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true }
+        scrollTrigger: { trigger: '.hero', start: 'clamp(bottom bottom)', end: 'bottom top', scrub: true }
       });
 
       /* World grid: the floor scrolls toward the viewer, one 120px cell per loop. */
@@ -1138,8 +1153,41 @@
       }
 
       /* 3D depth cards: the card tilts toward the cursor, its inner layers rise on Z
-         (CSS reads --lift), and the edge extrudes away from the cursor (--ex / --ey). */
+         (CSS reads --lift), and the edge extrudes away from the cursor (--ex / --ey).
+
+         Hit-testing uses each card's untransformed layout box, not the browser's
+         pointerenter/leave: a tilted card's edge swings away from the cursor, which
+         used to fire pointerleave, flatten the card, re-enter, and flicker. */
       var depthCards = [];
+      var activeTilt = null;
+      var lastPointer = null;
+
+      function layoutBox(card) {
+        var parent = card.offsetParent;
+        var base = parent ? parent.getBoundingClientRect() : { left: 0, top: 0 };
+        var left = base.left + (parent ? parent.clientLeft : 0) + card.offsetLeft;
+        var top = base.top + (parent ? parent.clientTop : 0) + card.offsetTop;
+        return { left: left, top: top, right: left + card.offsetWidth, bottom: top + card.offsetHeight };
+      }
+
+      function trackPointer(x, y) {
+        lastPointer = { x: x, y: y };
+        if (!activeTilt) return;
+        var box = layoutBox(activeTilt.card);
+        if (x >= box.left && x <= box.right && y >= box.top && y <= box.bottom) activeTilt.move(box, x, y);
+        else { activeTilt.leave(); activeTilt = null; }
+      }
+
+      document.addEventListener('pointermove', function (e) { trackPointer(e.clientX, e.clientY); }, { signal: cardSignal, passive: true });
+      document.addEventListener('pointerout', function (e) {
+        if (!e.relatedTarget && activeTilt) { activeTilt.leave(); activeTilt = null; } // pointer left the window
+      }, { signal: cardSignal });
+      // Content can scroll under a still pointer; re-test against the moved card.
+      var tiltScrollCheck = ScrollTrigger.create({
+        start: 0,
+        end: 'max',
+        onUpdate: function () { if (activeTilt && lastPointer) trackPointer(lastPointer.x, lastPointer.y); }
+      });
 
       function bindTilt(card, maxTilt, liftAmount, scaleAmount) {
         gsap.set(card, { transformPerspective: 1200, transformOrigin: '50% 50%' });
@@ -1159,39 +1207,43 @@
         var ex = gsap.quickTo(card, '--ex', { duration: .42, ease: 'power3.out' });
         var ey = gsap.quickTo(card, '--ey', { duration: .42, ease: 'power3.out' });
 
-        // Lift on the first eligible move (not pointerenter), so a pointer that arrives
-        // while the card is still entering still gets depth once the card is ready.
-        var lifted = false;
-
-        card.addEventListener('pointermove', function (e) {
-          if (!canInteract(card)) return;
-          if (!lifted) {
-            lifted = true;
-            gsap.to(card, { '--lift': 1, duration: .55, ease: 'power3.out', overwrite: 'auto' });
+        var tilt = {
+          card: card,
+          move: function (box, x, y) {
+            var px = Math.max(0, Math.min(1, (x - box.left) / (box.right - box.left)));
+            var py = Math.max(0, Math.min(1, (y - box.top) / (box.bottom - box.top)));
+            // Ease the tilt out over the outer 12% so the edges stay put under the cursor
+            // (keeps the CSS :hover glow from flickering on the border too).
+            var ramp = Math.min(1, Math.min(px, 1 - px, py, 1 - py) / .12);
+            rx((.5 - py) * maxTilt * ramp);
+            ry((px - .5) * maxTilt * ramp);
+            ex((.5 - px) * 2);
+            ey((.5 - py) * 2);
+            lift(liftAmount);
+            scale(scaleAmount);
+            card.style.setProperty('--mx', (px * 100) + '%');
+            card.style.setProperty('--my', (py * 100) + '%');
+            card.style.setProperty('--card-x', (px * 100) + '%');
+            card.style.setProperty('--card-y', (py * 100) + '%');
+          },
+          leave: function () {
+            rx(0); ry(0); ex(0); ey(0); lift(0); scale(1);
+            gsap.to(card, { '--lift': 0, duration: .45, ease: 'power3.out', overwrite: 'auto' });
+            card.style.setProperty('--mx', '50%');
+            card.style.setProperty('--my', '50%');
+            card.style.setProperty('--card-x', '50%');
+            card.style.setProperty('--card-y', '50%');
           }
-          var r = card.getBoundingClientRect();
-          var px = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width));
-          var py = Math.max(0, Math.min(1, (e.clientY - r.top) / r.height));
-          rx((.5 - py) * maxTilt);
-          ry((px - .5) * maxTilt);
-          ex((.5 - px) * 2);
-          ey((.5 - py) * 2);
-          lift(liftAmount);
-          scale(scaleAmount);
-          card.style.setProperty('--mx', (px * 100) + '%');
-          card.style.setProperty('--my', (py * 100) + '%');
-          card.style.setProperty('--card-x', (px * 100) + '%');
-          card.style.setProperty('--card-y', (py * 100) + '%');
-        }, { signal: cardSignal });
+        };
 
-        card.addEventListener('pointerleave', function () {
-          rx(0); ry(0); ex(0); ey(0); lift(0); scale(1);
-          lifted = false;
-          gsap.to(card, { '--lift': 0, duration: .45, ease: 'power3.out', overwrite: 'auto' });
-          card.style.setProperty('--mx', '50%');
-          card.style.setProperty('--my', '50%');
-          card.style.setProperty('--card-x', '50%');
-          card.style.setProperty('--card-y', '50%');
+        // Activate on any move over the card (not just pointerenter), so a pointer that
+        // arrives while the card is still entering gets depth once the card is ready.
+        card.addEventListener('pointermove', function (e) {
+          if (activeTilt === tilt || !canInteract(card)) return;
+          if (activeTilt) activeTilt.leave();
+          activeTilt = tilt;
+          gsap.to(card, { '--lift': 1, duration: .55, ease: 'power3.out', overwrite: 'auto' });
+          tilt.move(layoutBox(card), e.clientX, e.clientY);
         }, { signal: cardSignal });
       }
 
@@ -1207,7 +1259,7 @@
       var heroEl = document.querySelector('.hero');
       var portraitCard = document.querySelector('.portrait-card');
       if (heroEl && portraitCard) {
-        import('./hero-scene.js?v=2026-10-23-3d').then(function (mod) {
+        import('./hero-scene.js?v=2026-10-26').then(function (mod) {
           if (!cardMotionController.signal.aborted) {
             heroScene = mod.createHeroScene({ hero: heroEl, anchor: portraitCard, gsap: gsap, ScrollTrigger: ScrollTrigger, delay: bootWillPlay ? 1.9 : 0.35 });
           }
@@ -1253,6 +1305,8 @@
 
       return function () {
         if (cardMotionController) cardMotionController.abort();
+        if (activeTilt) { activeTilt.leave(); activeTilt = null; }
+        tiltScrollCheck.kill();
         if (heroScene) heroScene.destroy();
         depthCards.forEach(function (card) {
           card.classList.remove('is-3d');
