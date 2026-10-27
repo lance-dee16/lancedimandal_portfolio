@@ -723,43 +723,78 @@
         gsap.to(breakTrack, { xPercent: -50, duration: 20, repeat: -1, ease: 'none' });
       }
 
-      /* Scroll-driven 3D: blocks stand up out of the floor as they enter (hinged on
-         their bottom edge), and the hero tips back into the world as you leave it.
-         These containers are never animated elsewhere, so nothing fights over them. */
-      var rise = mobileMotion ? { rotationX: 9, z: -30 } : compactMotion ? { rotationX: 13, z: -70 } : { rotationX: 20, z: -120 };
-      /* Start/end come from layout offsets: the tilt itself moves the block on screen,
+      /* Scroll-driven 3D, tuned per breakpoint (gsap.matchMedia rebuilds these when the
+         window crosses a breakpoint, so a resized window never keeps the wrong values).
+         Rules that keep the motion smooth:
+           · nothing moves against the scroll direction, so blocks glide instead of stalling
+             and then catching up;
+           · tilts stay small, because large perspective tilts slant text near the edges;
+           · ScrollSmoother already eases desktop scrolling, so scrub is direct there
+             (stacking a second scrub lag felt rubbery); touch gets light smoothing. */
+      var scrollScrub = smoother ? true : .45;
+
+      /* Start/end come from layout offsets: the tilt itself moves a block on screen,
          so measuring its transformed rect would push the trigger points too late. */
       function layoutTop(el) {
         var y = 0;
         for (var n = el; n; n = n.offsetParent) y += n.offsetTop;
         return y;
       }
-      gsap.utils.toArray('.forgepress-builder .fp-workspace,.featured,.service-grid,.metric-deck,.exp-grid,.toolkit-grid,.athletic-grid,#contact > .wrap').forEach(function (block) {
-        // Tall blocks get a smaller angle so their top edge doesn't swing far out of place.
-        var damp = Math.max(.3, Math.min(1, 520 / Math.max(1, block.offsetHeight)));
-        gsap.fromTo(block,
-          { rotationX: rise.rotationX * damp, z: rise.z, transformPerspective: 1400, transformOrigin: '50% 100%' },
-          { rotationX: 0, z: 0, ease: 'none', scrollTrigger: {
-            trigger: block,
-            start: function () { return layoutTop(block) - window.innerHeight; },
-            end: function () { return layoutTop(block) - window.innerHeight * .58; },
-            scrub: compactMotion ? .5 : .9,
-            invalidateOnRefresh: true
-          } }
-        );
-      });
 
-      /* The exit starts once the hero's bottom reaches the viewport bottom. On desktop the
-         hero is about one screen tall, so it begins immediately; on phones the stacked hero
-         is taller, and the portrait stays fully visible until you have scrolled past it. */
-      gsap.to('.hero > .wrap', {
-        rotationX: compactMotion ? 8 : 16,
-        z: compactMotion ? -60 : -180,
-        autoAlpha: .3,
-        transformPerspective: 1400,
-        transformOrigin: '50% 100%',
-        ease: 'none',
-        scrollTrigger: { trigger: '.hero', start: 'clamp(bottom bottom)', end: 'bottom top', scrub: true }
+      mm.add({
+        desktop: '(min-width: 981px)',
+        tablet: '(min-width: 761px) and (max-width: 980px)',
+        phone: '(max-width: 760px)'
+      }, function (context) {
+        var bp = context.conditions;
+        var hero = document.querySelector('.hero');
+
+        /* Hero exit: the whole hero (copy, portrait, WebGL crystal, line drawings) moves
+           as one layer, so nothing drifts apart. It lags slightly behind the scroll, eases
+           back and fades. Desktop also lays back a few degrees, hinged at the top where the
+           headline sits, so the copy never slants. The exit starts once the hero's bottom
+           reaches the viewport bottom: right away on desktop, and only after the portrait
+           on the taller stacked hero on phones. */
+        if (hero) {
+          gsap.fromTo(hero,
+            { y: 0, scale: 1, rotationX: 0, autoAlpha: 1 },
+            {
+              y: function () { return hero.offsetHeight * (bp.phone ? .12 : .2); },
+              scale: bp.desktop ? .93 : .96,
+              rotationX: bp.desktop ? -5 : 0,
+              autoAlpha: .15,
+              transformPerspective: 1600,
+              transformOrigin: '50% 0%',
+              ease: 'none',
+              scrollTrigger: {
+                trigger: hero,
+                start: function () { return Math.max(0, layoutTop(hero) + hero.offsetHeight - window.innerHeight); },
+                end: function () { return layoutTop(hero) + hero.offsetHeight; },
+                scrub: scrollScrub,
+                invalidateOnRefresh: true
+              }
+            }
+          );
+        }
+
+        /* Content blocks rise into place: a short upward glide with a slight lay-back on
+           roomier screens. Phones keep the simpler per-card entrances only. */
+        if (bp.phone) return;
+        var tilt = bp.desktop ? 7 : 4;
+        gsap.utils.toArray('.forgepress-builder .fp-workspace,.featured,.service-grid,.metric-deck,.exp-grid,.toolkit-grid,.athletic-grid,#contact > .wrap').forEach(function (block) {
+          // Tall blocks get a smaller angle so their top edge doesn't swing far out of place.
+          var damp = Math.max(.35, Math.min(1, 520 / Math.max(1, block.offsetHeight)));
+          gsap.fromTo(block,
+            { y: bp.desktop ? 70 : 44, rotationX: tilt * damp, z: bp.desktop ? -60 : -30, transformPerspective: 1600, transformOrigin: '50% 100%' },
+            { y: 0, rotationX: 0, z: 0, ease: 'none', scrollTrigger: {
+              trigger: block,
+              start: function () { return layoutTop(block) - window.innerHeight; },
+              end: function () { return layoutTop(block) - window.innerHeight * .55; },
+              scrub: scrollScrub,
+              invalidateOnRefresh: true
+            } }
+          );
+        });
       });
 
       /* World grid: the floor scrolls toward the viewer, one 120px cell per loop. */
@@ -1259,7 +1294,7 @@
       var heroEl = document.querySelector('.hero');
       var portraitCard = document.querySelector('.portrait-card');
       if (heroEl && portraitCard) {
-        import('./hero-scene.js?v=2026-10-26').then(function (mod) {
+        import('./hero-scene.js?v=2026-10-27').then(function (mod) {
           if (!cardMotionController.signal.aborted) {
             heroScene = mod.createHeroScene({ hero: heroEl, anchor: portraitCard, gsap: gsap, ScrollTrigger: ScrollTrigger, delay: bootWillPlay ? 1.9 : 0.35 });
           }

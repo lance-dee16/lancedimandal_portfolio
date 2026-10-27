@@ -131,9 +131,14 @@ export function createHeroScene(options) {
   }
   hero.addEventListener('pointermove', onMove);
 
+  // Scroll progress through the hero (0 → 1). The canvas sits inside the hero, so it
+  // already moves and fades with the hero's own exit; scroll only spins the crystal
+  // and drifts the particles, never moves the crystal away from the portrait.
   var scroll = { p: 0 };
   var scrollTrigger = ScrollTrigger.create({
-    trigger: hero, start: 'top top', end: 'bottom top',
+    start: 0,
+    end: function () { return hero.offsetTop + hero.offsetHeight; },
+    invalidateOnRefresh: true,
     onUpdate: function (self) { scroll.p = self.progress; }
   });
 
@@ -156,7 +161,7 @@ export function createHeroScene(options) {
     eased.y += (pointer.y - eased.y) * 0.05;
 
     var p = scroll.p;
-    core.position.set(base.x + eased.x * 0.25, base.y - eased.y * 0.2 + p * 2.2 + Math.sin(t * 0.8) * 0.08, p * 2.5);
+    core.position.set(base.x + eased.x * 0.25, base.y - eased.y * 0.2 + Math.sin(t * 0.8) * 0.08, 0);
     var s = intro.s;
     core.scale.x = core.scale.y = core.scale.z = Math.max(0.0001, s * (core.userData.size || 1));
 
@@ -169,12 +174,11 @@ export function createHeroScene(options) {
     ringB.rotation.z = -t * 0.4;
 
     particles.rotation.y = t * 0.012;
-    particles.position.y = p * 1.5;
+    particles.position.y = p * 0.6;
 
     camera.position.x = eased.x * 0.6;
     camera.position.y = -eased.y * 0.4;
-    camera.position.z = 10 - p * 2.2;
-    camera.lookAt(0, p * 0.8, 0);
+    camera.lookAt(0, 0, 0);
 
     renderer.render(scene, camera);
   }
