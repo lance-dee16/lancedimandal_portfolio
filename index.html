@@ -11,15 +11,15 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css?v=2026-10-27">
+  <link rel="stylesheet" href="css/styles.css?v=2026-11-06">
 
-  <script src="js/main.js?v=2026-10-27" defer></script>
+  <script src="js/main.js?v=2026-11-06" defer></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.15.0/gsap.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/DrawSVGPlugin.min.js" defer></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.15.0/ScrollTrigger.min.js" defer></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.15.0/ScrollSmoother.min.js" defer></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.15.0/SplitText.min.js" defer></script>
-  <script src="js/animations.js?v=2026-10-27" defer></script>
+  <script src="js/animations.js?v=2026-11-06" defer></script>
 </head>
 <body>
   <!-- Boot screen (first visit per tab session) -->
@@ -47,10 +47,11 @@
       <a class="logo" href="#">Lance Dimandal<span>.</span></a>
       <div class="nav-links" id="primary-nav">
         <a href="#portfolio"><span>01</span> Work</a>
-        <a href="#services"><span>02</span> Services</a>
-        <a href="#about"><span>03</span> About</a>
-        <a href="#experience"><span>04</span> Experience</a>
-        <a href="#contact"><span>05</span> Contact</a>
+        <a href="#design"><span>02</span> Design</a>
+        <a href="#services"><span>03</span> Services</a>
+        <a href="#about"><span>04</span> About</a>
+        <a href="#experience"><span>05</span> Experience</a>
+        <a href="#contact"><span>06</span> Contact</a>
         <a class="resume" href="https://drive.google.com/file/d/15OOSOrkV5i4wzRMXbaLbTsULK8vVV7xe/view?usp=sharing" target="_blank" rel="noopener noreferrer">Résumé ↗</a>
       </div>
       <button class="menu-toggle" type="button" aria-label="Open menu" aria-controls="mobile-menu" aria-expanded="false"><span></span><span></span></button>
@@ -59,13 +60,14 @@
 
   <div class="mobile-menu" id="mobile-menu" aria-hidden="true">
     <div class="mobile-menu__inner wrap">
-      <div class="mobile-menu__label">Navigation / 05</div>
+      <div class="mobile-menu__label">Navigation / 06</div>
       <div class="mobile-menu__links">
         <a href="#portfolio"><span>01</span> Work</a>
-        <a href="#services"><span>02</span> Services</a>
-        <a href="#about"><span>03</span> About</a>
-        <a href="#experience"><span>04</span> Experience</a>
-        <a href="#contact"><span>05</span> Contact</a>
+        <a href="#design"><span>02</span> Design</a>
+        <a href="#services"><span>03</span> Services</a>
+        <a href="#about"><span>04</span> About</a>
+        <a href="#experience"><span>05</span> Experience</a>
+        <a href="#contact"><span>06</span> Contact</a>
       </div>
       <div class="mobile-menu__foot"><span>San Fernando, Pampanga</span><a href="mailto:dimandallance@gmail.com">Email me ↗</a></div>
     </div>
@@ -607,7 +609,79 @@
           </div>
         </section>
 
-        <!-- ============================== 02 Services ============================== -->
+        <!-- ============================== 02 Graphic design ============================== -->
+        <section id="design" aria-labelledby="design-heading">
+          <div class="wrap">
+            <div class="section-top">
+              <div>
+                <div class="eyebrow">Graphic design</div>
+                <h2 id="design-heading">Posters &amp; visual campaigns.</h2>
+              </div>
+              <p>Event posters, campaign graphics, editorial layouts, <br>and type-driven pieces for campus and community groups.</p>
+            </div>
+
+            <div class="design-filters" role="group" aria-label="Filter graphics by category">
+              <button type="button" class="design-filter" data-filter="all" aria-pressed="true">All <span>08</span></button>
+              <button type="button" class="design-filter" data-filter="events" aria-pressed="false">Events &amp; sports <span>02</span></button>
+              <button type="button" class="design-filter" data-filter="campus" aria-pressed="false">Campus <span>02</span></button>
+              <button type="button" class="design-filter" data-filter="editorial" aria-pressed="false">Editorial <span>02</span></button>
+              <button type="button" class="design-filter" data-filter="typography" aria-pressed="false">Typography <span>02</span></button>
+            </div>
+
+            <div class="design-grid">
+              <figure class="design-card" data-category="events">
+                <button class="design-card__open" type="button" data-full="images/graphics/kd-halloween-hat.webp" aria-label="View larger: KD Halloween Hat — Part II">
+                  <img class="design-card__img" src="images/graphics/kd-halloween-hat-thumb.webp" width="720" height="1018" alt="Halloween event poster for the KD Halloween Hat Part II: a frisbee thrower silhouetted against a full moon, with bats and a witch on a maroon night sky." loading="lazy" decoding="async">
+                </button>
+                <figcaption><span class="design-card__type">Event poster</span><strong>KD Halloween Hat — Part II</strong><span class="design-card__meta">Ultimate frisbee hat tournament · Oct 2022</span></figcaption>
+              </figure>
+              <figure class="design-card" data-category="campus">
+                <button class="design-card__open" type="button" data-full="images/graphics/student-elections-2022.webp" aria-label="View larger: Student Elections 2022">
+                  <img class="design-card__img" src="images/graphics/student-elections-2022-thumb.webp" width="720" height="1019" alt="Student Elections 2022 poster: “Your vote matters” in outlined type over a blue-tinted photo of the campus, with a pointing hand and the online election schedule." loading="lazy" decoding="async">
+                </button>
+                <figcaption><span class="design-card__type">Campaign poster</span><strong>Student Elections 2022</strong><span class="design-card__meta">City College of San Fernando Pampanga</span></figcaption>
+              </figure>
+              <figure class="design-card" data-category="typography">
+                <button class="design-card__open" type="button" data-full="images/graphics/i-am-me.webp" aria-label="View larger: I Am Me — The Art of Being Original">
+                  <img class="design-card__img" src="images/graphics/i-am-me-thumb.webp" width="720" height="1019" alt="Black typographic poster reading “I am me — the art of being original”, with a reaching hand, flowing line art and words such as create, imagine and innovate set along curves." loading="lazy" decoding="async">
+                </button>
+                <figcaption><span class="design-card__type">Typographic poster</span><strong>I Am Me — The Art of Being Original</strong><span class="design-card__meta">Personal type study</span></figcaption>
+              </figure>
+              <figure class="design-card" data-category="campus">
+                <button class="design-card__open" type="button" data-full="images/graphics/miting-de-advance.webp" aria-label="View larger: Miting de Advance">
+                  <img class="design-card__img" src="images/graphics/miting-de-advance-thumb.webp" width="720" height="405" alt="Miting de Advance banner for the CCSFP Supreme Student Council, showing the Sibul and Kayantabe party seals on either side of a fingerprint." loading="lazy" decoding="async">
+                </button>
+                <figcaption><span class="design-card__type">Event banner</span><strong>Miting de Advance</strong><span class="design-card__meta">CCSFP Supreme Student Council · May 2022</span></figcaption>
+              </figure>
+              <figure class="design-card" data-category="editorial">
+                <button class="design-card__open" type="button" data-full="images/graphics/role-poem.webp" aria-label="View larger: “Role”">
+                  <img class="design-card__img" src="images/graphics/role-poem-thumb.webp" width="720" height="405" alt="Literary layout for the poem “Role” by Watanabe of The Star Chronicle, set in three columns on a warm cream background with an illustration of three figures." loading="lazy" decoding="async">
+                </button>
+                <figcaption><span class="design-card__type">Literary feature</span><strong>“Role”</strong><span class="design-card__meta">The Star Chronicle · poem by Watanabe</span></figcaption>
+              </figure>
+              <figure class="design-card" data-category="events">
+                <button class="design-card__open" type="button" data-full="images/graphics/aslag-ultimate-roster.webp" aria-label="View larger: ASLAG Ultimate">
+                  <img class="design-card__img" src="images/graphics/aslag-ultimate-roster-thumb.webp" width="720" height="604" alt="ASLAG Ultimate team roster graphic for the Ultimate Fernandino Frisbee Open 2023, listing ten players in navy condensed type." loading="lazy" decoding="async">
+                </button>
+                <figcaption><span class="design-card__type">Team roster</span><strong>ASLAG Ultimate</strong><span class="design-card__meta">Ultimate Fernandino Frisbee Open 2023</span></figcaption>
+              </figure>
+              <figure class="design-card" data-category="editorial">
+                <button class="design-card__open" type="button" data-full="images/graphics/dilaw-na-papel.webp" aria-label="View larger: Dilaw na Papel">
+                  <img class="design-card__img" src="images/graphics/dilaw-na-papel-thumb.webp" width="720" height="1200" alt="Literary layout for the Filipino poem “Dilaw na Papel” by Niña Margarita Luga of The Star Chronicle, set on lined yellow paper with ink splatters." loading="lazy" decoding="async">
+                </button>
+                <figcaption><span class="design-card__type">Literary feature</span><strong>Dilaw na Papel</strong><span class="design-card__meta">The Star Chronicle · poem by Niña Margarita Luga</span></figcaption>
+              </figure>
+              <figure class="design-card" data-category="typography">
+                <button class="design-card__open" type="button" data-full="images/graphics/ccsfp-choose-hope.webp" aria-label="View larger: #CCSFPChoosesHope">
+                  <img class="design-card__img" src="images/graphics/ccsfp-choose-hope-thumb.webp" width="720" height="604" alt="Quote card for the CCSFP Institute of Information Technology reading “Your mind is your thinker but not your decision maker”, in bold condensed type over a muted photo." loading="lazy" decoding="async">
+                </button>
+                <figcaption><span class="design-card__type">Social graphic</span><strong>#CCSFPChoosesHope</strong><span class="design-card__meta">CCSFP Institute of Information Technology</span></figcaption>
+              </figure>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============================== 03 Services ============================== -->
         <section id="services">
           <div class="wrap">
             <div class="section-top">
@@ -647,7 +721,7 @@
           </div>
         </div>
 
-        <!-- ============================== 03 About ============================== -->
+        <!-- ============================== 04 About ============================== -->
         <section id="about">
           <div class="wrap about-grid">
             <div>
@@ -685,7 +759,7 @@
           </div>
         </section>
 
-        <!-- ============================== 04 Experience ============================== -->
+        <!-- ============================== 05 Experience ============================== -->
         <section id="experience">
           <div class="wrap">
             <div class="sheet-label">Experience</div>
@@ -917,7 +991,7 @@
           </div>
         </section>
 
-        <!-- ============================== 05 Contact ============================== -->
+        <!-- ============================== 06 Contact ============================== -->
         <section id="contact" class="contact">
           <div class="wrap">
             <div class="eyebrow">Get in touch</div>
@@ -943,5 +1017,15 @@
       </footer>
     </div>
   </div>
+  <!-- Graphic design viewer (opened by js/main.js) -->
+  <dialog class="design-lightbox" aria-label="Graphic preview">
+    <button class="design-lightbox__close" type="button" aria-label="Close preview">×</button>
+    <button class="design-lightbox__nav design-lightbox__nav--prev" type="button" aria-label="Previous graphic">←</button>
+    <figure class="design-lightbox__figure">
+      <img class="design-lightbox__img" alt="">
+      <figcaption class="design-lightbox__caption"></figcaption>
+    </figure>
+    <button class="design-lightbox__nav design-lightbox__nav--next" type="button" aria-label="Next graphic">→</button>
+  </dialog>
 </body>
 </html>

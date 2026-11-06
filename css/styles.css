@@ -13,17 +13,18 @@
      09. Work — featured projects
      10. Work — ForgePress showcase
      11. Work — project archive
-     12. Services
-     13. About & metrics
-     14. Experience
-     15. Skills & toolkit
-     16. Athletic
-     17. Contact & footer
-     18. Card system (shared hover, depth & transitions)
-     19. 3D depth & ambient background layers
-     20. Digital drawing system (GSAP DrawSVG)
-     21. Interaction states (pointer hover / touch feedback)
-     22. 3D depth system (world grid, WebGL hero, depth cards)
+     12. Graphic design gallery
+     13. Services
+     14. About & metrics
+     15. Experience
+     16. Skills & toolkit
+     17. Athletic
+     18. Contact & footer
+     19. Card system (shared hover, depth & transitions)
+     20. 3D depth & ambient background layers
+     21. Digital drawing system (GSAP DrawSVG)
+     22. Interaction states (pointer hover / touch feedback)
+     23. 3D depth system (world grid, WebGL hero, depth cards)
 
    Page components follow the page order. Each section lists its base rules
    first, then responsive overrides (wide → narrow), then reduced-motion.
@@ -3732,7 +3733,266 @@ h2 {
 }
 
 /* ==========================================================================
-   12. Services
+   12. Graphic design gallery
+
+   Poster gallery: category filters, masonry columns that keep each poster's
+   own proportions, and the full-size <dialog> viewer (behaviour in js/main.js).
+   ========================================================================== */
+
+#design {
+  position: relative;
+  background: rgba(5, 13, 20, 0.86);
+}
+.design-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 0 0 34px;
+}
+.design-filter {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 16px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--muted);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: color 0.25s ease, border-color 0.25s ease, background-color 0.25s ease;
+}
+.design-filter span {
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--muted-2);
+}
+.design-filter:hover {
+  color: var(--text);
+  border-color: rgba(142, 200, 255, 0.45);
+}
+.design-filter[aria-pressed="true"] {
+  color: #fff;
+  background: var(--blue);
+  border-color: var(--blue);
+}
+.design-filter[aria-pressed="true"] span {
+  color: rgba(255, 255, 255, 0.75);
+}
+.design-filter:focus-visible,
+.design-card__open:focus-visible,
+.design-lightbox button:focus-visible {
+  outline: 2px solid var(--blue-soft);
+  outline-offset: 3px;
+}
+.design-grid {
+  columns: 3;
+  column-gap: 22px;
+}
+.design-card {
+  margin: 0 0 22px;
+  break-inside: avoid;
+}
+.design-card[hidden] {
+  display: none;
+}
+.design-card__open {
+  display: block;
+  width: 100%;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--card-radius);
+  background: var(--panel);
+  cursor: zoom-in;
+  transition: transform 0.45s var(--ease), border-color 0.3s ease, box-shadow 0.45s var(--ease);
+}
+.design-card__img {
+  display: block;
+  width: 100%;
+  height: auto;
+  transition: transform 0.6s var(--ease);
+}
+.design-card figcaption {
+  display: grid;
+  gap: 3px;
+  padding: 12px 2px 0;
+}
+.design-card__type,
+.design-lightbox__caption .design-card__type {
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--blue-soft);
+}
+.design-card figcaption strong {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+}
+.design-card__meta {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* Viewer */
+html:has(.design-lightbox[open]) {
+  overflow: hidden;
+}
+.design-lightbox {
+  display: none;
+  width: 100vw;
+  max-width: 100vw;
+  height: 100dvh;
+  max-height: 100dvh;
+  margin: 0;
+  padding: 64px 24px 24px;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+}
+.design-lightbox[open] {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) 48px;
+  align-items: center;
+  gap: 18px;
+}
+.design-lightbox::backdrop {
+  background: rgba(3, 9, 15, 0.93);
+}
+.design-lightbox__figure {
+  display: grid;
+  justify-items: center;
+  gap: 14px;
+  min-width: 0;
+  margin: 0;
+}
+.design-lightbox__img {
+  display: block;
+  max-width: 100%;
+  max-height: calc(100dvh - 170px);
+  width: auto;
+  height: auto;
+  border-radius: 10px;
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.55);
+}
+.design-lightbox__caption {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: center;
+  gap: 4px 12px;
+  text-align: center;
+  font-size: 13px;
+}
+.design-lightbox__caption strong {
+  font-size: 15px;
+  font-weight: 600;
+}
+.design-lightbox__caption .design-card__meta {
+  color: var(--muted);
+}
+.design-lightbox button {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border: 1px solid var(--line-strong);
+  border-radius: 50%;
+  background: rgba(11, 25, 37, 0.85);
+  color: var(--text);
+  font: inherit;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  transition: border-color 0.25s ease, background-color 0.25s ease;
+}
+.design-lightbox button:hover {
+  border-color: var(--blue-soft);
+  background: rgba(22, 135, 248, 0.25);
+}
+.design-lightbox__close {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+}
+.design-lightbox.is-single .design-lightbox__nav {
+  visibility: hidden;
+}
+
+@media (max-width: 980px) {
+  .design-grid {
+    columns: 2;
+    column-gap: 16px;
+  }
+  .design-card {
+    margin-bottom: 18px;
+  }
+}
+@media (max-width: 560px) {
+  .design-grid {
+    columns: 1;
+  }
+  .design-filters {
+    gap: 8px;
+    margin-bottom: 26px;
+  }
+  .design-filter {
+    min-height: 36px;
+    padding: 0 13px;
+  }
+  .design-lightbox {
+    padding: 60px 12px 16px;
+  }
+  .design-lightbox[open] {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr) auto;
+  }
+  .design-lightbox__figure {
+    grid-row: 1;
+  }
+  .design-lightbox__nav--prev,
+  .design-lightbox__nav--next {
+    position: absolute;
+    bottom: 16px;
+  }
+  .design-lightbox__nav--prev {
+    left: 16px;
+  }
+  .design-lightbox__nav--next {
+    right: 16px;
+  }
+  .design-lightbox__img {
+    max-height: calc(100dvh - 200px);
+  }
+  .design-lightbox__caption {
+    padding: 0 60px;
+  }
+}
+@media (hover: hover) and (pointer: fine) {
+  .design-card__open:hover {
+    transform: translateY(-6px);
+    border-color: rgba(142, 200, 255, 0.38);
+    box-shadow: 0 26px 60px rgba(0, 0, 0, 0.4);
+  }
+  .design-card__open:hover .design-card__img {
+    transform: scale(1.03);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .design-card__open,
+  .design-card__img {
+    transition: none;
+  }
+}
+
+/* ==========================================================================
+   13. Services
    ========================================================================== */
 
 .service-grid {
@@ -3898,7 +4158,7 @@ h2 {
 }
 
 /* ==========================================================================
-   13. About & metrics
+   14. About & metrics
 
    Bio, metric cards and the rolling digital counters.
    ========================================================================== */
@@ -4376,7 +4636,7 @@ h2 {
 }
 
 /* ==========================================================================
-   14. Experience
+   15. Experience
    ========================================================================== */
 
 #experience {
@@ -4477,7 +4737,7 @@ h2 {
 }
 
 /* ==========================================================================
-   15. Skills & toolkit
+   16. Skills & toolkit
    ========================================================================== */
 
 .toolkit-grid {
@@ -4775,7 +5035,7 @@ h2 {
 }
 
 /* ==========================================================================
-   16. Athletic
+   17. Athletic
    ========================================================================== */
 
 .athletic-title {
@@ -5016,7 +5276,7 @@ h2 {
 }
 
 /* ==========================================================================
-   17. Contact & footer
+   18. Contact & footer
    ========================================================================== */
 
 .contact {
@@ -5170,7 +5430,7 @@ footer a {
 }
 
 /* ==========================================================================
-   18. Card system (shared hover, depth & transitions)
+   19. Card system (shared hover, depth & transitions)
 
    Behaviour shared by every card family (services, metrics, toolkit, athletic,
    projects). Placed after the components because it intentionally overrides them.
@@ -5238,7 +5498,7 @@ footer a {
 }
 
 /* ==========================================================================
-   19. 3D depth & ambient background layers
+   20. 3D depth & ambient background layers
 
    Decorative 3D layers behind sections. Purely visual (aria-hidden).
    ========================================================================== */
@@ -5300,7 +5560,7 @@ p {
 }
 
 /* ==========================================================================
-   20. Digital drawing system (GSAP DrawSVG)
+   21. Digital drawing system (GSAP DrawSVG)
 
    SVG line work injected by js/animations.js and drawn with GSAP DrawSVG.
    ========================================================================== */
@@ -5751,7 +6011,7 @@ p {
 }
 
 /* ==========================================================================
-   21. Interaction states (pointer hover / touch feedback)
+   22. Interaction states (pointer hover / touch feedback)
 
    Device-specific states. GSAP owns card-container transforms (tilt/lift);
    CSS here only handles glow, borders and child details, so the two never fight.
@@ -6100,7 +6360,7 @@ p {
 }
 
 /* ==========================================================================
-   22. 3D depth system (world grid, WebGL hero, depth cards)
+   23. 3D depth system (world grid, WebGL hero, depth cards)
 
    Everything here is switched on by js/animations.js, so reduced-motion
    visitors get a still floor and flat cards:

@@ -688,6 +688,7 @@
 
       revealLines('#services .section-top h2', 'assemble');
       revealLines('#portfolio .section-top h2', 'route');
+      revealLines('#design .section-top h2', 'assemble');
       revealLines('#about h2', 'measure');
       revealLines('#skills h2', 'wipe');
       revealLines('#athletic h2', 'flight');
@@ -781,7 +782,7 @@
            roomier screens. Phones keep the simpler per-card entrances only. */
         if (bp.phone) return;
         var tilt = bp.desktop ? 7 : 4;
-        gsap.utils.toArray('.forgepress-builder .fp-workspace,.featured,.service-grid,.metric-deck,.exp-grid,.toolkit-grid,.athletic-grid,#contact > .wrap').forEach(function (block) {
+        gsap.utils.toArray('.forgepress-builder .fp-workspace,.featured,.design-filters,.service-grid,.metric-deck,.exp-grid,.toolkit-grid,.athletic-grid,#contact > .wrap').forEach(function (block) {
           // Tall blocks get a smaller angle so their top edge doesn't swing far out of place.
           var damp = Math.max(.35, Math.min(1, 520 / Math.max(1, block.offsetHeight)));
           gsap.fromTo(block,
@@ -959,6 +960,28 @@
           );
         });
       }
+
+      /* Graphic design posters rise in small staggered batches. A card revealed later by a
+         filter may never have entered, so filtering clears any pending hidden state. */
+      gsap.set('.design-card', { y: compactMotion ? 18 : 30, autoAlpha: 0 });
+      ScrollTrigger.batch('.design-card', {
+        start: 'top 92%',
+        once: true,
+        onEnter: function (items) {
+          gsap.fromTo(items,
+            { y: compactMotion ? 18 : 30, autoAlpha: 0 },
+            { y: 0, autoAlpha: 1, duration: compactMotion ? .5 : .66, stagger: .07, ease: 'power3.out', clearProps: 'transform,opacity,visibility' }
+          );
+        }
+      });
+      document.querySelectorAll('.design-filter').forEach(function (button) {
+        button.addEventListener('click', function () {
+          // Wait a frame: js/main.js updates which cards are hidden in its own click handler.
+          requestAnimationFrame(function () {
+            gsap.set('.design-card:not([hidden])', { clearProps: 'transform,opacity,visibility' });
+          });
+        });
+      });
 
       /* Toolkit cards use a clean stagger; constellation motion stays in the background. */
       ScrollTrigger.batch('.toolkit-card', {
@@ -1294,7 +1317,7 @@
       var heroEl = document.querySelector('.hero');
       var portraitCard = document.querySelector('.portrait-card');
       if (heroEl && portraitCard) {
-        import('./hero-scene.js?v=2026-10-27').then(function (mod) {
+        import('./hero-scene.js?v=2026-11-06').then(function (mod) {
           if (!cardMotionController.signal.aborted) {
             heroScene = mod.createHeroScene({ hero: heroEl, anchor: portraitCard, gsap: gsap, ScrollTrigger: ScrollTrigger, delay: bootWillPlay ? 1.9 : 0.35 });
           }

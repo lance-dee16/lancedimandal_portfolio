@@ -122,20 +122,23 @@ Desktop users receive richer 3D interactions and pointer-based effects, while ta
 ## Project Structure
 
 ```
-index.html              Single-page site (Hero → Work → Services → About → Experience → Skills → Athletic → Contact)
+index.html              Single-page site (Hero → Work → Graphic design → Services → About → Experience → Skills → Athletic → Contact)
 css/
   styles.css            All styles, grouped into numbered sections (see the table of contents at the top)
 js/
-  main.js               Small non-animation helpers (footer year)
+  main.js               Non-animation behaviour: footer year, graphic design filters and poster viewer
   animations.js         GSAP motion: boot screen, scroll reveals, counters, DrawSVG line work, 3D cards, scroll 3D
   hero-scene.js         Three.js crystal in the hero (desktop only; loaded on demand by animations.js)
 images/
   profile/              Portrait photo
   clients/              Client and project logos used in the Work section
+  graphics/             Graphic design posters (full size + -thumb versions for the gallery grid)
   organizations/        Employer, school and team logos (Experience & Athletic)
 ```
 
 **Adding a project:** copy an existing `.project-card` inside `.project-grid` in `index.html` and put its logo in `images/clients/` (lowercase, hyphenated file name). The archive's project count updates automatically.
+
+**Adding a poster:** export it to `images/graphics/` as `name.webp` (max 1800px) plus `name-thumb.webp` (720px wide), then copy a `.design-card` in the Graphic design section, set its `data-category` (events, campus, editorial or typography) and update the counts on the filter buttons.
 
 **Cache busting:** when you change `css/styles.css` or a file in `js/`, bump the `?v=` date on its `<link>`/`<script>` tag in `index.html`.
 
