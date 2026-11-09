@@ -1317,7 +1317,7 @@
       var heroEl = document.querySelector('.hero');
       var portraitCard = document.querySelector('.portrait-card');
       if (heroEl && portraitCard) {
-        import('./hero-scene.js?v=2026-11-06').then(function (mod) {
+        import('./hero-scene.js?v=2026-11-09').then(function (mod) {
           if (!cardMotionController.signal.aborted) {
             heroScene = mod.createHeroScene({ hero: heroEl, anchor: portraitCard, gsap: gsap, ScrollTrigger: ScrollTrigger, delay: bootWillPlay ? 1.9 : 0.35 });
           }

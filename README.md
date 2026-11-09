@@ -138,7 +138,9 @@ images/
 
 **Adding a project:** copy an existing `.project-card` inside `.project-grid` in `index.html` and put its logo in `images/clients/` (lowercase, hyphenated file name). The archive's project count updates automatically.
 
-**Adding a poster:** export it to `images/graphics/` as `name.webp` (max 1800px) plus `name-thumb.webp` (720px wide), then copy a `.design-card` in the Graphic design section, set its `data-category` (events, campus, editorial or typography) and update the counts on the filter buttons.
+**Adding a poster:** export it to `images/graphics/` as `name.webp` (max 1800px) plus `name-thumb.webp` (720px wide), then copy a `.design-card` in the Graphic design section, set its `data-category` (events, campus, editorial, typography or dost) and update the counts on the filter buttons.
+
+**Search engines:** the site is intentionally hidden from search through the `robots` meta tag in `index.html` and the `X-Robots-Tag` header in `vercel.json`. Remove both to allow indexing again.
 
 **Cache busting:** when you change `css/styles.css` or a file in `js/`, bump the `?v=` date on its `<link>`/`<script>` tag in `index.html`.
 
