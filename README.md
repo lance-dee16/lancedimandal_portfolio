@@ -109,7 +109,10 @@ The portfolio includes:
 - Featured projects on a pinned horizontal scroll (stacked on phones and short screens)
 - Count-up stats, a scroll-velocity marquee, a hero spotlight and portrait ring
 - Archive and experience rows with an iOS list highlight and a floating logo preview that trails the cursor
-- A draggable skills ticker with inertia
+- Toolkit cards with a pointer-following spotlight and lit border, a spring lift, staggered tool chips and sibling focus dimming; the ticker eases to a stop on hover, speeds up with scroll and can be dragged with inertia
+- Athletic cards with the same glow treatment and an app-icon spring on the team logo, plus a gold frisbee thrown across the section as you scroll
+- A thin, warm scrollbar site-wide and an iOS-style fading scroll indicator inside the mobile menu sheet
+- A closing wordmark whose letters rise into place as you reach the bottom of the page
 - A closing gold contact panel that pulls up over the page, flattening its corners as it arrives
 - Fully responsive layouts (desktop, tablet, mobile, short windows)
 - Reduced-motion support: no zooms, no pinning, content shown as-is

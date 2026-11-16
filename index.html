@@ -26,8 +26,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css?v=2026-11-16d">
-  <script src="js/main.js?v=2026-11-16d" defer></script>
+  <link rel="stylesheet" href="css/styles.css?v=2026-11-16e">
+  <script src="js/main.js?v=2026-11-16e" defer></script>
 </head>
 <body>
   <a class="skip" href="#main">Skip to content</a>
@@ -505,8 +505,8 @@
           <p class="cap muted" data-r="rise" style="--d:.2s">The platforms and tools I use to build, refine, and maintain websites. <span class="hint">Drag to explore →</span></p>
         </div>
       </div>
-      <div class="mat-vp" id="matvp">
-        <div class="mat-track" id="mattrack" data-r="stagger">
+      <div class="mat-vp" id="matvp" data-r="deck">
+        <div class="mat-track" id="mattrack">
           <article class="mat"><span class="no mono">01</span><h3 class="h3">CMS &amp; page builders</h3><ul><li>WordPress</li><li>Elementor</li><li>Gutenberg</li><li>Divi</li><li>Shopify</li><li>Liquid</li><li>Shopify CLI</li><li>HubSpot EDM</li><li>Wix</li><li>Squarespace</li></ul></article>
           <article class="mat"><span class="no mono">02</span><h3 class="h3">Web development</h3><ul><li>HTML5</li><li>CSS3</li><li>SCSS/SASS</li><li>Bootstrap</li><li>JavaScript</li><li>jQuery</li><li>PHP</li><li>MySQL</li></ul></article>
           <article class="mat"><span class="no mono">03</span><h3 class="h3">SEO &amp; analytics</h3><ul><li>Yoast SEO</li><li>Rank Math</li><li>All in One SEO</li><li>Google Search Console</li><li>GTM</li><li>Schema Markup</li></ul></article>
@@ -522,6 +522,10 @@
     <!-- Tail stack: Athletic pins by its foot, Contact pulls up over it -->
     <div class="tstack" id="tstack">
       <section class="sec tpanel" id="athletic">
+        <div class="disc-flight" aria-hidden="true">
+          <i class="trail t3"></i><i class="trail t2"></i><i class="trail t1"></i>
+          <svg class="disc" viewBox="0 0 120 120"><defs><radialGradient id="discG" cx="40%" cy="35%" r="70%"><stop offset="0" stop-color="#f0d9a4"/><stop offset=".55" stop-color="#d4b26a"/><stop offset="1" stop-color="#8f733c"/></radialGradient></defs><circle cx="60" cy="60" r="56" fill="url(#discG)"/><circle cx="60" cy="60" r="44" fill="none" stroke="rgba(10,10,10,.28)" stroke-width="2"/><circle cx="60" cy="60" r="30" fill="none" stroke="rgba(10,10,10,.18)" stroke-width="1.5"/><path d="M32 60a28 28 0 0 1 28-28" fill="none" stroke="rgba(255,255,255,.55)" stroke-width="3" stroke-linecap="round"/><text x="60" y="64" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10" letter-spacing="2" fill="rgba(10,10,10,.6)">ULTIMATE</text></svg>
+        </div>
         <div class="wrap">
           <div class="shead">
             <div>
@@ -530,7 +534,7 @@
             </div>
             <p class="cap muted" data-r="rise" style="--d:.2s">I play Ultimate Frisbee with the Pampanga Ultimate Community. Before that, I captained ASLAG Ultimate in college. Outside of Ultimate, I also spend time bouldering and training.</p>
           </div>
-          <div class="ath" data-r="stagger">
+          <div class="ath" data-r="deck">
             <article class="ath-card">
               <span class="org"><img src="images/organizations/pampanga-ultimate-community.webp" width="56" height="56" alt="Pampanga Ultimate Community" loading="lazy" decoding="async"></span>
               <span class="meta gold">Active Member</span>
@@ -572,6 +576,7 @@
             <span>© <span id="copyright-year">2026</span> Lance Dimandal · San Fernando, Pampanga</span>
             <a class="lnk" href="#top">Back to top <span class="ar">↑</span></a>
           </div>
+          <div class="ftr-mark" id="ftrMark" aria-hidden="true">Lance Dimandal</div>
         </footer>
       </div>
     </div>

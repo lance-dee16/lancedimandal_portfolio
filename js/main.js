@@ -17,6 +17,7 @@
      09. Graphic design filter + lightbox
      10. Velocity ticker + skills drag ticker
      11. View cursor
+     12. Glow cards (toolkit + athletic), disc flight, closing wordmark
    ========================================================================== */
 (() => {
   /* ── 01. Helpers & setup ── */
@@ -288,6 +289,25 @@
   // Sideways travel needs room: wide enough, and tall enough that a card fits the pinned stage.
   const hsOn = () => full() && !reduce && innerWidth > 700 && innerHeight >= 620;
   let tick = false;
+  const athletic = $('#athletic');
+  const disc = $('.disc-flight .disc');
+  const discTrail = $$('.disc-flight .trail');
+  /* A shallow throw: in from the left, up through the middle, out on the right with a little float */
+  const flight = (p, w, h) => ({
+    x: (-0.12 + p * 1.24) * w - 42,
+    y: h * (0.78 - 0.62 * Math.sin(Math.PI * Math.min(1, p * 1.05)) + 0.04 * Math.sin(p * 14)) - 42,
+  });
+  const mark = $('#ftrMark');
+  if (mark) {
+    mark.innerHTML = [...mark.textContent].map((c, k) => c === ' ' ? '<span class="sp"></span>' : `<span class="ch" style="--k:${k}">${c}</span>`).join('');
+  }
+  // Fit the wordmark to the width of the page.
+  const fitMark = () => {
+    if (!mark) return;
+    mark.style.fontSize = '100px';
+    const w = mark.clientWidth, sw = [...mark.children].reduce((a, c) => a + c.getBoundingClientRect().width, 0);
+    mark.style.fontSize = `${Math.floor((100 * w) / Math.max(1, sw)) * 0.98}px`;
+  };
 
   /* The pinned section is exactly as tall as the sideways travel plus one screen. */
   function layout() {
@@ -358,11 +378,34 @@
         if (tail) tail.style.setProperty('--arr', clamp((vh - tail.getBoundingClientRect().top) / vh).toFixed(3));
       }
     }
+
+    /* Disc: thrown across the athletic section on a curve, spinning, as you scroll through it */
+    if (disc && athletic && on) {
+      const r = athletic.getBoundingClientRect();
+      if (r.bottom > 0 && r.top < vh) {
+        const p = clamp((vh - r.top) / (vh + r.height * 0.6));
+        const w = athletic.clientWidth, h = Math.min(athletic.clientHeight, vh);
+        discTrail.forEach((el, j) => {
+          const q = clamp(p - (j + 1) * 0.035);
+          const pos = flight(q, w, h);
+          el.style.transform = `translate3d(${pos.x}px,${pos.y}px,0) scale(${(0.9 - j * 0.15).toFixed(2)})`;
+          el.style.opacity = String(q > 0 && q < 1 ? 0.8 - j * 0.22 : 0);
+        });
+        const pos = flight(p, w, h);
+        disc.style.transform = `translate3d(${pos.x}px,${pos.y}px,0) rotate(${(-8 + 14 * Math.sin(p * 6)).toFixed(2)}deg) scaleY(${(0.4 + 0.08 * Math.sin(p * 9)).toFixed(3)}) rotate(${(p * 900).toFixed(1)}deg)`;
+      }
+    }
+
+    /* Wordmark: --end runs 0 → 1 as the bottom of the page arrives */
+    if (mark) {
+      const r = mark.getBoundingClientRect();
+      mark.style.setProperty('--end', on ? clamp((vh - r.top) / (r.height * 0.9)).toFixed(3) : '1');
+    }
   }
   addEventListener('scroll', () => {
     if (!tick) { tick = true; requestAnimationFrame(() => { tick = false; onScroll(); }); }
   }, { passive: true });
-  addEventListener('resize', () => { layout(); onScroll(); placeInd(); });
+  addEventListener('resize', () => { fitMark(); layout(); onScroll(); placeInd(); });
 
   /* ── 08. Project archive expand + follow preview ── */
   const more = $('#irowsMore');
@@ -656,9 +699,23 @@
     const vp = $('#matvp');
     const tr = $('#mattrack');
     if (!vp || !tr) return;
+    // Card extras before cloning: tool count, a big faint index, and per-chip stagger indices.
+    [...tr.children].forEach((c, i) => {
+      c.classList.add('glowcard');
+      c.style.setProperty('--i', i);
+      const items = $$('li', c);
+      items.forEach((li, k) => li.style.setProperty('--k', k));
+      const no = $('.no', c);
+      no.innerHTML = `<span>${no.textContent}</span><b>${pad(items.length)} tools</b>`;
+      const big = document.createElement('span');
+      big.className = 'big'; big.setAttribute('aria-hidden', 'true'); big.textContent = pad(i + 1);
+      c.appendChild(big);
+    });
     [...tr.children].forEach((c) => { const k = c.cloneNode(true); k.setAttribute('aria-hidden', 'true'); k.style.setProperty('--i', 0); tr.appendChild(k); });
     const SPEED = 26;
     let x = 0, v = 0, hover = false, drag = false, sx = 0, sx0 = 0, lastX = 0, lastT = 0, moved = 0, prev = performance.now(), inView = false;
+    let gear = 1, boost = 0, pY = scrollY;   // gear eases to 0 on hover instead of stopping dead; scrolling adds a push
+    addEventListener('scroll', () => { boost = Math.min(boost + Math.abs(scrollY - pY) * 4, 600); pY = scrollY; }, { passive: true });
     const W = () => tr.scrollWidth / 2;
     const wrapX = () => { const w = W(); if (!w) return; while (x <= -w) x += w; while (x > 0) x -= w; };
     new IntersectionObserver(([e]) => { inView = e.isIntersecting; }).observe(vp);
@@ -666,12 +723,15 @@
       const dt = Math.min(0.05, (t - prev) / 1000);
       prev = t;
       if (inView || drag) {
+        gear += ((hover ? 0 : 1) - gear) * Math.min(1, dt * 5);
+        boost *= Math.pow(0.1, dt);
         if (!drag) {
           if (Math.abs(v) > 1) { x += v * dt; v *= Math.pow(0.04, dt); }
-          else if (!hover && !reduce) x -= SPEED * dt;
+          else if (!reduce) x -= (SPEED + boost) * gear * dt;
         }
         wrapX();
-        tr.style.transform = `translate3d(${x.toFixed(2)}px,0,0)`;
+        const skew = reduce ? 0 : clamp((drag ? v : 0) / 4000, -0.04, 0.04) * -60;
+        tr.style.transform = `translate3d(${x.toFixed(2)}px,0,0) skewX(${skew.toFixed(2)}deg)`;
       }
       requestAnimationFrame(loop);
     }
@@ -729,10 +789,53 @@
     document.addEventListener('click', () => { ts = 0; c.classList.remove('on'); }, true);
   })();
 
+  /* ── 12. Glow cards: pointer position for the spotlight and lit border ── */
+  $$('.ath-card').forEach((c, i) => {
+    c.classList.add('glowcard');
+    c.style.setProperty('--i', i);
+    const per = $('.mono', c);
+    const yr = per && (per.textContent.match(/\d{4}/) || [])[0];
+    if (yr) { const y = document.createElement('span'); y.className = 'yrs'; y.setAttribute('aria-hidden', 'true'); y.textContent = `’${yr.slice(2)}`; c.appendChild(y); }
+  });
+  if (fine) {
+    document.addEventListener('pointermove', (e) => {
+      const c = e.target.closest && e.target.closest('.glowcard');
+      if (!c) return;
+      const r = c.getBoundingClientRect();
+      c.style.setProperty('--mx', `${(e.clientX - r.left).toFixed(0)}px`);
+      c.style.setProperty('--my', `${(e.clientY - r.top).toFixed(0)}px`);
+    }, { passive: true });
+  }
+
+  /* Sheet scroll indicator (iOS-style: shows while scrolling, fades when idle) */
+  (() => {
+    const sc = $('.mmenu-in');
+    if (!sc) return;
+    const ind = document.createElement('span');
+    ind.className = 'sheet-ind'; ind.setAttribute('aria-hidden', 'true'); ind.innerHTML = '<i></i>';
+    sc.parentElement.appendChild(ind);
+    const bar = $('i', ind);
+    let t = 0;
+    const paint = () => {
+      const max = sc.scrollHeight - sc.clientHeight;
+      if (max <= 1) { ind.classList.remove('on'); return; }
+      const track = ind.clientHeight;
+      const h = Math.max(28, track * (sc.clientHeight / sc.scrollHeight));
+      bar.style.height = `${h}px`;
+      bar.style.transform = `translateY(${((track - h) * (sc.scrollTop / max)).toFixed(1)}px)`;
+      ind.classList.add('on');
+      clearTimeout(t);
+      t = setTimeout(() => ind.classList.remove('on'), 900);
+    };
+    sc.addEventListener('scroll', paint, { passive: true });
+    if (toggle) toggle.addEventListener('click', () => setTimeout(paint, 500));
+  })();
+
   /* ── Boot ── */
+  fitMark();
   layout();
   onScroll();
   boot();
   addEventListener('load', () => { layout(); onScroll(); });
-  if (document.fonts) document.fonts.ready.then(() => { layout(); onScroll(); });
+  if (document.fonts) document.fonts.ready.then(() => { fitMark(); layout(); onScroll(); });
 })();

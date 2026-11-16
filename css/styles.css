@@ -87,6 +87,14 @@ button { background: none; border: 0; cursor: pointer; }
 :focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
 ::selection { background: var(--gold); color: var(--ink); }
 
+/* Scrollbars: thin, dark track, warm thumb that turns gold on hover */
+html { scrollbar-width: thin; scrollbar-color: rgba(237, 230, 216, .22) var(--ink); }
+::-webkit-scrollbar { width: 12px; height: 12px; }
+::-webkit-scrollbar-track { background: var(--ink); }
+::-webkit-scrollbar-thumb { background: rgba(237, 230, 216, .2); border-radius: 12px; border: 3px solid var(--ink); }
+::-webkit-scrollbar-thumb:hover { background: var(--gold); }
+::-webkit-scrollbar-corner { background: var(--ink); }
+
 .skip {
   position: fixed; left: 16px; top: -60px; z-index: 400;
   padding: 10px 16px; background: var(--gold); color: var(--ink); font-weight: 500;
@@ -196,6 +204,29 @@ html.m-full [data-r="stagger"].in > *, html.m-full [data-r="rows"].in > * {
 html.m-full [data-r="rows"]::before { transform: scaleX(0); transform-origin: left; }
 html.m-full [data-r="rows"].in::before { transform: none; transition: transform 1.3s var(--soft) var(--d, 0s); }
 .instant, .instant * { transition: none !important; }
+/* Deck: cards deal in on separate translate/scale properties so hover can own transform */
+html.m-full [data-r="deck"] .glowcard { opacity: 0; translate: 0 56px; scale: .92; }
+html.m-full [data-r="deck"].in .glowcard { opacity: 1; translate: 0 0; scale: 1; }
+
+/* Glow cards: a spotlight and a lit border follow the pointer; the card lifts on a spring,
+   and its siblings step back so the one under the cursor is in focus. */
+.glowcard {
+  position: relative; isolation: isolate;
+  transition: transform .8s var(--spring), opacity .8s ease, translate 1.3s var(--spring), scale 1.3s var(--spring), filter .5s ease, border-color .3s ease, background-color .3s ease;
+  transition-delay: 0s, calc(var(--i, 0) * 80ms), calc(var(--i, 0) * 80ms), calc(var(--i, 0) * 80ms), 0s, 0s, 0s;
+}
+.glowcard::before, .glowcard::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; opacity: 0; transition: opacity .45s ease; }
+.glowcard::before { z-index: -1; background: radial-gradient(380px circle at var(--mx, 50%) var(--my, 0%), rgba(212, 178, 106, .16), transparent 62%); }
+.glowcard::after {
+  z-index: 2; padding: 1px; background: radial-gradient(260px circle at var(--mx, 50%) var(--my, 0%), rgba(228, 200, 142, .95), rgba(212, 178, 106, .15) 45%, transparent 70%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+}
+@media (hover: hover) and (pointer: fine) {
+  .glowcard:hover { transform: translateY(-10px); border-color: transparent; }
+  .glowcard:hover::before, .glowcard:hover::after { opacity: 1; }
+  :is(.mat-track, .ath):has(.glowcard:hover) .glowcard:not(:hover) { filter: brightness(.55) saturate(.7); transform: scale(.965); }
+}
 
 /* ───────── 05. Boot splash ─────────
    First visit per tab session: the name comes into focus, a gold line fills,
@@ -258,14 +289,27 @@ html.menu-open .hdr { opacity: 0; transform: scale(.94); pointer-events: none; }
 html.menu-open .mmenu { transform: translateY(var(--drag, 0px)); visibility: visible; transition: transform .8s var(--spring), visibility 0s; }
 .mmenu.dragging { transition: none !important; }
 .sheet-grab { position: absolute; top: 10px; left: 50%; width: 40px; height: 5px; margin-left: -20px; border-radius: 5px; background: rgba(237, 230, 216, .28); }
-.sheet-close { position: absolute; top: 18px; right: 18px; width: 36px; height: 36px; border-radius: 50%; background: rgba(237, 230, 216, .1); font-size: 20px; line-height: 1; color: var(--text); transition: transform .6s var(--bouncy); }
+.sheet-close { position: absolute; z-index: 2; top: 16px; right: 16px; width: 36px; height: 36px; border-radius: 50%; background: rgba(237, 230, 216, .1); font-size: 20px; line-height: 1; color: var(--text); transition: transform .6s var(--bouncy); }
 .sheet-close:active { transform: scale(.9); transition-duration: .12s; }
-.mmenu-in { height: 100%; display: flex; flex-direction: column; padding: 56px 0 32px; overflow-y: auto; }
+.mmenu-in {
+  height: 100%; display: flex; flex-direction: column; padding: 56px 0 28px; overflow-y: auto; overscroll-behavior: contain;
+  scrollbar-width: none; -ms-overflow-style: none;
+  -webkit-mask-image: linear-gradient(#000 calc(100% - 28px), transparent); mask-image: linear-gradient(#000 calc(100% - 28px), transparent);
+}
+.mmenu-in::-webkit-scrollbar { display: none; }
+/* iOS-style scroll indicator: thin, inset from the edge, fades when idle */
+.sheet-ind { position: absolute; right: 7px; top: 64px; bottom: 28px; width: 3px; pointer-events: none; opacity: 0; transition: opacity .5s ease; }
+.sheet-ind i { position: absolute; left: 0; right: 0; top: 0; border-radius: 3px; background: rgba(237, 230, 216, .45); }
+.sheet-ind.on { opacity: 1; transition-duration: .15s; }
+@media (min-width: 701px) {
+  .mmenu { width: min(720px, calc(100% - 48px)); margin: 0 auto; top: 32px; border-radius: 28px 28px 0 0; border-left: 1px solid rgba(237, 230, 216, .08); border-right: 1px solid rgba(237, 230, 216, .08); }
+  .mmenu-in { width: auto; margin: 0 40px; }
+}
 .mmenu-links { display: flex; flex-direction: column; margin-top: 18px; }
 .mmenu-links a {
   display: flex; align-items: baseline; gap: 16px;
   padding: 10px 0; border-bottom: 1px solid var(--hair);
-  font-weight: 300; font-size: clamp(34px, 9vw, 60px); line-height: 1.1; letter-spacing: -.03em;
+  font-weight: 300; font-size: clamp(26px, min(9vw, 7.4svh), 60px); line-height: 1.1; letter-spacing: -.03em;
   opacity: 0; transform: translateY(30px); transition: opacity .2s ease, transform .3s ease;
 }
 .mmenu-links a span { font: 400 12px/1 var(--mono); color: var(--gold); }
@@ -638,19 +682,26 @@ html.m-full [data-r="lines"].in .hang { opacity: 1; transform: none; transition:
 .mat-vp { overflow: hidden; cursor: grab; touch-action: pan-y; user-select: none; -webkit-user-select: none; }
 .mat-vp.dragging { cursor: grabbing; }
 .mat-vp.dragging .mat { pointer-events: none; }
-.mat-track { display: flex; gap: 20px; width: max-content; padding: 0 var(--m); will-change: transform; }
+.mat-track { display: flex; gap: 20px; width: max-content; padding: 18px var(--m); will-change: transform; }
 .mat {
   width: clamp(268px, 24vw, 340px); min-height: 320px; flex: none; padding: 28px; display: flex; flex-direction: column;
-  border: 1px solid var(--hair); border-radius: 24px; background: var(--ink); transition: border-color .3s var(--ui), background-color .3s var(--ui), transform .7s var(--bouncy);
+  border: 1px solid var(--hair); border-radius: 24px; background: var(--ink); overflow: hidden;
 }
-.mat:active { transform: scale(.97); transition-duration: .15s; }
-.mat:hover { border-color: var(--gold-hair); background: #121110; }
-.mat .no { font-size: 11px; color: var(--gold); }
-.mat .h3 { margin: 40px 0 20px; }
+.mat-vp.dragging .mat { transition: filter .3s ease; }
+.mat:hover { background: #121110; }
+.mat .no { font-size: 11px; color: var(--gold); display: flex; justify-content: space-between; }
+.mat .no b { font-weight: 400; color: var(--muted); }
+.mat .h3 { margin: 40px 0 20px; transition: color .3s ease, transform .8s var(--spring); }
+.mat:hover .h3 { color: var(--gold); transform: translateX(4px); }
+.mat .big { position: absolute; z-index: -1; right: -6px; bottom: -34px; font: 300 150px/1 var(--f); letter-spacing: -.06em; color: rgba(212, 178, 106, .05); transition: transform 1s var(--spring), color .5s ease; pointer-events: none; }
+.mat:hover .big { transform: translate(-10px, -14px); color: rgba(212, 178, 106, .1); }
 .mat ul { display: flex; flex-wrap: wrap; gap: 6px; margin-top: auto; }
 .mat li { padding: 4px 11px; border-radius: 999px; border: 1px solid var(--hair); font-size: 13px; line-height: 20px; color: rgba(237, 230, 216, .82); transition: border-color .2s var(--ui), color .2s var(--ui); }
-.mat:hover li { border-color: var(--hair-2); }
-.mat li:hover { border-color: var(--gold); color: var(--gold); }
+.mat li { transition: border-color .3s ease, color .3s ease, background-color .3s ease, transform .7s var(--bouncy); transition-delay: 0s; }
+@media (hover: hover) and (pointer: fine) {
+  .mat:hover li { border-color: rgba(212, 178, 106, .32); color: var(--text); transform: translateY(-2px); transition-delay: calc(var(--k, 0) * 28ms); }
+  .mat li:hover { background: var(--gold); border-color: var(--gold); color: var(--ink); transition-delay: 0s; }
+}
 
 /* ───────── 18. Tail stack — Athletic → Contact → Footer ─────────
    Athletic pins by its foot (top = viewport − panel height when taller than the
@@ -658,7 +709,23 @@ html.m-full [data-r="lines"].in .hang { opacity: 1; transform: none; transition:
    covered panel scales 1 → .94 and dims to .82 against a black stage. */
 .tstack { position: relative; background: #000; }
 .tpanel { position: sticky; top: var(--st, 0px); will-change: transform, filter; transform-origin: 50% 0; transform: scale(calc(1 - .06 * var(--cov, 0))); filter: brightness(calc(1 - .18 * var(--cov, 0))); }
-.tstack > .tpanel:first-child { background: var(--ink); }
+.tstack > .tpanel:first-child { background: var(--ink); overflow: hidden; border-radius: calc(var(--cov, 0) * 40px); }
+#athletic > .wrap { position: relative; z-index: 1; }
+.disc-flight { position: absolute; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+.disc-flight .disc, .disc-flight .trail { position: absolute; left: 0; top: 0; width: 96px; height: 96px; will-change: transform; }
+.disc { filter: drop-shadow(0 14px 24px rgba(0, 0, 0, .55)); }
+.trail { border-radius: 50%; background: radial-gradient(circle, rgba(212, 178, 106, .22), transparent 65%); }
+html:not(.m-full) .disc-flight { display: none; }
+/* Contact: the content trails the rising panel, then settles */
+.tail .contact > .wrap { transform: translateY(calc((1 - var(--arr, 1)) * 140px)); opacity: calc(.25 + var(--arr, 1) * .75); }
+/* Closing wordmark: letters rise into place as you reach the very bottom */
+.ftr-mark {
+  display: flex; justify-content: center; overflow: hidden; white-space: nowrap; user-select: none;
+  width: min(1280px, calc(100% - 2 * var(--m))); margin: 8px auto 0; padding: .04em 0 .06em;
+  font-weight: 300; line-height: .82; letter-spacing: -.055em; color: var(--ink);
+}
+.ftr-mark .ch { display: inline-block; transform: translateY(calc((1 - var(--end, 1)) * (70% + var(--k) * 6%))); opacity: calc(.15 + var(--end, 1) * .85); will-change: transform; }
+.ftr-mark .sp { display: inline-block; width: .26em; }
 .tpanel.tail { z-index: 1; min-height: 100svh; display: flex; flex-direction: column; background: var(--gold); color: var(--ink); --r: calc((1 - var(--arr, 1)) * 64px); border-radius: var(--r) var(--r) 0 0; }
 .tail .contact { flex: 1 0 auto; display: flex; align-items: center; padding: calc(var(--hdr) + 48px) 0 72px; }
 .tail .contact > .wrap { width: min(1280px, calc(100% - 2 * var(--m))); }
@@ -666,9 +733,14 @@ html.m-spec .tstack { background: none; }
 html.m-spec .tpanel, html.m-spec .tpanel.tail { position: static; min-height: 0; filter: none !important; transform: none !important; }
 
 .ath { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
-.ath-card { display: flex; flex-direction: column; gap: 10px; padding: 32px; border-radius: 24px; border: 1px solid var(--hair); background: var(--ink-2); transition: border-color .3s var(--ui), transform .7s var(--bouncy); }
-.ath-card:active { transform: scale(.98); transition-duration: .15s; }
-.ath-card:hover { border-color: var(--gold-hair); }
+.ath-card { display: flex; flex-direction: column; gap: 10px; padding: 32px; border-radius: 24px; border: 1px solid var(--hair); background: var(--ink-2); overflow: hidden; }
+
+.ath-card .org { transition: transform .9s var(--bouncy), border-color .3s ease; }
+.ath-card:hover .org { transform: scale(1.12) rotate(-8deg); border-color: var(--gold-hair); }
+.ath-card .h3 { transition: color .3s ease; }
+.ath-card:hover .h3 { color: var(--gold); }
+.ath-card .yrs { position: absolute; z-index: -1; right: 24px; top: 18px; font: 300 88px/1 var(--f); letter-spacing: -.05em; color: rgba(212, 178, 106, .06); transition: transform 1s var(--spring), color .5s ease; }
+.ath-card:hover .yrs { transform: translateY(-6px); color: rgba(212, 178, 106, .12); }
 .ath-card .org { margin-bottom: 18px; }
 .ath-card .meta { font-size: 11px; }
 .ath-card .h3 { font-size: 26px; line-height: 32px; font-weight: 300; letter-spacing: -.02em; }
@@ -689,7 +761,7 @@ html.m-spec .tpanel, html.m-spec .tpanel.tail { position: static; min-height: 0;
 .contact-bottom .cap { color: rgba(10, 10, 10, .72); }
 .contact-links { display: flex; flex-wrap: wrap; gap: 14px 32px; }
 .tail :focus-visible { outline-color: var(--ink); }
-.ftr { border-top: 1px solid rgba(10, 10, 10, .18); padding: 28px 0 32px; font-size: 13px; line-height: 20px; }
+.ftr { border-top: 1px solid rgba(10, 10, 10, .18); padding: 28px 0 0; overflow: hidden; font-size: 13px; line-height: 20px; }
 .ftr .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px 32px; }
 .ftr .logo { margin: 0; font-size: 16px; }
 .ftr .logo span { color: var(--ink); }
@@ -825,6 +897,7 @@ html.m-spec .tpanel, html.m-spec .tpanel.tail { position: static; min-height: 0;
 
   .trow { padding: 28px 4px; }
   .ath { grid-template-columns: 1fr; }
+  .disc-flight .disc, .disc-flight .trail { width: 64px; height: 64px; }
   .ath-card { padding: 24px; }
 
   .mat { min-height: 280px; padding: 24px; }
@@ -847,6 +920,7 @@ html.m-spec .tpanel, html.m-spec .tpanel.tail { position: static; min-height: 0;
 /* ───────── 21. Reduced motion ───────── */
 @media (prefers-reduced-motion: reduce) {
   html.menu-open #main { transform: none; }
+  .tail .contact > .wrap, .ftr-mark .ch { transform: none !important; opacity: 1 !important; }
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
   .tk-track { flex-wrap: wrap; width: auto; justify-content: center; }
   .tpanel { position: static; transform: none !important; filter: none !important; }
