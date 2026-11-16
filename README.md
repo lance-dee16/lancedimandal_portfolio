@@ -108,7 +108,8 @@ The portfolio includes:
 - Headlines that come into focus word by word out of a blur
 - Featured projects on a pinned horizontal scroll (stacked on phones and short screens)
 - Count-up stats, a scroll-velocity marquee, a hero spotlight and portrait ring
-- Archive and experience rows with an iOS list highlight and a floating logo preview that trails the cursor
+- Archive and experience rows with an iOS list highlight; one floating logo preview follows the pointer on a damped spring, stays open across rows, rolls each logo in from the direction you move and flips sides near the screen edge
+- Liquid badges: gold floods in from the point the pointer enters and drains toward where it leaves
 - Toolkit cards with a pointer-following spotlight and lit border, a spring lift, staggered tool chips and sibling focus dimming; the ticker eases to a stop on hover, speeds up with scroll and can be dragged with inertia
 - Athletic cards with the same glow treatment and an app-icon spring on the team logo, plus a gold frisbee thrown across the section as you scroll
 - A thin, warm scrollbar site-wide and an iOS-style fading scroll indicator inside the mobile menu sheet

@@ -425,8 +425,23 @@ html.m-full [data-r="proof"].in .stat > * { opacity: 1; transform: none; transit
 .fp-brand .badge { margin-left: auto; }
 .fp-h { font-size: clamp(26px, 2.6vw, 38px); margin: 28px 0 20px; }
 .chipset { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 28px; }
-.chipset li { padding: 6px 14px; border-radius: 999px; border: 1px solid var(--hair-2); font-size: 13px; line-height: 20px; transition: border-color .2s var(--ui), color .2s var(--ui); }
-.chipset li:hover { border-color: var(--gold); color: var(--gold); }
+.chipset li { padding: 6px 14px; border-radius: 999px; border: 1px solid var(--hair-2); font-size: 13px; line-height: 20px; cursor: default; }
+
+/* Liquid chips: gold floods in from the exact point the pointer enters and drains out
+   toward where it leaves; the chip lifts on a spring and its neighbours step back. */
+.liquid { position: relative; overflow: hidden; isolation: isolate; transition: color .35s ease, border-color .35s ease, box-shadow .45s ease, translate .7s var(--bouncy), scale .7s var(--bouncy), filter .35s ease; }
+html.m-full .chipset.in > li.liquid {
+  transition: opacity .7s ease calc(var(--d, 0s) + var(--i, 0) * 60ms), transform 1.2s var(--spring) calc(var(--d, 0s) + var(--i, 0) * 60ms),
+    color .35s ease, border-color .35s ease, box-shadow .45s ease, translate .7s var(--bouncy), scale .7s var(--bouncy), filter .35s ease;
+}
+.liquid::before {
+  content: ""; position: absolute; z-index: -1; left: var(--cx, 50%); top: var(--cy, 50%); width: var(--dd, 240px); height: var(--dd, 240px);
+  margin: calc(var(--dd, 240px) / -2) 0 0 calc(var(--dd, 240px) / -2); border-radius: 50%;
+  background: radial-gradient(circle, var(--gold-h), var(--gold) 70%); transform: scale(0); transition: transform .55s cubic-bezier(.4, 0, .2, 1);
+}
+.liquid.lit { color: var(--ink); border-color: var(--gold); translate: 0 -3px; scale: 1.04; box-shadow: 0 10px 26px rgba(212, 178, 106, .28); }
+.liquid.lit::before { transform: scale(1); transition: transform .75s var(--spring); }
+:is(.chipset, .mat ul):has(.liquid.lit) .liquid:not(.lit) { filter: brightness(.6); }
 .fp-foot { display: flex; flex-direction: column; gap: 6px; margin-top: 28px; padding-top: 16px; border-top: 1px solid var(--hair); font-size: 10px; }
 
 .fp-ui { border: 1px solid var(--hair-2); border-radius: var(--r-md); overflow: hidden; background: #0d0c0b; font: 400 10px/14px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
@@ -696,11 +711,11 @@ html.m-full [data-r="lines"].in .hang { opacity: 1; transform: none; transition:
 .mat .big { position: absolute; z-index: -1; right: -6px; bottom: -34px; font: 300 150px/1 var(--f); letter-spacing: -.06em; color: rgba(212, 178, 106, .05); transition: transform 1s var(--spring), color .5s ease; pointer-events: none; }
 .mat:hover .big { transform: translate(-10px, -14px); color: rgba(212, 178, 106, .1); }
 .mat ul { display: flex; flex-wrap: wrap; gap: 6px; margin-top: auto; }
-.mat li { padding: 4px 11px; border-radius: 999px; border: 1px solid var(--hair); font-size: 13px; line-height: 20px; color: rgba(237, 230, 216, .82); transition: border-color .2s var(--ui), color .2s var(--ui); }
-.mat li { transition: border-color .3s ease, color .3s ease, background-color .3s ease, transform .7s var(--bouncy); transition-delay: 0s; }
+.mat li { padding: 4px 11px; border-radius: 999px; border: 1px solid var(--hair); font-size: 13px; line-height: 20px; color: rgba(237, 230, 216, .82); }
+.mat li.liquid { transition: border-color .3s ease, color .3s ease, transform .7s var(--bouncy), translate .7s var(--bouncy), scale .7s var(--bouncy), box-shadow .45s ease, filter .35s ease; transition-delay: 0s; }
 @media (hover: hover) and (pointer: fine) {
   .mat:hover li { border-color: rgba(212, 178, 106, .32); color: var(--text); transform: translateY(-2px); transition-delay: calc(var(--k, 0) * 28ms); }
-  .mat li:hover { background: var(--gold); border-color: var(--gold); color: var(--ink); transition-delay: 0s; }
+  .mat li.lit { transition-delay: 0s; }
 }
 
 /* ───────── 18. Tail stack — Athletic → Contact → Footer ─────────
@@ -784,12 +799,15 @@ html.m-spec .tpanel, html.m-spec .tpanel.tail { position: static; min-height: 0;
 
 .follow { position: fixed; left: 0; top: 0; z-index: 240; width: 220px; height: 116px; pointer-events: none; transform: translate3d(-400px, -400px, 0); }
 .follow .fi {
-  width: 100%; height: 100%; display: grid; place-items: center; padding: 22px 26px;
+  position: relative; width: 100%; height: 100%; overflow: hidden;
   background: rgba(20, 19, 17, .9); border: 1px solid rgba(237, 230, 216, .1); border-radius: 20px; box-shadow: 0 24px 60px rgba(0, 0, 0, .5);
   -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
-  opacity: 0; transform: scale(.5);
-  transition: opacity .2s ease, transform .7s var(--bouncy);
+  opacity: 0; transform: scale(.4); transition: opacity .2s ease, transform .6s cubic-bezier(.4, 0, .2, 1);
 }
+.follow.on .fi { transition: opacity .2s ease, transform .8s var(--bouncy); }
+.follow .fl { position: absolute; inset: 0; display: grid; place-items: center; padding: 22px 26px; opacity: 0; }
+.follow .fl.front { opacity: 1; }
+.follow .fi::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; background: linear-gradient(160deg, rgba(255, 255, 255, .07), transparent 40%); }
 .follow.on .fi { opacity: 1; transform: none; }
 .follow img { max-width: 100%; max-height: 56px; object-fit: contain; }
 @media not all and (hover: hover) and (pointer: fine) { .follow { display: none; } }

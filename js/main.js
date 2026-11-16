@@ -432,32 +432,111 @@
     });
   }
 
-  /* A single logo card trails the pointer across the archive, tilting with its speed. */
+  /* Archive preview: one floating logo card for the whole list.
+     · It stays open while the pointer is anywhere over the rows, so moving between
+       rows (fast or slow) never makes it blink off and back on.
+     · Position runs on a damped spring (stiffness/damping), not a lerp, so it
+       catches up quickly, settles without wobble and tilts/stretches with speed.
+     · Logos roll in from the direction you are moving (down → from below).
+     · It flips to the left of the cursor near the right edge, and updates while
+       you scroll with the wheel. */
   (() => {
     const fol = $('#follow');
-    if (!fol || !fine) return;
-    const img = $('img', fol);
-    let tx = -400, ty = -400, cx = -400, cy = -400, rot = 0, active = false, raf = 0;
-    const loop = () => {
-      const dx = tx - cx;
-      cx += dx * 0.16; cy += (ty - cy) * 0.16;
-      rot += (clamp(dx * 0.08, -9, 9) - rot) * 0.2;
-      fol.style.transform = `translate3d(${(cx + 28).toFixed(1)}px,${(cy - 58).toFixed(1)}px,0) rotate(${reduce ? 0 : rot.toFixed(2)}deg)`;
-      raf = active || Math.abs(dx) > 0.5 ? requestAnimationFrame(loop) : 0;
+    const list = $('#irows');
+    if (!fol || !list || !fine) return;
+    const fi = $('.fi', fol);
+    fi.innerHTML = '<span class="fl front"><img alt=""></span><span class="fl"><img alt=""></span>';
+    const layers = $$('.fl', fi);
+    let front = 0;
+    const W = 220, Hb = 116, GAP = 28, K = 320, D = 30; // box size, cursor gap, spring stiffness, damping
+    let tx = -400, ty = -400, px = -400, py = -400, vx = 0, vy = 0, side = 1, active = false, curRow = null, curIdx = -1, raf = 0, last = 0;
+    const rowsNow = () => $$('#irows .irow');
+
+    const swap = (row) => {
+      if (row === curRow) return;
+      const rows = rowsNow();
+      const idx = rows.indexOf(row);
+      const src = row && $('.pv img', row) && $('.pv img', row).getAttribute('src');
+      const dir = curIdx < 0 ? 0 : idx > curIdx ? 1 : -1;
+      curRow = row; curIdx = idx;
+      if (!src) return;
+      const inc = layers[1 - front];
+      const out = layers[front];
+      [inc, out].forEach((l) => l.getAnimations().forEach((x) => x.cancel()));
+      $('img', inc).src = src;
+      inc.classList.add('front');
+      out.classList.remove('front');
+      front = 1 - front;
+      if (!dir || reduce) return;
+      inc.animate([{ transform: `translateY(${dir * 70}%) scale(.9)`, opacity: 0, filter: 'blur(4px)' }, { transform: 'none', opacity: 1, filter: 'blur(0)' }], { duration: 620, easing: SPRING });
+      out.animate([{ transform: 'none', opacity: 1, filter: 'blur(0)' }, { transform: `translateY(${-dir * 55}%) scale(.92)`, opacity: 0, filter: 'blur(4px)' }], { duration: 380, easing: 'cubic-bezier(.4,0,.2,1)' });
     };
-    $$('#irows .irow').forEach((row) => {
-      const src = $('.pv img', row);
-      row.addEventListener('pointerenter', (e) => {
-        if (!src) return;
-        if (!active) { cx = e.clientX; cy = e.clientY; }
-        img.src = src.getAttribute('src');
-        active = true; fol.classList.add('on');
-        if (!raf) raf = requestAnimationFrame(loop);
-      });
-      row.addEventListener('pointerleave', () => { active = false; fol.classList.remove('on'); });
-    });
-    addEventListener('pointermove', (e) => { tx = e.clientX; ty = e.clientY; }, { passive: true });
-    addEventListener('scroll', () => { if (active) { active = false; fol.classList.remove('on'); } }, { passive: true });
+
+    const loop = (t) => {
+      const dt = Math.min(0.032, (t - last) / 1000 || 0.016);
+      last = t;
+      // Side: right of the cursor unless that would run off-screen.
+      const want = tx + GAP + W > innerWidth - 16 ? -1 : 1;
+      side += (want - side) * Math.min(1, dt * 10);
+      const gx = tx + (side > 0 ? GAP : -GAP) + (side - 1) * (W / 2);   // side 1 → left edge at cursor+gap; side -1 → right edge at cursor-gap
+      const gy = Math.max(12, Math.min(innerHeight - Hb - 12, ty - Hb / 2));
+      if (reduce) { px = gx; py = gy; vx = vy = 0; }
+      else {
+        vx += (K * (gx - px) - D * vx) * dt; px += vx * dt;
+        vy += (K * (gy - py) - D * vy) * dt; py += vy * dt;
+      }
+      const tilt = clamp(vx * 0.01, -10, 10);
+      const stretch = clamp(Math.hypot(vx, vy) / 9000, 0, 0.08);
+      fol.style.transform = `translate3d(${px.toFixed(1)}px,${py.toFixed(1)}px,0) rotate(${tilt.toFixed(2)}deg) scale(${(1 + stretch).toFixed(3)},${(1 - stretch * 0.6).toFixed(3)})`;
+      const settled = Math.abs(vx) + Math.abs(vy) < 2 && Math.abs(gx - px) + Math.abs(gy - py) < 0.5;
+      raf = active || !settled ? requestAnimationFrame(loop) : 0;
+    };
+    const kick = () => { if (!raf) { last = performance.now(); raf = requestAnimationFrame(loop); } };
+
+    const show = (e) => {
+      const row = e.target.closest && e.target.closest('.irow');
+      if (!row || !list.contains(row)) return;
+      if (!active) {
+        // First appearance: start on the cursor so it grows in place instead of flying in.
+        tx = e.clientX; ty = e.clientY;
+        side = tx + GAP + W > innerWidth - 16 ? -1 : 1;
+        px = tx + (side > 0 ? GAP : -GAP) + (side - 1) * (W / 2); py = ty - Hb / 2; vx = vy = 0;
+        active = true;
+        fol.classList.add('on');
+      }
+      swap(row);
+      kick();
+    };
+    list.addEventListener('pointermove', (e) => { tx = e.clientX; ty = e.clientY; show(e); });
+    list.addEventListener('pointerleave', () => { active = false; curRow = null; curIdx = -1; fol.classList.remove('on'); kick(); });
+    // Wheel-scrolling under a still pointer: follow whichever row is now beneath it.
+    addEventListener('scroll', () => {
+      if (!active) return;
+      const el = document.elementFromPoint(tx, ty);
+      const row = el && el.closest('.irow');
+      if (!row || !list.contains(row)) { active = false; curRow = null; curIdx = -1; fol.classList.remove('on'); return; }
+      swap(row);
+      kick();
+    }, { passive: true });
+  })();
+
+  /* Liquid chips: gold floods in from the entry point and drains toward the exit point. */
+  (() => {
+    if (!fine) return;
+    const set = (el, e) => {
+      const r = el.getBoundingClientRect();
+      el.style.setProperty('--cx', `${(e.clientX - r.left).toFixed(0)}px`);
+      el.style.setProperty('--cy', `${(e.clientY - r.top).toFixed(0)}px`);
+      el.style.setProperty('--dd', `${Math.ceil(Math.hypot(r.width, r.height) * 2.2)}px`);
+    };
+    const bind = (el) => {
+      el.classList.add('liquid');
+      el.addEventListener('pointerenter', (e) => { set(el, e); requestAnimationFrame(() => el.classList.add('lit')); });
+      el.addEventListener('pointerleave', (e) => { set(el, e); el.classList.remove('lit'); });
+    };
+    $$('.chipset li').forEach(bind);
+    // Toolkit chips are cloned for the ticker, so bind after cloning has happened.
+    requestAnimationFrame(() => $$('.mat li').forEach(bind));
   })();
 
   /* ── 09. Graphic design filter + lightbox ── */
