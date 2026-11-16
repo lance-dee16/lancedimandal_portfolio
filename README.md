@@ -93,26 +93,26 @@ Over the course of my work, I have developed and maintained multiple client webs
 
 This portfolio is built as more than a traditional developer website.
 
-It is a 2D, black-and-gold, editorial layout with a precise motion language: smooth settling eases, no bounce.
+It is a 2D, black-and-gold, editorial layout with an iOS-inspired motion language: spring physics with a slight, natural overshoot, frosted glass and continuous rounded corners.
 
 The portfolio includes:
 
-- A gold-seamed curtain that carries the first visit and every navigation jump, showing the target section's index and title
+- Spring-based motion throughout (CSS `linear()` spring curves with cubic-bezier fallbacks)
+- A first-visit splash that zooms through while the page scales up into place
+- Section jumps that zoom the page out and spring the new view back in, like switching apps
+- A header that springs into a floating frosted pill once you scroll, Dynamic Island-style
+- A mobile menu that opens as a bottom sheet, pushes the page back into a rounded card and can be swiped down to close
+- Graphic design posters that zoom out of their thumbnail like Photos, with swipe-down to dismiss
+- An iOS-style segmented control for the design filters, with a spring thumb
+- Press feedback: buttons, cards and tiles give slightly when tapped
 - Headlines that come into focus word by word out of a blur
-- Image plates that open from a rounded, inset frame while the image settles
-- Featured projects on a pinned horizontal scroll: the centred card is in focus, the others step back and dim
-- Count-up stats under rules that draw across
-- A marquee that speeds up, skews and changes direction with your scroll
-- A hero spotlight that follows the pointer, a ring that draws around the portrait and a rotating scroll badge
-- Archive and experience rows that lean in on a gold edge, with a floating logo preview that trails the cursor
-- Graphic design filters with a sliding underline and tiles that deal back in one by one
-- A scroll-linked process line with a glowing head that signs off each service
+- Featured projects on a pinned horizontal scroll (stacked on phones and short screens)
+- Count-up stats, a scroll-velocity marquee, a hero spotlight and portrait ring
+- Archive and experience rows with an iOS list highlight and a floating logo preview that trails the cursor
 - A draggable skills ticker with inertia
-- A header that hides on scroll down and returns on scroll up
-- A circular mobile-menu reveal from the menu button
 - A closing gold contact panel that pulls up over the page, flattening its corners as it arrives
-- Fully responsive layouts (desktop, tablet, mobile) with touch-friendly fallbacks
-- Reduced-motion support: no curtain, no pinning, content shown as-is
+- Fully responsive layouts (desktop, tablet, mobile, short windows)
+- Reduced-motion support: no zooms, no pinning, content shown as-is
 
 Everything runs on vanilla JavaScript with no animation libraries.
 
@@ -125,7 +125,7 @@ index.html              Single-page site (Hero → Work → Graphic design → S
 css/
   styles.css            All styles, grouped into numbered sections (see the table of contents at the top)
 js/
-  main.js               All behaviour: curtain, reveals, horizontal projects, filters, lightbox, tickers, cursor, mobile menu
+  main.js               All behaviour: splash, zoom jumps, header island, bottom sheet, reveals, horizontal projects, filters, lightbox, tickers, cursor, mobile menu
 images/
   profile/              Portrait photo
   clients/              Client and project logos used in the Work section

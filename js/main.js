@@ -1,16 +1,16 @@
 /* ==========================================================================
    Lance Dimandal — Portfolio motion (vanilla JS, no dependencies)
 
-   html.m-full  → every reveal, curtain and scroll-linked effect
-   html.m-spec  → reduced motion: no curtain, no pinning, content shown as-is
+   html.m-full  → every reveal, spring and scroll-linked effect
+   html.m-spec  → reduced motion: no zooms, no pinning, content shown as-is
    html.hs-off  → featured projects stack vertically (phones / reduced motion)
 
    Sections:
      01. Helpers & setup
      02. Word splitting, stagger indices
      03. Reveal observer + stat counters
-     04. Curtain: boot (first visit per tab session) and anchor jumps
-     05. Header (hide on scroll down), active nav, mobile menu
+     04. Boot splash + zoom-out / zoom-in section jumps
+     05. Header island, active nav, mobile bottom sheet
      06. Hero spotlight
      07. Scroll-linked: horizontal projects, process line, tail stack
      08. Project archive expand + follow preview
@@ -26,8 +26,13 @@
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const fine = matchMedia('(hover:hover) and (pointer:fine)').matches;
   const full = () => H.classList.contains('m-full');
-  const E = 'cubic-bezier(.65,0,.35,1)';
   const S = 'cubic-bezier(.16,.84,.24,1)';
+  /* iOS-style springs for WAAPI (falls back to a cubic-bezier where linear() is unsupported) */
+  const hasLinear = window.CSS && CSS.supports('transition-timing-function', 'linear(0, 1)');
+  const css = getComputedStyle(H);
+  const SPRING = hasLinear ? css.getPropertyValue('--spring').trim() : 'cubic-bezier(.2,.9,.25,1.02)';
+  const BOUNCY = hasLinear ? css.getPropertyValue('--bouncy').trim() : 'cubic-bezier(.3,1.4,.5,1)';
+  const main = $('#main');
   const wait = (ms) => new Promise((r) => setTimeout(r, ms));
   const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
   const pad = (n) => String(n).padStart(2, '0');
@@ -98,35 +103,34 @@
   );
   const observeAll = () => $$('[data-r]').forEach((el) => { if (!el.classList.contains('in')) io.observe(el); });
 
-  /* ── 04. Curtain ── */
+  /* ── 04. Boot splash + section jumps ── */
   const hero = $('.hero');
   const curtain = $('#curtain');
-  const cIdx = curtain && $('.c-idx', curtain);
   const cTitle = curtain && $('.c-title', curtain);
   const cBar = curtain && $('.c-bar i', curtain);
-  const TOTAL = '07';
-  const setCurtain = (sec, title) => {
-    cIdx.textContent = `${sec.dataset.sheet || '01'} / ${TOTAL}`;
-    cTitle.textContent = title || sec.dataset.title || 'Index';
-  };
   const focusIn = (el, delay = 0) => el.animate(
-    [{ opacity: 0, filter: 'blur(12px)', transform: 'translateY(.25em)' }, { opacity: 1, filter: 'blur(0)', transform: 'none' }],
-    { duration: 700, delay, easing: S, fill: 'both' }
+    [{ opacity: 0, filter: 'blur(12px)', transform: 'translateY(.25em) scale(.96)' }, { opacity: 1, filter: 'blur(0)', transform: 'none' }],
+    { duration: 900, delay, easing: SPRING, fill: 'both' }
   );
+  /* Scale the page around the centre of the viewport, wherever it is scrolled to. */
+  const centre = () => { main.style.transformOrigin = `50% ${(scrollY + innerHeight / 2).toFixed(0)}px`; };
 
   async function boot() {
     if (H.classList.contains('booting') && full() && curtain) {
-      setCurtain(hero, 'Lance Dimandal');
       const t = focusIn(cTitle, 80);
       const bar = cBar.animate([{ transform: 'scaleX(0)' }, { transform: 'scaleX(1)' }], { duration: 900, delay: 150, easing: S, fill: 'forwards' });
       await bar.finished;
-      const fade = cTitle.animate([{ opacity: 1 }, { opacity: 0, transform: 'translateY(-.15em)' }], { duration: 300, easing: 'ease-in', fill: 'forwards' });
-      const lift = curtain.animate([{ transform: 'translateY(0)' }, { transform: 'translateY(-101%)' }], { duration: 900, delay: 120, easing: E, fill: 'forwards' });
-      setTimeout(() => hero && hero.classList.add('in'), 380);
-      setTimeout(observeAll, 520);
-      await lift.finished;
+      centre();
+      // The splash zooms through toward you while the page scales up into place.
+      const away = curtain.animate([{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'scale(1.12)' }], { duration: 650, easing: 'cubic-bezier(.4,0,.2,1)', fill: 'forwards' });
+      const pageIn = main.animate([{ opacity: 0, transform: 'scale(.9)' }, { opacity: 1, transform: 'none' }], { duration: 1300, easing: SPRING, fill: 'both' });
+      const hdrIn = hdr.animate([{ opacity: 0, transform: 'translateY(-20px)' }, { opacity: 1, transform: 'none' }], { duration: 1100, delay: 200, easing: SPRING, fill: 'both' });
       H.classList.remove('booting');
-      [t, bar, fade, lift].forEach((a) => a.cancel());
+      setTimeout(() => hero && hero.classList.add('in'), 120);
+      setTimeout(observeAll, 300);
+      await pageIn.finished;
+      [t, bar, away, pageIn, hdrIn].forEach((a) => a.cancel());
+      main.style.transformOrigin = '';
       try { sessionStorage.setItem('ld-boot', '1'); } catch (e) { /* private mode */ }
     } else {
       H.classList.remove('booting');
@@ -135,34 +139,38 @@
     }
   }
 
+  /* Section jumps feel like switching apps: the page zooms out and fades,
+     we move, and the new view springs back in from slightly larger. */
   let busy = false;
-  const targetY = (el) => (el === hero ? 0 : el.getBoundingClientRect().top + scrollY);
+  /* Document position from offsets, so it is unaffected by any zoom or sheet scaling in progress. */
+  const targetY = (el) => {
+    if (el === hero) return 0;
+    let y = 0;
+    for (let n = el; n; n = n.offsetParent) y += n.offsetTop;
+    return y;
+  };
   async function jump(el, hash) {
     if (busy) return;
     const setHash = () => { try { history.replaceState(null, '', hash); } catch (e) { /* sandboxed */ } };
-    if (!full() || reduce || !curtain) {
+    if (!full() || reduce) {
       scrollTo({ top: targetY(el), behavior: reduce ? 'auto' : 'smooth' });
       setHash();
       return;
     }
     busy = true;
     try {
-      setCurtain(el);
-      curtain.style.pointerEvents = 'auto';
-      const up = curtain.animate([{ transform: 'translateY(101%)' }, { transform: 'translateY(0)' }], { duration: 640, easing: E, fill: 'forwards' });
-      const t = focusIn(cTitle, 280);
-      const bar = cBar.animate([{ transform: 'scaleX(0)' }, { transform: 'scaleX(1)' }], { duration: 700, delay: 200, easing: S, fill: 'forwards' });
-      await up.finished;
+      centre();
+      const out = main.animate([{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'scale(.92)' }], { duration: 340, easing: 'cubic-bezier(.4,0,1,1)', fill: 'forwards' });
+      await out.finished;
       scrollTo({ top: targetY(el), behavior: 'instant' });
       setHash();
-      hdr.classList.remove('hide');
       layout();
       onScroll();
-      await wait(320);
-      const off = curtain.animate([{ transform: 'translateY(0)' }, { transform: 'translateY(-101%)' }], { duration: 760, easing: E, fill: 'forwards' });
-      await off.finished;
-      [up, t, bar, off].forEach((a) => a.cancel());
-      curtain.style.pointerEvents = '';
+      centre();
+      const back = main.animate([{ opacity: 0, transform: 'scale(1.05)' }, { opacity: 1, transform: 'none' }], { duration: 1000, easing: SPRING, fill: 'backwards' });
+      out.cancel();
+      await back.finished;
+      main.style.transformOrigin = '';
     } finally {
       busy = false;
     }
@@ -176,11 +184,11 @@
     e.preventDefault();
     const wasOpen = H.classList.contains('menu-open');
     closeMenu();
-    if (wasOpen && full() && !reduce) setTimeout(() => jump(el, hash), 160);
+    if (wasOpen && full() && !reduce) setTimeout(() => jump(el, hash), 420);
     else jump(el, hash);
   });
 
-  /* ── 05. Header, active nav, mobile menu ── */
+  /* ── 05. Header island, active nav, mobile bottom sheet ── */
   const hdr = $('#hdr');
   const navLinks = $$('.nav a');
   const navIO = new IntersectionObserver(
@@ -194,20 +202,57 @@
 
   const toggle = $('.menu-toggle');
   const mmenu = $('#mobile-menu');
+  let lastFocus = null;
   function setMenu(open) {
+    if (open) { centre(); lastFocus = document.activeElement; }
     H.classList.toggle('menu-open', open);
     toggle.setAttribute('aria-expanded', String(open));
     toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
     mmenu.setAttribute('aria-hidden', String(!open));
     mmenu.inert = !open;
-    hdr.classList.remove('hide');
+    mmenu.style.removeProperty('--drag');
+    if (open) setTimeout(() => $('.sheet-close', mmenu).focus({ preventScroll: true }), 50);
+    else if (lastFocus && lastFocus.focus) lastFocus.focus({ preventScroll: true });
   }
   function closeMenu() { if (H.classList.contains('menu-open')) setMenu(false); }
   if (toggle && mmenu) {
     mmenu.inert = true;
     toggle.addEventListener('click', () => setMenu(!H.classList.contains('menu-open')));
+    $('.sheet-close', mmenu).addEventListener('click', closeMenu);
+    $('.page-frame').addEventListener('click', closeMenu);
     addEventListener('keydown', (e) => { if (e.key === 'Escape') closeMenu(); });
     matchMedia('(min-width: 1101px)').addEventListener('change', (m) => { if (m.matches) closeMenu(); });
+
+    /* Swipe the sheet down to dismiss: it follows the finger with rubber-banding
+       upward, and closes past 110px or on a quick flick. */
+    let sy = 0, dy = 0, lastY = 0, lastT = 0, vy = 0, dragging = false, moved = false;
+    mmenu.addEventListener('pointerdown', (e) => {
+      if (e.button) return;
+      sy = lastY = e.clientY; lastT = performance.now(); dy = 0; vy = 0; dragging = true; moved = false;
+    });
+    addEventListener('pointermove', (e) => {
+      if (!dragging) return;
+      const raw = e.clientY - sy;
+      if (!moved && Math.abs(raw) < 6) return;
+      if (!moved) { moved = true; mmenu.classList.add('dragging'); try { mmenu.setPointerCapture(e.pointerId); } catch (err) { /* ok */ } }
+      dy = raw > 0 ? raw : -Math.sqrt(-raw) * 3; // rubber band upward
+      const now = performance.now();
+      vy = (e.clientY - lastY) / Math.max(1, now - lastT);
+      lastY = e.clientY; lastT = now;
+      mmenu.style.setProperty('--drag', `${dy.toFixed(1)}px`);
+    });
+    const release = () => {
+      if (!dragging) return;
+      dragging = false;
+      if (!moved) return;
+      mmenu.classList.remove('dragging');
+      if (dy > 110 || vy > 0.6) closeMenu();
+      else mmenu.style.removeProperty('--drag');
+    };
+    addEventListener('pointerup', release);
+    addEventListener('pointercancel', release);
+    // Swallow the click that ends a drag so a link isn't followed by accident.
+    mmenu.addEventListener('click', (e) => { if (moved) { e.preventDefault(); e.stopPropagation(); moved = false; } }, true);
   }
 
   /* ── 06. Hero spotlight (fine pointers) ── */
@@ -240,8 +285,8 @@
   const steps = $$('.step');
   const panels = $$('#tstack > .tpanel');
   const tail = $('#tstack > .tail');
-  const hsOn = () => full() && !reduce && innerWidth > 700;
-  let lastY = scrollY;
+  // Sideways travel needs room: wide enough, and tall enough that a card fits the pinned stage.
+  const hsOn = () => full() && !reduce && innerWidth > 700 && innerHeight >= 620;
   let tick = false;
 
   /* The pinned section is exactly as tall as the sideways travel plus one screen. */
@@ -258,16 +303,7 @@
     const on = full() && !reduce;
     const y = scrollY;
 
-    if (hdr && hero) {
-      const over = y < hero.offsetHeight - hdr.offsetHeight;
-      hdr.classList.toggle('over', over);
-      hdr.classList.toggle('solid', !over);
-      if (!busy && !H.classList.contains('menu-open')) {
-        if (y > lastY + 6 && y > vh * 0.6) hdr.classList.add('hide');
-        else if (y < lastY - 6 || y < vh * 0.6) hdr.classList.remove('hide');
-      }
-    }
-    lastY = y;
+    if (hdr) hdr.classList.toggle('island', y > 40);
 
     /* Horizontal projects */
     if (hs && hcards.length) {
@@ -428,7 +464,7 @@
       const shown = tiles.filter((t) => !t.hidden);
       const anims = shown.map((t, i) => t.animate(
         [{ opacity: 0, transform: 'translateY(22px) scale(.96)', filter: 'blur(6px)' }, { opacity: 1, transform: 'none', filter: 'blur(0)' }],
-        { duration: 700, delay: Math.min(i, 8) * 55, easing: S, fill: 'backwards' }
+        { duration: 900, delay: Math.min(i, 8) * 50, easing: SPRING, fill: 'backwards' }
       ));
       if (anims.length) await anims.at(-1).finished;
       tiles.forEach((t) => $$('.instant', t).forEach((p) => p.classList.remove('instant')));
@@ -444,47 +480,141 @@
     }));
   }
 
+  /* Lightbox: posters zoom out of their thumbnail like Photos, swipe down to dismiss. */
   const lb = $('.lightbox');
   if (lb && typeof lb.showModal === 'function' && tiles.length) {
     const img = $('.lb-img', lb);
+    const fig = $('.lb-fig', lb);
     const cap = $('.lb-cap', lb);
     const count = $('.lb-count', lb);
-    let cur = 0;
+    const chrome = $$('.lb-close, .lb-nav, .lb-count', lb).concat([cap]);
+    const motion = () => full() && !reduce;
+    let cur = 0, curTile = null, closing = false;
     const visible = () => tiles.filter((t) => !t.hidden);
-    const show = (tile, dir = 0) => {
+    const thumbOf = (t) => $('img', t);
+    const fill = (tile) => {
       const list = visible();
       cur = Math.max(0, list.indexOf(tile));
-      img.src = $('.tile-open', tile).dataset.full;
-      img.alt = $('img', tile).alt;
+      curTile = tile;
+      const th = thumbOf(tile);
+      img.src = th.currentSrc || th.src;             // instant: the thumbnail is already loaded
+      img.width = th.naturalWidth || +th.getAttribute('width');
+      img.height = th.naturalHeight || +th.getAttribute('height');
+      img.alt = th.alt;
+      const hiSrc = $(".tile-open", tile).dataset.full;
+      const hi = new Image();
+      hi.onload = () => { if (curTile === tile) img.src = hiSrc; };
+      hi.src = hiSrc;
       cap.innerHTML = $('figcaption', tile).innerHTML;
       count.textContent = `${pad(cur + 1)} / ${pad(list.length)}`;
       lb.classList.toggle('is-single', list.length < 2);
-      if (lb.open && full() && !reduce) {
-        $('.lb-fig', lb).animate(
-          [{ opacity: 0, transform: `translateX(${dir * 40}px)`, filter: 'blur(8px)' }, { opacity: 1, transform: 'none', filter: 'blur(0)' }],
-          { duration: 520, easing: S }
-        );
-      }
     };
+    // FLIP: the image starts exactly where the thumbnail sits and springs to its place.
+    const fromThumb = (tile) => {
+      const a = thumbOf(tile).getBoundingClientRect();
+      const b = img.getBoundingClientRect();
+      if (!b.width || !a.width) return null;
+      return `translate(${a.left - b.left}px, ${a.top - b.top}px) scale(${a.width / b.width}, ${a.height / b.height})`;
+    };
+    const bgAnim = (from, to, dur, easing) => lb.animate([{ backgroundColor: `rgba(8,8,7,${from})` }, { backgroundColor: `rgba(8,8,7,${to})` }], { duration: dur, easing, fill: 'forwards' });
+    async function open(tile) {
+      fill(tile);
+      lb.showModal();
+      H.classList.add('lb-open');
+      if (!motion()) return;
+      const t = fromThumb(tile);
+      const bg = bgAnim(0, .96, 450, 'ease-out');
+      chrome.forEach((el) => el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 400, delay: 220, fill: 'backwards' }));
+      if (t) await img.animate([{ transform: t, borderRadius: '18px' }, { transform: 'none', borderRadius: '14px' }], { duration: 900, easing: SPRING }).finished;
+      bg.cancel();
+    }
+    async function close() {
+      if (closing || !lb.open) return;
+      if (!motion()) { lb.close(); return; }
+      closing = true;
+      const tr = img.getBoundingClientRect();
+      const a = thumbOf(curTile).getBoundingClientRect();
+      const onScreen = a.bottom > 0 && a.top < innerHeight && !curTile.hidden;
+      const now = getComputedStyle(img).transform;
+      chrome.forEach((el) => el.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 160, fill: 'forwards' }));
+      const bg = bgAnim(lb.dataset.alpha || .96, 0, 380, 'ease-in');
+      let anim;
+      if (onScreen) {
+        img.style.transform = 'none';
+        const b = img.getBoundingClientRect();
+        const to = `translate(${a.left - b.left}px, ${a.top - b.top}px) scale(${a.width / b.width}, ${a.height / b.height})`;
+        anim = img.animate([{ transform: now === 'none' ? `translate(0,${tr.top - b.top}px)` : now, borderRadius: '14px' }, { transform: to, borderRadius: '18px' }], { duration: 700, easing: SPRING, fill: 'forwards' });
+      } else {
+        anim = img.animate([{ opacity: 1, transform: now }, { opacity: 0, transform: 'scale(.85)' }], { duration: 300, easing: 'ease-in', fill: 'forwards' });
+      }
+      await Promise.all([anim.finished, bg.finished]);
+      lb.close();
+      [anim, bg].forEach((x) => x.cancel());
+      lb.getAnimations({ subtree: true }).forEach((x) => x.cancel());
+      img.style.transform = '';
+      delete lb.dataset.alpha;
+      closing = false;
+    }
     const step = (d) => {
       const list = visible();
       if (list.length < 2) return;
-      show(list[(cur + d + list.length) % list.length], d);
+      fill(list[(cur + d + list.length) % list.length]);
+      if (motion()) {
+        fig.animate(
+          [{ opacity: 0, transform: `translateX(${d * 60}px) scale(.96)`, filter: 'blur(8px)' }, { opacity: 1, transform: 'none', filter: 'blur(0)' }],
+          { duration: 800, easing: SPRING }
+        );
+      }
     };
-    tiles.forEach((t) => $('.tile-open', t).addEventListener('click', () => {
-      show(t);
-      lb.showModal();
-      H.classList.add('lb-open');
-    }));
-    $('.lb-close', lb).addEventListener('click', () => lb.close());
+    tiles.forEach((t) => $('.tile-open', t).addEventListener('click', () => open(t)));
+    $('.lb-close', lb).addEventListener('click', close);
     $('.lb-prev', lb).addEventListener('click', () => step(-1));
     $('.lb-next', lb).addEventListener('click', () => step(1));
+    lb.addEventListener('cancel', (e) => { e.preventDefault(); close(); });
     lb.addEventListener('keydown', (e) => {
       if (e.key === 'ArrowLeft') step(-1);
       if (e.key === 'ArrowRight') step(1);
     });
-    lb.addEventListener('click', (e) => { if (e.target === lb) lb.close(); });
+    lb.addEventListener('click', (e) => { if (e.target === lb && !dragMoved) close(); });
     lb.addEventListener('close', () => { img.removeAttribute('src'); H.classList.remove('lb-open'); });
+
+    /* Swipe down on the image to dismiss: it shrinks and the backdrop thins as you drag. */
+    let sy = 0, sx = 0, dragging = false, dragMoved = false, dy = 0, dx = 0;
+    img.addEventListener('pointerdown', (e) => {
+      if (!motion()) return;
+      dragging = true; dragMoved = false; sy = e.clientY; sx = e.clientX; dy = dx = 0;
+      img.setPointerCapture(e.pointerId);
+    });
+    img.addEventListener('pointermove', (e) => {
+      if (!dragging) return;
+      dy = e.clientY - sy; dx = e.clientX - sx;
+      if (!dragMoved && Math.hypot(dx, dy) < 6) return;
+      dragMoved = true;
+      const k = clamp(Math.max(0, dy) / 600, 0, 0.4);
+      img.style.transform = `translate(${dx * 0.6}px, ${dy}px) scale(${1 - k})`;
+      const alpha = (0.96 * (1 - clamp(Math.max(0, dy) / 400))).toFixed(3);
+      lb.style.backgroundColor = `rgba(8,8,7,${alpha})`;
+      lb.dataset.alpha = alpha;
+      chrome.forEach((el) => (el.style.opacity = String(1 - clamp(Math.abs(dy) / 120))));
+    });
+    const endDrag = () => {
+      if (!dragging) return;
+      dragging = false;
+      if (!dragMoved) return;
+      if (dy > 120) { lb.style.backgroundColor = ''; chrome.forEach((el) => (el.style.opacity = '')); close(); }
+      else {
+        const from = img.style.transform;
+        img.style.transform = '';
+        lb.style.backgroundColor = '';
+        chrome.forEach((el) => (el.style.opacity = ''));
+        delete lb.dataset.alpha;
+        img.animate([{ transform: from }, { transform: 'none' }], { duration: 700, easing: SPRING });
+      }
+      setTimeout(() => { dragMoved = false; }, 0);
+    };
+    img.addEventListener('pointerup', endDrag);
+    img.addEventListener('pointercancel', endDrag);
+    img.addEventListener('dragstart', (e) => e.preventDefault());
   }
 
   /* ── 10. Velocity ticker + skills drag ticker ── */

@@ -10,7 +10,7 @@
   <title>Lance Dimandal — Web Developer</title>
 
   <!-- Motion mode is decided before first paint so nothing flashes in and out.
-       m-full = every reveal, curtain and scroll-linked effect · m-spec = reduced motion. -->
+       m-full = every reveal, spring and scroll-linked effect · m-spec = reduced motion. -->
   <script>
     (function () {
       var h = document.documentElement;
@@ -18,7 +18,7 @@
       var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
       h.classList.add(reduce ? 'm-spec' : 'm-full');
       try { if (!reduce && !sessionStorage.getItem('ld-boot')) h.classList.add('booting'); } catch (e) {}
-      // Safety net: never leave the boot curtain closed if the main script fails.
+      // Safety net: never leave the boot splash up if the main script fails.
       setTimeout(function () { h.classList.remove('booting'); }, 4000);
     })();
   </script>
@@ -26,23 +26,23 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css?v=2026-11-16c">
-  <script src="js/main.js?v=2026-11-16c" defer></script>
+  <link rel="stylesheet" href="css/styles.css?v=2026-11-16d">
+  <script src="js/main.js?v=2026-11-16d" defer></script>
 </head>
 <body>
   <a class="skip" href="#main">Skip to content</a>
 
-  <!-- Page curtain: one panel with gold seams. Boot (first visit per tab session) and nav jumps. -->
+  <!-- Boot splash (first visit per tab session) -->
   <div class="curtain" id="curtain" aria-hidden="true">
     <div class="wrap curtain-in">
-      <span class="c-top"><span class="c-idx mono">01</span><span class="mono">Lance Dimandal — Portfolio 2026</span></span>
+      <span class="c-top"><span class="c-idx mono">Web developer</span><span class="mono">Portfolio — 2026</span></span>
       <span class="c-title">Lance Dimandal</span>
       <span class="c-bar"><i></i></span>
     </div>
   </div>
 
   <!-- ============================== Header ============================== -->
-  <header class="hdr over" id="hdr">
+  <header class="hdr" id="hdr">
     <div class="wrap hdr-in">
       <a class="logo" href="#top">Lance Dimandal<span>.</span></a>
       <nav class="nav" aria-label="Primary">
@@ -58,7 +58,10 @@
     </div>
   </header>
 
-  <div class="mmenu" id="mobile-menu" aria-hidden="true">
+  <div class="page-frame" aria-hidden="true"></div>
+  <div class="mmenu" id="mobile-menu" aria-hidden="true" role="dialog" aria-label="Navigation">
+    <span class="sheet-grab" aria-hidden="true"></span>
+    <button class="sheet-close" type="button" aria-label="Close menu">×</button>
     <div class="wrap mmenu-in">
       <span class="meta muted">Navigation / 06</span>
       <nav class="mmenu-links" aria-label="Mobile">
