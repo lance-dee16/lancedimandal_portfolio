@@ -115,6 +115,7 @@ The portfolio includes:
 - A thin, warm scrollbar site-wide and an iOS-style fading scroll indicator inside the mobile menu sheet
 - A closing wordmark whose letters rise into place as you reach the bottom of the page
 - A closing gold contact panel that pulls up over the page, flattening its corners as it arrives
+- Soft interface sounds, synthesized live with the Web Audio API (no audio files): taps, picker-style detent ticks, a gentle two-note rise/fall for open/close and an airy whoosh for section jumps. Silent until the first tap/click, quiet by design, respects the iOS silent switch where supported, adds a tiny vibration on Android, and can be turned off with the speaker button in the header (remembered per browser)
 - Fully responsive layouts (desktop, tablet, mobile, short windows)
 - Reduced-motion support: no zooms, no pinning, content shown as-is
 

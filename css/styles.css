@@ -272,6 +272,18 @@ html.menu-open .hdr { opacity: 0; transform: scale(.94); pointer-events: none; }
 }
 .nav a:hover, .nav a.on { color: var(--text); }
 .nav a.on::after { transform: scale(1); }
+/* Sound toggle: speaker with waves when on, a cross when off */
+.snd { width: 40px; height: 40px; flex: none; display: grid; place-items: center; border-radius: 50%; border: 1px solid var(--hair-2); color: var(--text); transition: transform .6s var(--bouncy), border-color .3s ease, color .3s ease, background-color .3s ease; }
+.snd:hover { border-color: var(--gold); color: var(--gold); }
+.snd:active { transform: scale(.9); transition-duration: .12s; }
+.snd .w, .snd .x { transition: opacity .3s ease, transform .5s var(--spring); transform-origin: 12px 12px; }
+.snd .x { opacity: 0; transform: scale(.4); }
+.snd.off { color: var(--muted); }
+.snd.off .w { opacity: 0; transform: scale(.6); }
+.snd.off .x { opacity: 1; transform: none; }
+.snd:not(.off) .w2 { animation: sndw 2.6s ease-in-out infinite; }
+@keyframes sndw { 50% { opacity: .35; } }
+.hdr.island .snd { width: 38px; height: 38px; }
 .menu-toggle { display: none; width: 44px; height: 44px; position: relative; border: 1px solid var(--hair-2); border-radius: 50%; transition: transform .6s var(--bouncy); }
 .menu-toggle i { position: absolute; left: 13px; right: 13px; height: 1px; background: var(--text); }
 .menu-toggle i:first-child { top: 18px; }
@@ -825,6 +837,7 @@ html.m-spec .tpanel, html.m-spec .tpanel.tail { position: static; min-height: 0;
 @media (max-width: 1100px) {
   .nav, .hdr .resume { display: none; }
   .menu-toggle { display: block; }
+  .hdr-in { gap: 12px; }
 
   .hero-in { grid-template-columns: minmax(0, 1fr) minmax(0, 270px); gap: 48px; }
   .hero-h { font-size: clamp(42px, 6.4vw, 72px); }

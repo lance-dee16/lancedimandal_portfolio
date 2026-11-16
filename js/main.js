@@ -18,6 +18,7 @@
      10. Velocity ticker + skills drag ticker
      11. View cursor
      12. Glow cards (toolkit + athletic), disc flight, closing wordmark
+     13. Interface sounds (SFX) — synthesized with Web Audio, toggle in the header
    ========================================================================== */
 (() => {
   /* ── 01. Helpers & setup ── */
@@ -37,6 +38,118 @@
   const wait = (ms) => new Promise((r) => setTimeout(r, ms));
   const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
   const pad = (n) => String(n).padStart(2, '0');
+
+  /* ── 13. Interface sounds ──
+     Original, synthesized cues (Web Audio API, no audio files): soft taps, picker-style
+     detent ticks, a gentle two-note rise/fall for open/close, an airy whoosh for jumps.
+     · Quiet by design and run through a compressor plus a short, soft room tail.
+     · Nothing can play before the visitor's first tap/click/key (browser rule), and
+       hover ticks only start after that too.
+     · On iOS the session is "ambient" where supported, so the silent switch mutes it
+       and it mixes politely with other audio. Android also gets a tiny vibration.
+     · The header speaker button toggles everything; the choice is remembered. */
+  const SFX = (() => {
+    let ctx = null, out = null, verb = null, unlocked = false, enabled = true;
+    const last = {};
+    try { if (localStorage.getItem('ld-sfx') === '0') enabled = false; } catch (e) { /* storage blocked */ }
+    const AC = window.AudioContext || window.webkitAudioContext;
+    const build = () => {
+      if (ctx || !AC) return;
+      try { if (navigator.audioSession) navigator.audioSession.type = 'ambient'; } catch (e) { /* unsupported */ }
+      ctx = new AC();
+      const comp = ctx.createDynamicsCompressor();
+      comp.threshold.value = -20; comp.ratio.value = 3; comp.attack.value = 0.002; comp.release.value = 0.15;
+      out = ctx.createGain(); out.gain.value = 0.85;
+      out.connect(comp).connect(ctx.destination);
+      // Soft, short "room": decaying stereo noise impulse, mixed low.
+      verb = ctx.createConvolver();
+      const len = Math.floor(ctx.sampleRate * 0.55);
+      const ir = ctx.createBuffer(2, len, ctx.sampleRate);
+      for (let c = 0; c < 2; c++) { const d = ir.getChannelData(c); for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 3.2); }
+      verb.buffer = ir;
+      const wet = ctx.createGain(); wet.gain.value = 0.16;
+      verb.connect(wet).connect(out);
+    };
+    const ready = () => {
+      if (!enabled || !unlocked || !AC) return null;
+      build();
+      if (ctx.state === 'suspended') ctx.resume();
+      return ctx;
+    };
+    const unlock = () => { unlocked = true; if (enabled) { build(); if (ctx && ctx.state === 'suspended') ctx.resume(); } };
+    ['pointerdown', 'keydown', 'touchstart'].forEach((ev) => addEventListener(ev, unlock, { capture: true, passive: true }));
+
+    const tone = (f0, f1, dur, gain, delay = 0, wet = true, type = 'sine') => {
+      const c = ready(); if (!c) return;
+      const t = c.currentTime + 0.004 + delay;
+      const o = c.createOscillator(), g = c.createGain();
+      o.type = type;
+      o.frequency.setValueAtTime(f0, t);
+      if (f1 !== f0) o.frequency.exponentialRampToValueAtTime(f1, t + dur * 0.7);
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(gain, t + 0.008);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+      o.connect(g); g.connect(out); if (wet) g.connect(verb);
+      o.start(t); o.stop(t + dur + 0.05);
+    };
+    const air = (dur, gain, f0, f1, q = 1, delay = 0) => {
+      const c = ready(); if (!c) return;
+      const t = c.currentTime + 0.004 + delay;
+      const n = Math.ceil(c.sampleRate * dur);
+      const b = c.createBuffer(1, n, c.sampleRate), d = b.getChannelData(0);
+      for (let i = 0; i < n; i++) d[i] = Math.random() * 2 - 1;
+      const src = c.createBufferSource(); src.buffer = b;
+      const bp = c.createBiquadFilter(); bp.type = 'bandpass'; bp.Q.value = q;
+      bp.frequency.setValueAtTime(f0, t); bp.frequency.exponentialRampToValueAtTime(f1, t + dur);
+      const g = c.createGain();
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(gain, t + dur * 0.35);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+      src.connect(bp).connect(g); g.connect(out); g.connect(verb);
+      src.start(t); src.stop(t + dur + 0.02);
+    };
+    const gate = (k, ms) => { const n = performance.now(); if (last[k] && n - last[k] < ms) return false; last[k] = n; return true; };
+    const buzz = (ms) => { if (!enabled || !unlocked) return; try { if (navigator.vibrate) navigator.vibrate(ms); } catch (e) { /* ignore */ } };
+
+    const api = {
+      tap() { if (!gate('tap', 45)) return; tone(1320, 980, 0.07, 0.045); air(0.03, 0.02, 3400, 2600, 1.6); buzz(6); },
+      tick(v = 1) { if (!gate('tick', 38)) return; tone(2350, 2150, 0.032, 0.026 * v, 0, false); },
+      open() { tone(523.25, 523.25, 0.34, 0.036); tone(783.99, 783.99, 0.46, 0.032, 0.06); air(0.24, 0.012, 600, 1900, 0.8); buzz(8); },
+      close() { tone(659.25, 659.25, 0.26, 0.032); tone(440, 440, 0.38, 0.028, 0.05); air(0.2, 0.01, 1700, 520, 0.8); },
+      swoosh() { air(0.42, 0.028, 300, 2600, 0.9); tone(392, 587.33, 0.32, 0.016, 0.1); },
+      snap() { if (!gate('snap', 120)) return; tone(880, 1320, 0.09, 0.034); buzz(10); },
+      chime() { [659.25, 830.61, 987.77].forEach((f, i) => tone(f, f, 0.9, 0.026, i * 0.075)); },
+      get on() { return enabled; },
+      set(v) {
+        enabled = v;
+        try { localStorage.setItem('ld-sfx', v ? '1' : '0'); } catch (e) { /* storage blocked */ }
+        if (v) { unlock(); api.chime(); }
+      },
+    };
+    return api;
+  })();
+
+  /* Header speaker toggle */
+  (() => {
+    const b = $('#sndBtn');
+    if (!b) return;
+    const paint = () => {
+      b.classList.toggle('off', !SFX.on);
+      b.setAttribute('aria-pressed', String(SFX.on));
+      b.setAttribute('aria-label', SFX.on ? 'Turn sound effects off' : 'Turn sound effects on');
+      b.title = SFX.on ? 'Sound on' : 'Sound off';
+    };
+    paint();
+    b.addEventListener('click', () => { SFX.set(!SFX.on); paint(); });
+  })();
+
+  /* Default tap for anything clickable that doesn't have its own cue */
+  const OWN_CUE = '.menu-toggle, .sheet-close, .tile-open, .lb-close, .lb-nav, #chips button, #irowsBtn, #sndBtn, a[href^="#"]';
+  document.addEventListener('click', (e) => {
+    const el = e.target.closest && e.target.closest('a, button');
+    if (!el || el.matches(OWN_CUE)) return;
+    SFX.tap();
+  }, true);
 
   const year = $('#copyright-year');
   if (year) year.textContent = String(new Date().getFullYear());
@@ -152,6 +265,7 @@
   };
   async function jump(el, hash) {
     if (busy) return;
+    SFX.swoosh();
     const setHash = () => { try { history.replaceState(null, '', hash); } catch (e) { /* sandboxed */ } };
     if (!full() || reduce) {
       scrollTo({ top: targetY(el), behavior: reduce ? 'auto' : 'smooth' });
@@ -205,7 +319,8 @@
   const mmenu = $('#mobile-menu');
   let lastFocus = null;
   function setMenu(open) {
-    if (open) { centre(); lastFocus = document.activeElement; }
+    if (open === H.classList.contains('menu-open')) return;
+    if (open) { centre(); lastFocus = document.activeElement; SFX.open(); } else SFX.close();
     H.classList.toggle('menu-open', open);
     toggle.setAttribute('aria-expanded', String(open));
     toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
@@ -241,6 +356,8 @@
       vy = (e.clientY - lastY) / Math.max(1, now - lastT);
       lastY = e.clientY; lastT = now;
       mmenu.style.setProperty('--drag', `${dy.toFixed(1)}px`);
+      const past = dy > 110;
+      if (past !== mmenu._past) { mmenu._past = past; if (past) SFX.snap(); }
     });
     const release = () => {
       if (!dragging) return;
@@ -420,6 +537,7 @@
     more.inert = true;
     moreBtn.addEventListener('click', () => {
       const open = !more.classList.contains('open');
+      if (open) SFX.open(); else SFX.close();
       more.classList.toggle('open', open);
       more.inert = !open;
       moreBtn.setAttribute('aria-expanded', String(open));
@@ -458,6 +576,7 @@
       const idx = rows.indexOf(row);
       const src = row && $('.pv img', row) && $('.pv img', row).getAttribute('src');
       const dir = curIdx < 0 ? 0 : idx > curIdx ? 1 : -1;
+      if (curRow) SFX.tick(0.7);
       curRow = row; curIdx = idx;
       if (!src) return;
       const inc = layers[1 - front];
@@ -531,7 +650,7 @@
     };
     const bind = (el) => {
       el.classList.add('liquid');
-      el.addEventListener('pointerenter', (e) => { set(el, e); requestAnimationFrame(() => el.classList.add('lit')); });
+      el.addEventListener('pointerenter', (e) => { set(el, e); SFX.tick(0.45); requestAnimationFrame(() => el.classList.add('lit')); });
       el.addEventListener('pointerleave', (e) => { set(el, e); el.classList.remove('lit'); });
     };
     $$('.chipset li').forEach(bind);
@@ -571,6 +690,7 @@
       fstatus.innerHTML = f === 'all' ? '' : `Showing <b>${shown}</b> of ${tiles.length} pieces`;
     };
     async function filter(btn) {
+      SFX.tick(1.2);
       $$('button', chips).forEach((b) => {
         b.classList.toggle('on', b === btn);
         b.setAttribute('aria-pressed', String(b === btn));
@@ -654,6 +774,7 @@
 
     async function open(tile) {
       if (closing) return;
+      SFX.open();
       fill(tile);
       lb.showModal();
       H.classList.add('lb-open');
@@ -672,6 +793,7 @@
 
     async function close() {
       if (closing || !lb.open) return;
+      SFX.close();
       if (!motion()) { lb.close(); return; }
       closing = true;
       const tile = curTile;
@@ -704,6 +826,7 @@
     const step = (d) => {
       const list = visible();
       if (list.length < 2) return;
+      SFX.tick();
       fill(list[(cur + d + list.length) % list.length]);
       if (motion()) {
         fig.animate(
@@ -750,11 +873,14 @@
       img.style.transform = `translate(${(dx * 0.7 + (img.offsetWidth * k) / 2).toFixed(1)}px, ${(up + (img.offsetHeight * k) / 2).toFixed(1)}px) scale(${(1 - k).toFixed(3)})`;
       bgEl.style.opacity = String((1 - clamp(down / 420, 0, 0.92)).toFixed(3));
       chrome.forEach((el) => (el.style.opacity = String(1 - clamp(Math.abs(dy) / 90))));
+      const past = dy > 110;
+      if (past !== img._past) { img._past = past; if (past) SFX.snap(); }
     });
     const endDrag = () => {
       if (!dragging) return;
       dragging = false;
       if (!dragMoved) return;
+      img._past = false;
       if (dy > 110 || vy > 0.7) close();
       else {
         const from = img.style.transform;
@@ -861,6 +987,10 @@
       x = sx0 + (e.clientX - sx);
       moved = Math.max(moved, Math.abs(e.clientX - sx));
       if (moved > 4) vp.classList.add('dragging');
+      const card = tr.firstElementChild;
+      const stepW = card ? card.offsetWidth + 20 : 340;
+      const det = Math.floor(x / stepW);
+      if (det !== vp._det) { if (vp._det !== undefined) SFX.tick(0.8); vp._det = det; }
       v = ((e.clientX - lastX) / Math.max(1, now - lastT)) * 1000;
       lastX = e.clientX; lastT = now;
     });
