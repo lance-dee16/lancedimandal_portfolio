@@ -406,6 +406,7 @@
   // Sideways travel needs room: wide enough, and tall enough that a card fits the pinned stage.
   const hsOn = () => full() && !reduce && innerWidth > 700 && innerHeight >= 620;
   let tick = false;
+  let procReady = false;
   const athletic = $('#athletic');
   const disc = $('.disc-flight .disc');
   const discTrail = $$('.disc-flight .trail');
@@ -465,19 +466,27 @@
       }
     }
 
-    /* Process: gold line + glowing head; each step signs off as the head passes. */
+    /* Process: one number drives everything. p = how far the reading line (62% down the
+       viewport) has travelled through the list. The fill scale, the head position and each
+       step's "signed off" state all come from that same p in the same frame, and it is
+       recomputed on every scroll — even off-screen — so a fast flick past the section
+       still leaves it exactly full (below) or exactly empty (above). */
     if (proc) {
       const b = proc.getBoundingClientRect();
       const line = vh * 0.62;
-      if (b.top < vh && b.bottom > 0) {
-        const p = on ? clamp((line - b.top) / b.height) : 1;
-        pfill.style.transform = `scaleY(${p})`;
-        if (phead) phead.style.top = `${(p * 100).toFixed(2)}%`;
-        steps.forEach((s) => {
-          const sb = s.getBoundingClientRect();
-          s.classList.toggle('on', !on || sb.top + Math.min(sb.height / 2, 60) < line);
-        });
-      }
+      const p = on ? clamp((line - b.top) / b.height) : 1;
+      const headY = p * b.height;                       // px from the top of the list
+      pfill.style.transform = `scaleY(${p.toFixed(4)})`;
+      if (phead) phead.style.transform = `translate3d(0, ${headY.toFixed(1)}px, 0)`;
+      steps.forEach((s) => {
+        const no = s.firstElementChild.getBoundingClientRect();
+        const lit = !on || no.top + no.height / 2 - b.top <= headY + 0.5;
+        if (lit !== s.classList.contains('on')) {
+          s.classList.toggle('on', lit);
+          if (lit && procReady) SFX.tick(0.9);         // a soft detent as each step signs off
+        }
+      });
+      procReady = true;
     }
 
     /* Tail: pin by the foot; covered panel recedes; arriving gold panel flattens its corners. */
