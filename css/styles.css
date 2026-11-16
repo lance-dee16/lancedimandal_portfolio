@@ -662,6 +662,12 @@ html.m-spec .lightbox[open] .lb-fig { animation: lbFig .3s ease; }
 html:not(.m-full) .proc .fill { transform: none; }
 /* The head is moved with a transform in the same frame as the fill — no transition, so it can never lag */
 .proc .head { position: absolute; left: -4px; top: -4.5px; width: 9px; height: 9px; border-radius: 50%; background: var(--gold); box-shadow: 0 0 0 4px rgba(212, 178, 106, .15), 0 0 18px rgba(212, 178, 106, .6); transform: translate3d(0, 0, 0); will-change: transform; }
+/* Comet tail: grows with scroll speed behind the head (above it going down, below it going up) */
+.proc .head::before {
+  content: ""; position: absolute; left: 50%; bottom: 50%; width: 3px; margin-left: -1.5px; height: var(--tail, 0px); border-radius: 3px;
+  background: linear-gradient(to top, rgba(228, 200, 142, .95), rgba(212, 178, 106, 0)); pointer-events: none;
+}
+.proc .head.up::before { bottom: auto; top: 50%; background: linear-gradient(to bottom, rgba(228, 200, 142, .95), rgba(212, 178, 106, 0)); }
 .proc .fill { will-change: transform; }
 html:not(.m-full) .proc .head { display: none; }
 .step {

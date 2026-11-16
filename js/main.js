@@ -407,6 +407,48 @@
   const hsOn = () => full() && !reduce && innerWidth > 700 && innerHeight >= 620;
   let tick = false;
   let procReady = false;
+  /* Process line: smooth AND synced.
+     Scroll only sets procTarget (how far the reading line, 62% down the viewport, has
+     travelled through the list). Every animation frame one shared value, procP, glides
+     toward it on a critically damped follower (~90ms, no overshoot), and the fill, the
+     glowing head, its comet tail and the steps' "signed off" state are ALL drawn from that
+     same procP in that same frame. So wheel notches no longer make the dot jump, yet the
+     line and the dot can never drift apart. Large jumps (nav links, fast flicks past the
+     section) still land exactly full or exactly empty. */
+  let procTarget = 0, procP = 0, procV = 0, procRaf = 0, procLast = 0;
+  function procFrame(t) {
+    const dt = Math.min(0.05, procLast ? (t - procLast) / 1000 : 0.016);
+    procLast = t;
+    const b = proc.getBoundingClientRect();
+    const smooth = full() && !reduce;
+    const prevP = procP;
+    if (!smooth || !procReady) procP = procTarget;
+    else {
+      const k = 1 - Math.exp(-dt * 22);                  // critically damped, frame-rate independent
+      procP += (procTarget - procP) * k;
+      if (Math.abs(procTarget - procP) < 0.0004) procP = procTarget;
+    }
+    procV = procV * 0.7 + (((procP - prevP) * b.height) / Math.max(dt, 0.001)) * 0.3;  // px/s, smoothed
+    const headY = procP * b.height;
+    pfill.style.transform = `scaleY(${procP.toFixed(5)})`;
+    if (phead) {
+      const sp = Math.abs(procV);
+      phead.style.transform = `translate3d(0, ${headY.toFixed(2)}px, 0) scale(${(1 + Math.min(sp / 4000, 0.35)).toFixed(3)})`;
+      phead.style.setProperty('--tail', `${Math.min(sp * 0.06, 90).toFixed(1)}px`);
+      phead.classList.toggle('up', procV < -1);
+    }
+    steps.forEach((st) => {
+      const no = st.firstElementChild.getBoundingClientRect();
+      const lit = !smooth || no.top + no.height / 2 - b.top <= headY + 0.5;
+      if (lit !== st.classList.contains('on')) {
+        st.classList.toggle('on', lit);
+        if (lit && procReady) SFX.tick(0.9);              // a soft detent as each step signs off
+      }
+    });
+    procReady = true;
+    procRaf = procP !== procTarget || Math.abs(procV) > 1 ? requestAnimationFrame(procFrame) : 0;
+    if (!procRaf) { procLast = 0; procV = 0; phead && phead.style.setProperty('--tail', '0px'); }
+  }
   const athletic = $('#athletic');
   const disc = $('.disc-flight .disc');
   const discTrail = $$('.disc-flight .trail');
@@ -466,27 +508,11 @@
       }
     }
 
-    /* Process: one number drives everything. p = how far the reading line (62% down the
-       viewport) has travelled through the list. The fill scale, the head position and each
-       step's "signed off" state all come from that same p in the same frame, and it is
-       recomputed on every scroll — even off-screen — so a fast flick past the section
-       still leaves it exactly full (below) or exactly empty (above). */
+    /* Process: scroll sets a target; a per-frame follower glides toward it. */
     if (proc) {
       const b = proc.getBoundingClientRect();
-      const line = vh * 0.62;
-      const p = on ? clamp((line - b.top) / b.height) : 1;
-      const headY = p * b.height;                       // px from the top of the list
-      pfill.style.transform = `scaleY(${p.toFixed(4)})`;
-      if (phead) phead.style.transform = `translate3d(0, ${headY.toFixed(1)}px, 0)`;
-      steps.forEach((s) => {
-        const no = s.firstElementChild.getBoundingClientRect();
-        const lit = !on || no.top + no.height / 2 - b.top <= headY + 0.5;
-        if (lit !== s.classList.contains('on')) {
-          s.classList.toggle('on', lit);
-          if (lit && procReady) SFX.tick(0.9);         // a soft detent as each step signs off
-        }
-      });
-      procReady = true;
+      procTarget = on ? clamp((vh * 0.62 - b.top) / b.height) : 1;
+      if (!procRaf) procRaf = requestAnimationFrame(procFrame);
     }
 
     /* Tail: pin by the foot; covered panel recedes; arriving gold panel flattens its corners. */
