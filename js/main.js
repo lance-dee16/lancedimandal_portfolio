@@ -602,28 +602,35 @@
     }));
   }
 
-  /* Lightbox: posters zoom out of their thumbnail like Photos, swipe down to dismiss. */
+  /* Lightbox: posters zoom out of their thumbnail like Photos, swipe down to dismiss.
+     The dim + blur sit on their own layer (.lb-bg) so they fade in step with the
+     image instead of snapping off at the end, and they thin out as you drag.
+     The source thumbnail is hidden while the image is in flight, so there is
+     only ever one copy on screen. */
   const lb = $('.lightbox');
   if (lb && typeof lb.showModal === 'function' && tiles.length) {
     const img = $('.lb-img', lb);
     const fig = $('.lb-fig', lb);
     const cap = $('.lb-cap', lb);
     const count = $('.lb-count', lb);
+    const bgEl = $('.lb-bg', lb);
     const chrome = $$('.lb-close, .lb-nav, .lb-count', lb).concat([cap]);
     const motion = () => full() && !reduce;
-    let cur = 0, curTile = null, closing = false;
+    let cur = 0, curTile = null, closing = false, opening = null;
     const visible = () => tiles.filter((t) => !t.hidden);
     const thumbOf = (t) => $('img', t);
+    const hideSrc = (t, on) => { if (t) thumbOf(t).classList.toggle('lb-src', on); };
     const fill = (tile) => {
       const list = visible();
       cur = Math.max(0, list.indexOf(tile));
+      hideSrc(curTile, false);
       curTile = tile;
       const th = thumbOf(tile);
       img.src = th.currentSrc || th.src;             // instant: the thumbnail is already loaded
       img.width = th.naturalWidth || +th.getAttribute('width');
       img.height = th.naturalHeight || +th.getAttribute('height');
       img.alt = th.alt;
-      const hiSrc = $(".tile-open", tile).dataset.full;
+      const hiSrc = $('.tile-open', tile).dataset.full;
       const hi = new Image();
       hi.onload = () => { if (curTile === tile) img.src = hiSrc; };
       hi.src = hiSrc;
@@ -631,52 +638,69 @@
       count.textContent = `${pad(cur + 1)} / ${pad(list.length)}`;
       lb.classList.toggle('is-single', list.length < 2);
     };
-    // FLIP: the image starts exactly where the thumbnail sits and springs to its place.
-    const fromThumb = (tile) => {
+    // FLIP transform that puts the (untransformed) viewer image exactly over a thumbnail.
+    const toThumb = (tile) => {
       const a = thumbOf(tile).getBoundingClientRect();
       const b = img.getBoundingClientRect();
       if (!b.width || !a.width) return null;
       return `translate(${a.left - b.left}px, ${a.top - b.top}px) scale(${a.width / b.width}, ${a.height / b.height})`;
     };
-    const bgAnim = (from, to, dur, easing) => lb.animate([{ backgroundColor: `rgba(8,8,7,${from})` }, { backgroundColor: `rgba(8,8,7,${to})` }], { duration: dur, easing, fill: 'forwards' });
+    const onScreen = (tile) => {
+      if (!tile || tile.hidden) return false;
+      const a = thumbOf(tile).getBoundingClientRect();
+      return a.bottom > 0 && a.top < innerHeight && a.width > 0;
+    };
+    const clearAnims = () => [img, bgEl, ...chrome].forEach((el) => el.getAnimations().forEach((x) => x.cancel()));
+
     async function open(tile) {
+      if (closing) return;
       fill(tile);
       lb.showModal();
       H.classList.add('lb-open');
       if (!motion()) return;
-      const t = fromThumb(tile);
-      const bg = bgAnim(0, .96, 450, 'ease-out');
-      chrome.forEach((el) => el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 400, delay: 220, fill: 'backwards' }));
-      if (t) await img.animate([{ transform: t, borderRadius: '18px' }, { transform: 'none', borderRadius: '14px' }], { duration: 900, easing: SPRING }).finished;
-      bg.cancel();
+      const t = toThumb(tile);
+      hideSrc(tile, true);
+      bgEl.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 420, easing: 'cubic-bezier(.2,0,0,1)' });
+      chrome.forEach((el) => el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 360, delay: 240, fill: 'backwards' }));
+      if (t) {
+        opening = img.animate([{ transform: t, borderRadius: '18px' }, { transform: 'none', borderRadius: '14px' }], { duration: 850, easing: SPRING });
+        try { await opening.finished; } catch (e) { /* cancelled by a quick close */ }
+        opening = null;
+      }
+      if (!closing) hideSrc(tile, false);
     }
+
     async function close() {
       if (closing || !lb.open) return;
       if (!motion()) { lb.close(); return; }
       closing = true;
-      const tr = img.getBoundingClientRect();
-      const a = thumbOf(curTile).getBoundingClientRect();
-      const onScreen = a.bottom > 0 && a.top < innerHeight && !curTile.hidden;
+      const tile = curTile;
+      // Where the image is right now (mid-open, mid-drag or at rest), as a transform.
       const now = getComputedStyle(img).transform;
-      chrome.forEach((el) => el.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 160, fill: 'forwards' }));
-      const bg = bgAnim(lb.dataset.alpha || .96, 0, 380, 'ease-in');
+      const bgNow = getComputedStyle(bgEl).opacity;
+      if (opening) { opening.cancel(); opening = null; }
+      img.style.transform = 'none';
+      bgEl.style.opacity = '';
+      const back = onScreen(tile) ? toThumb(tile) : null;
+      const from = now && now !== 'none' ? now : 'none';
+      chrome.forEach((el) => { const op = el.style.opacity || getComputedStyle(el).opacity; el.style.opacity = ''; el.animate([{ opacity: op }, { opacity: 0 }], { duration: 160, fill: 'forwards' }); });
+      // Backdrop and image travel together: both finish in the same ~half second.
+      const bg = bgEl.animate([{ opacity: bgNow }, { opacity: 0 }], { duration: back ? 460 : 300, easing: 'cubic-bezier(.4,0,.2,1)', fill: 'forwards' });
       let anim;
-      if (onScreen) {
-        img.style.transform = 'none';
-        const b = img.getBoundingClientRect();
-        const to = `translate(${a.left - b.left}px, ${a.top - b.top}px) scale(${a.width / b.width}, ${a.height / b.height})`;
-        anim = img.animate([{ transform: now === 'none' ? `translate(0,${tr.top - b.top}px)` : now, borderRadius: '14px' }, { transform: to, borderRadius: '18px' }], { duration: 700, easing: SPRING, fill: 'forwards' });
+      if (back) {
+        hideSrc(tile, true);
+        anim = img.animate([{ transform: from, borderRadius: '14px' }, { transform: back, borderRadius: '18px' }], { duration: 560, easing: 'cubic-bezier(.2,.9,.25,1)', fill: 'forwards' });
       } else {
-        anim = img.animate([{ opacity: 1, transform: now }, { opacity: 0, transform: 'scale(.85)' }], { duration: 300, easing: 'ease-in', fill: 'forwards' });
+        anim = img.animate([{ transform: from, opacity: 1 }, { transform: `${from === 'none' ? '' : from} scale(.9)`, opacity: 0 }], { duration: 300, easing: 'ease-in', fill: 'forwards' });
       }
       await Promise.all([anim.finished, bg.finished]);
+      hideSrc(tile, false);            // thumbnail reappears exactly under the image's last frame
       lb.close();
-      [anim, bg].forEach((x) => x.cancel());
-      lb.getAnimations({ subtree: true }).forEach((x) => x.cancel());
+      clearAnims();
       img.style.transform = '';
-      delete lb.dataset.alpha;
       closing = false;
     }
+
     const step = (d) => {
       const list = visible();
       if (list.length < 2) return;
@@ -697,40 +721,50 @@
       if (e.key === 'ArrowLeft') step(-1);
       if (e.key === 'ArrowRight') step(1);
     });
-    lb.addEventListener('click', (e) => { if (e.target === lb && !dragMoved) close(); });
-    lb.addEventListener('close', () => { img.removeAttribute('src'); H.classList.remove('lb-open'); });
+    lb.addEventListener('click', (e) => { if ((e.target === lb || e.target === bgEl) && !dragMoved) close(); });
+    lb.addEventListener('close', () => { img.removeAttribute('src'); H.classList.remove('lb-open'); hideSrc(curTile, false); });
 
-    /* Swipe down on the image to dismiss: it shrinks and the backdrop thins as you drag. */
-    let sy = 0, sx = 0, dragging = false, dragMoved = false, dy = 0, dx = 0;
+    /* Swipe to dismiss: the image follows the finger (a little sideways give, shrinking as it
+       goes down), the backdrop thins with the distance, and letting go past ~110px or with a
+       quick downward flick sends it home; otherwise it springs back. */
+    let sy = 0, sx = 0, dragging = false, dragMoved = false, dy = 0, dx = 0, lastY = 0, lastT = 0, vy = 0;
     img.addEventListener('pointerdown', (e) => {
-      if (!motion()) return;
-      dragging = true; dragMoved = false; sy = e.clientY; sx = e.clientX; dy = dx = 0;
+      if (!motion() || closing) return;
+      if (opening) { opening.finish(); }
+      dragging = true; dragMoved = false; sy = lastY = e.clientY; sx = e.clientX; dy = dx = vy = 0; lastT = performance.now();
       img.setPointerCapture(e.pointerId);
     });
     img.addEventListener('pointermove', (e) => {
       if (!dragging) return;
       dy = e.clientY - sy; dx = e.clientX - sx;
       if (!dragMoved && Math.hypot(dx, dy) < 6) return;
+      if (!dragMoved) hideSrc(curTile, true);   // only one copy on screen while dragging
       dragMoved = true;
-      const k = clamp(Math.max(0, dy) / 600, 0, 0.4);
-      img.style.transform = `translate(${dx * 0.6}px, ${dy}px) scale(${1 - k})`;
-      const alpha = (0.96 * (1 - clamp(Math.max(0, dy) / 400))).toFixed(3);
-      lb.style.backgroundColor = `rgba(8,8,7,${alpha})`;
-      lb.dataset.alpha = alpha;
-      chrome.forEach((el) => (el.style.opacity = String(1 - clamp(Math.abs(dy) / 120))));
+      const now = performance.now();
+      vy = (e.clientY - lastY) / Math.max(1, now - lastT);
+      lastY = e.clientY; lastT = now;
+      const down = Math.max(0, dy);
+      const k = clamp(down / 900, 0, 0.35);
+      const up = dy < 0 ? -Math.sqrt(-dy) * 3 : dy;   // rubber-band upward
+      // scale around the image centre (transform-origin is the top-left corner)
+      img.style.transform = `translate(${(dx * 0.7 + (img.offsetWidth * k) / 2).toFixed(1)}px, ${(up + (img.offsetHeight * k) / 2).toFixed(1)}px) scale(${(1 - k).toFixed(3)})`;
+      bgEl.style.opacity = String((1 - clamp(down / 420, 0, 0.92)).toFixed(3));
+      chrome.forEach((el) => (el.style.opacity = String(1 - clamp(Math.abs(dy) / 90))));
     });
     const endDrag = () => {
       if (!dragging) return;
       dragging = false;
       if (!dragMoved) return;
-      if (dy > 120) { lb.style.backgroundColor = ''; chrome.forEach((el) => (el.style.opacity = '')); close(); }
+      if (dy > 110 || vy > 0.7) close();
       else {
         const from = img.style.transform;
+        const bgFrom = bgEl.style.opacity || '1';
         img.style.transform = '';
-        lb.style.backgroundColor = '';
+        bgEl.style.opacity = '';
         chrome.forEach((el) => (el.style.opacity = ''));
-        delete lb.dataset.alpha;
-        img.animate([{ transform: from }, { transform: 'none' }], { duration: 700, easing: SPRING });
+        img.animate([{ transform: from }, { transform: 'none' }], { duration: 650, easing: SPRING });
+        hideSrc(curTile, false);
+        bgEl.animate([{ opacity: bgFrom }, { opacity: 1 }], { duration: 300, easing: 'ease-out' });
       }
       setTimeout(() => { dragMoved = false; }, 0);
     };

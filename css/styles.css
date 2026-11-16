@@ -612,11 +612,16 @@ html.m-spec .plogo, html.hs-off .plogo { transform: none; }
 
 .lightbox {
   position: fixed; inset: 0; width: 100%; height: 100%; max-width: none; max-height: none; margin: 0; border: 0;
-  background: rgba(8, 8, 7, .96); color: var(--text); padding: 72px clamp(16px, 8vw, 120px) 64px;
+  background: transparent; color: var(--text); padding: 72px clamp(16px, 8vw, 120px) 64px; overflow: hidden;
   display: none; align-items: center; justify-content: center;
 }
 .lightbox[open] { display: flex; }
-.lightbox { -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px); touch-action: none; }
+.lightbox { touch-action: none; }
+/* Dim + blur live on their own layer so both can fade together (and follow a swipe) */
+.lb-bg { position: absolute; inset: 0; z-index: 0; background: rgba(8, 8, 7, .94); -webkit-backdrop-filter: blur(16px) saturate(120%); backdrop-filter: blur(16px) saturate(120%); will-change: opacity; }
+.lb-fig { position: relative; z-index: 1; }
+.lb-count { z-index: 2; }
+.tile .ph-img.lb-src { visibility: hidden; }
 .lightbox::backdrop { background: transparent; }
 @keyframes lbIn { from { opacity: 0; } }
 .lb-fig { display: flex; flex-direction: column; align-items: center; max-width: 100%; max-height: 100%; }
@@ -924,6 +929,7 @@ html.m-spec .tpanel, html.m-spec .tpanel.tail { position: static; min-height: 0;
   .contact-bottom { margin-top: 40px; }
 
   .lightbox { padding: 64px 12px 80px; }
+  .lb-bg { -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
   .lb-nav { top: auto; bottom: 16px; margin-top: 0; }
   .lb-prev { left: calc(50% - 52px); }
   .lb-next { right: calc(50% - 52px); }
