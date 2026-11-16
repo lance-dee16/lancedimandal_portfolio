@@ -981,56 +981,146 @@
       c.appendChild(big);
     });
     [...tr.children].forEach((c) => { const k = c.cloneNode(true); k.setAttribute('aria-hidden', 'true'); k.style.setProperty('--i', 0); tr.appendChild(k); });
+    /* Drag physics — iOS-style paging on an endless strip.
+       · Auto: a slow ticker; it eases to a stop on hover and gets a push from page scroll.
+       · Press: cards sink to .97 on a spring and a "Drag" cursor appears (fine pointers).
+       · Drag: the strip follows 1:1; each card leans with the velocity and cards further
+         from the finger answer later (softer springs), so the row feels elastic.
+       · Release: momentum is projected forward and the strip springs to the nearest card
+         edge in that direction (snap), keeping the release velocity — no dead stop.
+       · Idle: after ~2.4s of no interaction the auto ticker ramps back in.
+       · Page dots show the card at the left edge and jump to any card; trackpads can
+         swipe sideways too. Ticks play as each card passes the edge. */
     const SPEED = 26;
+    const N = tr.children.length / 2;                       // real cards (the rest are clones)
+    const cards = [...tr.children];
     let x = 0, v = 0, hover = false, drag = false, sx = 0, sx0 = 0, lastX = 0, lastT = 0, moved = 0, prev = performance.now(), inView = false;
-    let gear = 1, boost = 0, pY = scrollY;   // gear eases to 0 on hover instead of stopping dead; scrolling adds a push
+    let gear = 1, boost = 0, pY = scrollY, mode = 'auto', target = 0, idleAt = 0, press = 1, pressT = 1, px = innerWidth / 2, activeIdx = -1;
+    const lean = cards.map(() => ({ r: 0, vr: 0, y: 0, vy: 0 }));   // per-card spring state
     addEventListener('scroll', () => { boost = Math.min(boost + Math.abs(scrollY - pY) * 4, 600); pY = scrollY; }, { passive: true });
-    const W = () => tr.scrollWidth / 2;
-    const wrapX = () => { const w = W(); if (!w) return; while (x <= -w) x += w; while (x > 0) x -= w; };
+    // One loop = exactly one full set of cards (card 0 → its clone), not half the strip width:
+    // the strip's side padding made the old wrap jump a few pixels and knocked snaps off the grid.
+    const W = () => (cards[N] ? cards[N].offsetLeft - cards[0].offsetLeft : tr.scrollWidth / 2);
+    const stepW = () => (cards[1] ? cards[1].offsetLeft - cards[0].offsetLeft : 340);
+    const wrapX = () => { const w = W(); if (!w) return; while (x <= -w) { x += w; target += w; } while (x > 0) { x -= w; target -= w; } };
+    const nearest = (pos) => Math.round(pos / stepW()) * stepW();
+    const settle = (vel) => { mode = 'settle'; target = nearest(x + clamp(vel, -4000, 4000) * 0.28); idleAt = performance.now() + 2400; };
     new IntersectionObserver(([e]) => { inView = e.isIntersecting; }).observe(vp);
+
+    // Page dots
+    const dots = document.createElement('div');
+    dots.className = 'mat-dots';
+    dots.setAttribute('role', 'group');
+    dots.setAttribute('aria-label', 'Toolkit cards');
+    dots.innerHTML = Array.from({ length: N }, (_, i) => `<button type="button" aria-label="Show card ${i + 1}: ${$('.h3', cards[i]).textContent}"><i></i></button>`).join('');
+    vp.after(dots);
+    const dotBtns = $$('button', dots);
+    dotBtns.forEach((d, i) => d.addEventListener('click', () => {
+      // Shortest way round the loop to card i at the left edge.
+      const s = stepW(), w = W();
+      let t = -i * s;
+      while (t - x > w / 2) t -= w;
+      while (x - t > w / 2) t += w;
+      mode = 'settle'; target = t; v = 0; idleAt = performance.now() + 3200;
+    }));
+
     function loop(t) {
-      const dt = Math.min(0.05, (t - prev) / 1000);
+      const dt = Math.min(0.032, (t - prev) / 1000);
       prev = t;
-      if (inView || drag) {
-        gear += ((hover ? 0 : 1) - gear) * Math.min(1, dt * 5);
+      if (inView || drag || mode !== 'auto') {
+        gear += ((hover || mode !== 'auto' ? 0 : 1) - gear) * Math.min(1, dt * (mode === 'auto' ? 2.2 : 8));
         boost *= Math.pow(0.1, dt);
         if (!drag) {
-          if (Math.abs(v) > 1) { x += v * dt; v *= Math.pow(0.04, dt); }
-          else if (!reduce) x -= (SPEED + boost) * gear * dt;
+          if (mode === 'settle') {
+            // Damped spring toward the snapped card edge (keeps the release velocity).
+            v += (170 * (target - x) - 26 * v) * dt;
+            x += v * dt;
+            if (Math.abs(target - x) < 0.3 && Math.abs(v) < 6) { x = target; v = 0; mode = 'rest'; }
+          } else if (mode === 'rest') {
+            if (performance.now() > idleAt && !hover) mode = 'auto';
+          } else if (!reduce) {
+            x -= (SPEED + boost) * gear * dt;
+          }
         }
         wrapX();
-        const skew = reduce ? 0 : clamp((drag ? v : 0) / 4000, -0.04, 0.04) * -60;
-        tr.style.transform = `translate3d(${x.toFixed(2)}px,0,0) skewX(${skew.toFixed(2)}deg)`;
+        tr.style.transform = `translate3d(${x.toFixed(2)}px,0,0)`;
+
+        // Card under the left edge → active dot (+ a tick as each one passes while you interact).
+        const idx = ((Math.round(-x / stepW()) % N) + N) % N;
+        if (idx !== activeIdx) {
+          if (activeIdx !== -1 && mode !== 'auto') SFX.tick(0.8);
+          activeIdx = idx;
+          dotBtns.forEach((d, k) => { d.classList.toggle('on', k === idx); d.setAttribute('aria-current', k === idx ? 'true' : 'false'); });
+        }
+
+        // Press + per-card lean/lift springs (only while the strip is being handled).
+        const manual = drag || mode === 'settle';
+        pressT = drag ? 0.97 : 1;
+        press += (pressT - press) * Math.min(1, dt * 14);
+        if (!reduce && (manual || vp.classList.contains('manual'))) {
+          const vel = drag ? v : v * 0.6;
+          let still = !manual && Math.abs(press - 1) < 0.001;
+          cards.forEach((c, i) => {
+            const L = lean[i];
+            const r = c.getBoundingClientRect();
+            const near = clamp(1 - Math.abs(r.left + r.width / 2 - px) / (innerWidth * 0.9));
+            const k = 120 + 260 * near;                       // closer to the finger = stiffer = answers first
+            const rT = clamp(-vel * 0.0022, -7, 7) * (1.25 - near * 0.5);
+            const yT = drag ? -6 * near - 2 : 0;
+            L.vr += (k * (rT - L.r) - 18 * L.vr) * dt; L.r += L.vr * dt;
+            L.vy += (k * (yT - L.y) - 18 * L.vy) * dt; L.y += L.vy * dt;
+            if (Math.abs(L.r) > 0.02 || Math.abs(L.y) > 0.05 || Math.abs(L.vr) > 0.1) still = false;
+            c.style.transform = `translateY(${L.y.toFixed(2)}px) rotate(${L.r.toFixed(3)}deg) scale(${press.toFixed(4)})`;
+          });
+          if (still) { vp.classList.remove('manual'); cards.forEach((c) => (c.style.transform = '')); }
+        }
       }
       requestAnimationFrame(loop);
     }
     requestAnimationFrame(loop);
+
     vp.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') hover = true; });
     vp.addEventListener('pointerleave', () => { hover = false; });
     vp.addEventListener('pointerdown', (e) => {
-      drag = true; moved = 0; v = 0; sx = e.clientX; sx0 = x; lastX = e.clientX; lastT = performance.now();
+      if (e.button) return;
+      drag = true; moved = 0; v = 0; sx = e.clientX; sx0 = x; lastX = px = e.clientX; lastT = performance.now();
+      mode = 'rest'; idleAt = Infinity;
+      vp.classList.add('manual');
       vp.setPointerCapture(e.pointerId);
     });
     vp.addEventListener('pointermove', (e) => {
       if (!drag) return;
       const now = performance.now();
       x = sx0 + (e.clientX - sx);
+      px = e.clientX;
       moved = Math.max(moved, Math.abs(e.clientX - sx));
-      if (moved > 4) vp.classList.add('dragging');
-      const card = tr.firstElementChild;
-      const stepW = card ? card.offsetWidth + 20 : 340;
-      const det = Math.floor(x / stepW);
-      if (det !== vp._det) { if (vp._det !== undefined) SFX.tick(0.8); vp._det = det; }
-      v = ((e.clientX - lastX) / Math.max(1, now - lastT)) * 1000;
+      if (moved > 4 && !vp.classList.contains('dragging')) { vp.classList.add('dragging'); vp.dataset.cursor = '← →'; }
+      const inst = ((e.clientX - lastX) / Math.max(1, now - lastT)) * 1000;
+      v = v * 0.4 + inst * 0.6;                              // smoothed release velocity
       lastX = e.clientX; lastT = now;
     });
     const end = () => {
       if (!drag) return;
-      drag = false; vp.classList.remove('dragging');
-      if (performance.now() - lastT > 80) v = 0;
+      drag = false;
+      vp.classList.remove('dragging');
+      vp.dataset.cursor = 'Drag';
+      if (performance.now() - lastT > 90) v = 0;              // held still before letting go
+      settle(v);
     };
     vp.addEventListener('pointerup', end);
     vp.addEventListener('pointercancel', end);
+    // Trackpad / shift+wheel: sideways swipes move the strip, then it settles on a card.
+    let wheelT = 0;
+    vp.addEventListener('wheel', (e) => {
+      const dx = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.shiftKey ? e.deltaY : 0;
+      if (!dx) return;
+      e.preventDefault();
+      x -= dx; v = -dx * 30; mode = 'rest'; idleAt = Infinity;
+      vp.classList.add('manual');
+      clearTimeout(wheelT);
+      wheelT = setTimeout(() => settle(v * 0.3), 120);
+    }, { passive: false });
+    if (fine) vp.dataset.cursor = 'Drag';
     vp.addEventListener('dragstart', (e) => e.preventDefault());
   })();
 

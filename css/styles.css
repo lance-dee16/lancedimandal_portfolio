@@ -724,7 +724,16 @@ html.m-full [data-r="lines"].in .hang { opacity: 1; transform: none; transition:
   width: clamp(268px, 24vw, 340px); min-height: 320px; flex: none; padding: 28px; display: flex; flex-direction: column;
   border: 1px solid var(--hair); border-radius: 24px; background: var(--ink); overflow: hidden;
 }
-.mat-vp.dragging .mat { transition: filter .3s ease; }
+/* While the strip is handled, JS drives each card's transform every frame: no transform transition */
+.mat-vp.manual .mat { transition: filter .3s ease, opacity .8s ease, background-color .3s ease; }
+.mat-vp.manual .mat::before, .mat-vp.manual .mat::after { opacity: 0 !important; }
+/* Page dots: the active one stretches into a gold pill, iOS-style */
+.mat-dots { display: flex; justify-content: center; gap: 6px; margin-top: 22px; }
+.mat-dots button { width: 22px; height: 22px; display: grid; place-items: center; border-radius: 50%; }
+.mat-dots i { display: block; width: 6px; height: 6px; border-radius: 6px; background: rgba(237, 230, 216, .25); transition: width .6s var(--spring), background-color .3s ease; }
+.mat-dots button:hover i { background: rgba(237, 230, 216, .5); }
+.mat-dots button.on i { width: 20px; background: var(--gold); }
+.mat-dots button.on { width: 34px; border-radius: 11px; transition: width .6s var(--spring); }
 .mat:hover { background: #121110; }
 .mat .no { font-size: 11px; color: var(--gold); display: flex; justify-content: space-between; }
 .mat .no b { font-weight: 400; color: var(--muted); }
