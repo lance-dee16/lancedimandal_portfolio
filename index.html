@@ -10,7 +10,7 @@
   <title>Lance Dimandal — Web Developer</title>
 
   <!-- Motion mode is decided before first paint so nothing flashes in and out.
-       m-full = every reveal, shutter and scroll-linked effect · m-spec = reduced motion. -->
+       m-full = every reveal, curtain and scroll-linked effect · m-spec = reduced motion. -->
   <script>
     (function () {
       var h = document.documentElement;
@@ -18,7 +18,7 @@
       var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
       h.classList.add(reduce ? 'm-spec' : 'm-full');
       try { if (!reduce && !sessionStorage.getItem('ld-boot')) h.classList.add('booting'); } catch (e) {}
-      // Safety net: never leave the boot shutter closed if the main script fails.
+      // Safety net: never leave the boot curtain closed if the main script fails.
       setTimeout(function () { h.classList.remove('booting'); }, 4000);
     })();
   </script>
@@ -26,19 +26,19 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css?v=2026-11-16">
-  <script src="js/main.js?v=2026-11-16" defer></script>
+  <link rel="stylesheet" href="css/styles.css?v=2026-11-16b">
+  <script src="js/main.js?v=2026-11-16b" defer></script>
 </head>
 <body>
   <a class="skip" href="#main">Skip to content</a>
 
-  <!-- Page shutter: 12 strips = the 12-column grid. Used for the first-visit boot and for nav jumps. -->
-  <div class="shutter" id="shutter" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
-  <div class="sheet" id="sheet" aria-hidden="true">
-    <div><span>Portfolio</span>Lance Dimandal — 2026</div>
-    <div><span>Sheet</span><b data-s>01 / 07</b></div>
-    <div><span>Title</span><b data-t>Index</b></div>
-    <div><span>Scale</span>1:1</div>
+  <!-- Page curtain: one panel with gold seams. Boot (first visit per tab session) and nav jumps. -->
+  <div class="curtain" id="curtain" aria-hidden="true">
+    <div class="wrap curtain-in">
+      <span class="c-top"><span class="c-idx mono">01</span><span class="mono">Lance Dimandal — Portfolio 2026</span></span>
+      <span class="c-title">Lance Dimandal</span>
+      <span class="c-bar"><i></i></span>
+    </div>
   </div>
 
   <!-- ============================== Header ============================== -->
@@ -81,9 +81,9 @@
 
     <!-- ============================== Hero ============================== -->
     <section class="hero" id="top" data-title="Index" data-sheet="01">
-      <div class="hero-media reel" id="reel" aria-hidden="true"></div>
+      <div class="hero-media" aria-hidden="true"></div>
+      <div class="hero-spot" id="heroSpot" aria-hidden="true"></div>
       <div class="hero-grad" aria-hidden="true"></div>
-      <div class="hero-guides" aria-hidden="true"><div class="wrap grid" id="guides"></div></div>
 
       <div class="wrap hero-in">
         <div class="hh">
@@ -97,6 +97,7 @@
         </div>
 
         <figure class="hero-portrait">
+          <svg class="ring" viewBox="0 0 200 200" aria-hidden="true"><circle class="r1" cx="100" cy="100" r="96"/><circle class="r2" cx="100" cy="100" r="88"/></svg>
           <div class="ph" data-r="plate" data-from="up" style="--d:.45s">
             <div class="ph-in"><img class="ph-img duo" src="images/profile/lance-dimandal.webp" width="900" height="900" alt="Lance Dimandal" fetchpriority="high" decoding="async"></div>
           </div>
@@ -107,21 +108,20 @@
         </figure>
       </div>
 
-      <div class="vctl">
-        <button class="ibtn" id="vbtn" type="button" aria-label="Pause showreel"><svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><rect x="3" y="2" width="3" height="12"/><rect x="10" y="2" width="3" height="12"/></svg></button>
-        <span class="meta" id="reelLbl">Showreel</span><span class="meta mono" id="reelTc">01 / 04</span>
-      </div>
-      <div class="cue" aria-hidden="true"><span class="meta">Scroll</span><i></i></div>
+      <a class="cue-badge" href="#work" aria-label="Scroll to selected work">
+        <svg viewBox="0 0 100 100" aria-hidden="true"><defs><path id="cuePath" d="M50,50 m-38,0 a38,38 0 1,1 76,0 a38,38 0 1,1 -76,0"/></defs><text><textPath href="#cuePath">Scroll to explore · Scroll to explore · </textPath></text></svg>
+        <span class="ar" aria-hidden="true">↓</span>
+      </a>
     </section>
 
     <!-- Proof band: rules draw down one by one, text follows -->
     <section class="statband" aria-label="Selected development metrics">
       <div class="wrap">
         <div class="proof" data-r="proof">
-          <div class="stat"><span class="h3 tab">20+</span><span class="meta">Websites developed and maintained across client work</span></div>
-          <div class="stat"><span class="h3 tab">50%</span><span class="meta">Upper end of recorded PageSpeed / Lighthouse improvement</span></div>
-          <div class="stat"><span class="h3 tab">03</span><span class="meta">Core ecosystems: WordPress, Shopify and HubSpot</span></div>
-          <div class="stat"><span class="h3 tab">02+</span><span class="meta">Years working in agency web development</span></div>
+          <div class="stat"><span class="h3 tab" data-count="20" data-suffix="+">20+</span><span class="meta">Websites developed and maintained across client work</span></div>
+          <div class="stat"><span class="h3 tab" data-count="50" data-suffix="%">50%</span><span class="meta">Upper end of recorded PageSpeed / Lighthouse improvement</span></div>
+          <div class="stat"><span class="h3 tab" data-count="3" data-pad="2">03</span><span class="meta">Core ecosystems: WordPress, Shopify and HubSpot</span></div>
+          <div class="stat"><span class="h3 tab" data-count="2" data-pad="2" data-suffix="+">02+</span><span class="meta">Years working in agency web development</span></div>
         </div>
       </div>
     </section>
@@ -200,8 +200,11 @@
         <!-- Client & agency work: the pile (sticky stacking cards) -->
         <div class="subhead mt96" data-r="rows"><span class="meta mark">Client &amp; agency work</span><span class="meta muted">03 featured</span></div>
         <h3 class="h2 mt32" data-r="lines">Selected website projects</h3>
+      </div>
 
-        <div class="pstack" id="pstack">
+      <div class="hscroll" id="hscroll">
+        <div class="hs-sticky">
+          <div class="hs-track" id="hstrack">
           <a class="pcard" href="https://byrons.com.au/" target="_blank" rel="noopener noreferrer" data-cursor="Visit site">
             <span class="pshot"><i style="background:radial-gradient(70% 90% at 70% 30%,rgba(212,178,106,.20),transparent 60%),repeating-linear-gradient(32deg,#0d0d0c 0 38px,#1b1913 38px 40px,#0d0d0c 40px 78px)"></i></span>
             <span class="pscrim"></span>
@@ -245,8 +248,12 @@
             </span>
             <span class="pnote">Moving commerce to Shopify<br>Neto → Shopify</span>
           </div>
+          </div>
+          <div class="wrap hs-foot"><span class="mono" id="pcur">01 / 03</span><span class="hs-bar"><i id="hsbar"></i></span><span class="mono">Scroll to advance →</span></div>
         </div>
-        <div class="pcount"><span id="pcur">01 / 03</span><span>Scroll to advance</span></div>
+      </div>
+
+      <div class="wrap">
 
         <!-- Client & agency work: archive index (newest first) -->
         <div class="ihead mt96" data-r="rise">
@@ -397,7 +404,7 @@
           <p class="cap muted" data-r="rise" style="--d:.2s">Hands-on development and support, from the first layout to ongoing updates.</p>
         </div>
         <div class="proc" id="proc">
-          <div class="track"></div><div class="fill" id="pfill"></div>
+          <div class="track"></div><div class="fill" id="pfill"></div><i class="head" id="phead"></i>
           <article class="step"><span class="no mono">01</span><h3 class="nm">WordPress &amp; Elementor</h3><div class="ds"><p class="cap">Custom pages, reusable templates, and responsive layouts built from your Figma designs or project brief.</p><span class="meta">Elementor · ACF · Custom CSS</span></div></article>
           <article class="step"><span class="no mono">02</span><h3 class="nm">Shopify development</h3><div class="ds"><p class="cap">Theme customization, product pages, and platform migrations, including the details that make a store easier to use.</p><span class="meta">Shopify · Liquid · Migrations</span></div></article>
           <article class="step"><span class="no mono">03</span><h3 class="nm">Website care &amp; fixes</h3><div class="ds"><p class="cap">Layout fixes, performance improvements, plugin updates, and content changes for the website you already have.</p><span class="meta">Maintenance · Performance · SEO</span></div></article>
@@ -579,6 +586,7 @@
     <span class="lb-count mono" aria-hidden="true"></span>
   </dialog>
 
+  <div class="follow" id="follow" aria-hidden="true"><div class="fi"><img alt=""></div></div>
   <div class="vcur" id="vcur" aria-hidden="true"><span>View</span></div>
 </body>
 </html>

@@ -93,22 +93,26 @@ Over the course of my work, I have developed and maintained multiple client webs
 
 This portfolio is built as more than a traditional developer website.
 
-It is a 2D, black-and-gold, editorial layout with a precise motion language: no bounce, no overshoot, every movement on one of three easing curves (drafting, settle, UI).
+It is a 2D, black-and-gold, editorial layout with a precise motion language: smooth settling eases, no bounce.
 
 The portfolio includes:
 
-- A 12-strip page shutter for the first visit and for navigation jumps, with a drafting-sheet caption
-- Headlines that rise line by line out of masks
-- Image plates that wipe in like cut sheets, with the image settling from 112% to 100%
-- Sticky stacking project cards: each card pins, the next scrolls over it, and the covered card recedes and dims
-- Project archive rows with a gold fill that sweeps left to right and a logo preview that opens in-row
-- Graphic design filters with a sliding underline and a single cross-fade re-pack
-- A scroll-linked process line that "signs off" each service as it passes
-- A draggable skills ticker with inertia that pauses on hover
-- A closing tail where the gold contact panel pulls up over the page
-- A "View" cursor disc on fine pointers
+- A gold-seamed curtain that carries the first visit and every navigation jump, showing the target section's index and title
+- Headlines that come into focus word by word out of a blur
+- Image plates that open from a rounded, inset frame while the image settles
+- Featured projects on a pinned horizontal scroll: the centred card is in focus, the others step back and dim
+- Count-up stats under rules that draw across
+- A marquee that speeds up, skews and changes direction with your scroll
+- A hero spotlight that follows the pointer, a ring that draws around the portrait and a rotating scroll badge
+- Archive and experience rows that lean in on a gold edge, with a floating logo preview that trails the cursor
+- Graphic design filters with a sliding underline and tiles that deal back in one by one
+- A scroll-linked process line with a glowing head that signs off each service
+- A draggable skills ticker with inertia
+- A header that hides on scroll down and returns on scroll up
+- A circular mobile-menu reveal from the menu button
+- A closing gold contact panel that pulls up over the page, flattening its corners as it arrives
 - Fully responsive layouts (desktop, tablet, mobile) with touch-friendly fallbacks
-- Reduced-motion support: no shutter, no pinning, content shown as-is
+- Reduced-motion support: no curtain, no pinning, content shown as-is
 
 Everything runs on vanilla JavaScript with no animation libraries.
 
@@ -121,7 +125,7 @@ index.html              Single-page site (Hero → Work → Graphic design → S
 css/
   styles.css            All styles, grouped into numbered sections (see the table of contents at the top)
 js/
-  main.js               All behaviour: shutter, reveals, project pile, filters, lightbox, tickers, cursor, mobile menu
+  main.js               All behaviour: curtain, reveals, horizontal projects, filters, lightbox, tickers, cursor, mobile menu
 images/
   profile/              Portrait photo
   clients/              Client and project logos used in the Work section
@@ -129,7 +133,7 @@ images/
   organizations/        Employer, school and team logos (Experience & Athletic)
 ```
 
-**Reveal attributes:** add `data-r="lines"` (split on `<br>`), `rise`, `fade`, `line`, `plate` (with optional `data-from="up|right"`), `stagger` or `rows` to any element, plus an optional `style="--d:.2s"` delay.
+**Reveal attributes:** add `data-r="lines"` (split into words), `rise`, `fade`, `line`, `plate` (with optional `data-from="up|right"`), `stagger` or `rows` to any element, plus an optional `style="--d:.2s"` delay.
 
 **Adding a project to the archive:** copy an `.irow` inside `#irows` in `index.html` (use `<a>` when there is a live site, `<div>` when there isn't) and put its logo in `images/clients/`. The count and the "Show all" label update automatically.
 
