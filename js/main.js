@@ -756,44 +756,65 @@
       curTile = tile;
       const th = thumbOf(tile);
       img.src = th.currentSrc || th.src;             // instant: the thumbnail is already loaded
-      img.width = th.naturalWidth || +th.getAttribute('width');
-      img.height = th.naturalHeight || +th.getAttribute('height');
       img.alt = th.alt;
       const hiSrc = $('.tile-open', tile).dataset.full;
       const hi = new Image();
-      hi.onload = () => { if (curTile === tile) img.src = hiSrc; };
       hi.src = hiSrc;
+      // Swap to the sharp file once it is fully decoded; the box size is already fixed, so
+      // this only sharpens the picture and can't move or resize it.
+      (hi.decode ? hi.decode() : new Promise((r) => { hi.onload = r; })).then(() => { if (curTile === tile) img.src = hiSrc; }).catch(() => {});
       cap.innerHTML = $('figcaption', tile).innerHTML;
       count.textContent = `${pad(cur + 1)} / ${pad(list.length)}`;
       lb.classList.toggle('is-single', list.length < 2);
+      fit();
     };
-    // FLIP transform that puts the (untransformed) viewer image exactly over a thumbnail.
+    /* Fit the poster into the space left for it (dialog padding and caption removed), from the
+       aspect ratio in its width/height attributes — known up front, never from the loaded file. */
+    const fit = () => {
+      if (!curTile || !lb.open) return;
+      const th = thumbOf(curTile);
+      const ar = (+th.getAttribute('width') || th.naturalWidth || 1) / (+th.getAttribute('height') || th.naturalHeight || 1);
+      const cs = getComputedStyle(lb);
+      const availW = lb.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+      const capH = cap.offsetHeight + (parseFloat(getComputedStyle(cap).marginTop) || 0);
+      const availH = lb.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom) - capH;
+      const w = Math.max(80, Math.min(availW, availH * ar, 1400));
+      img.style.width = `${Math.round(w)}px`;
+      img.style.height = `${Math.round(w / ar)}px`;
+    };
+    addEventListener('resize', () => { if (lb.open && !closing) fit(); });
+    /* FLIP: the transform that lays the (untransformed) viewer image exactly over the
+       thumbnail's visible frame (.ph — not the <img>, which may be hover-zoomed inside it).
+       Also returns the radius that will *look* like the tile's 18px once scaled down. */
+    const frameOf = (t) => $('.ph', t) || thumbOf(t);
     const toThumb = (tile) => {
-      const a = thumbOf(tile).getBoundingClientRect();
+      const a = frameOf(tile).getBoundingClientRect();
       const b = img.getBoundingClientRect();
       if (!b.width || !a.width) return null;
-      return `translate(${a.left - b.left}px, ${a.top - b.top}px) scale(${a.width / b.width}, ${a.height / b.height})`;
+      const sx = a.width / b.width, sy = a.height / b.height;
+      return { t: `translate(${a.left - b.left}px, ${a.top - b.top}px) scale(${sx}, ${sy})`, r: `${(18 / ((sx + sy) / 2)).toFixed(1)}px` };
     };
+    const ZOOM = 'cubic-bezier(.22,1,.36,1)';   // fast start, long smooth settle, no bounce
     const onScreen = (tile) => {
       if (!tile || tile.hidden) return false;
-      const a = thumbOf(tile).getBoundingClientRect();
+      const a = frameOf(tile).getBoundingClientRect();
       return a.bottom > 0 && a.top < innerHeight && a.width > 0;
     };
     const clearAnims = () => [img, bgEl, ...chrome].forEach((el) => el.getAnimations().forEach((x) => x.cancel()));
 
     async function open(tile) {
-      if (closing) return;
+      if (closing || lb.open) return;
       SFX.open();
-      fill(tile);
-      lb.showModal();
+      lb.showModal();                 // open first so the dialog has real dimensions…
       H.classList.add('lb-open');
+      fill(tile);                     // …then fill + fit: the final size is set before any motion
       if (!motion()) return;
       const t = toThumb(tile);
       hideSrc(tile, true);
-      bgEl.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 420, easing: 'cubic-bezier(.2,0,0,1)' });
-      chrome.forEach((el) => el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 360, delay: 240, fill: 'backwards' }));
+      bgEl.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 380, easing: 'cubic-bezier(.2,0,0,1)' });
+      chrome.forEach((el) => el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 320, delay: 260, fill: 'backwards' }));
       if (t) {
-        opening = img.animate([{ transform: t, borderRadius: '18px' }, { transform: 'none', borderRadius: '14px' }], { duration: 850, easing: SPRING });
+        opening = img.animate([{ transform: t.t, borderRadius: t.r }, { transform: 'none', borderRadius: '14px' }], { duration: 620, easing: ZOOM });
         try { await opening.finished; } catch (e) { /* cancelled by a quick close */ }
         opening = null;
       }
@@ -812,7 +833,7 @@
       if (opening) { opening.cancel(); opening = null; }
       img.style.transform = 'none';
       bgEl.style.opacity = '';
-      const back = onScreen(tile) ? toThumb(tile) : null;
+      const back = onScreen(tile) ? toThumb(tile) : null;   // {t, r} or null
       const from = now && now !== 'none' ? now : 'none';
       chrome.forEach((el) => { const op = el.style.opacity || getComputedStyle(el).opacity; el.style.opacity = ''; el.animate([{ opacity: op }, { opacity: 0 }], { duration: 160, fill: 'forwards' }); });
       // Backdrop and image travel together: both finish in the same ~half second.
@@ -820,7 +841,7 @@
       let anim;
       if (back) {
         hideSrc(tile, true);
-        anim = img.animate([{ transform: from, borderRadius: '14px' }, { transform: back, borderRadius: '18px' }], { duration: 560, easing: 'cubic-bezier(.2,.9,.25,1)', fill: 'forwards' });
+        anim = img.animate([{ transform: from, borderRadius: '14px' }, { transform: back.t, borderRadius: back.r }], { duration: 560, easing: ZOOM, fill: 'forwards' });
       } else {
         anim = img.animate([{ transform: from, opacity: 1 }, { transform: `${from === 'none' ? '' : from} scale(.9)`, opacity: 0 }], { duration: 300, easing: 'ease-in', fill: 'forwards' });
       }
