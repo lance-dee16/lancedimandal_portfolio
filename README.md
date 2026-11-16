@@ -93,29 +93,24 @@ Over the course of my work, I have developed and maintained multiple client webs
 
 This portfolio is built as more than a traditional developer website.
 
-It combines my professional work with interactive motion design to create a more immersive browsing experience.
+It is a 2D, black-and-gold, editorial layout with a precise motion language: no bounce, no overshoot, every movement on one of three easing curves (drafting, settle, UI).
 
 The portfolio includes:
 
-- GSAP-powered animations
-- 3D interface elements
-- Animated digital counters
-- Scroll-triggered transitions
-- Interactive project cards
-- Perspective and depth effects
-- Infinite marquees
-- Floating technology elements
-- Animated background objects
-- Custom cursor interactions
-- Interactive project archive
-- Responsive tablet layouts
-- Mobile-specific animations
-- Touch-friendly interactions
-- Reduced-motion accessibility support
+- A 12-strip page shutter for the first visit and for navigation jumps, with a drafting-sheet caption
+- Headlines that rise line by line out of masks
+- Image plates that wipe in like cut sheets, with the image settling from 112% to 100%
+- Sticky stacking project cards: each card pins, the next scrolls over it, and the covered card recedes and dims
+- Project archive rows with a gold fill that sweeps left to right and a logo preview that opens in-row
+- Graphic design filters with a sliding underline and a single cross-fade re-pack
+- A scroll-linked process line that "signs off" each service as it passes
+- A draggable skills ticker with inertia that pauses on hover
+- A closing tail where the gold contact panel pulls up over the page
+- A "View" cursor disc on fine pointers
+- Fully responsive layouts (desktop, tablet, mobile) with touch-friendly fallbacks
+- Reduced-motion support: no shutter, no pinning, content shown as-is
 
-The animation system is designed differently depending on the device.
-
-Desktop users receive richer 3D interactions and pointer-based effects, while tablet and mobile layouts use optimized animations designed to maintain smooth scrolling and good performance.
+Everything runs on vanilla JavaScript with no animation libraries.
 
 ---
 
@@ -126,9 +121,7 @@ index.html              Single-page site (Hero → Work → Graphic design → S
 css/
   styles.css            All styles, grouped into numbered sections (see the table of contents at the top)
 js/
-  main.js               Non-animation behaviour: footer year, graphic design filters and poster viewer
-  animations.js         GSAP motion: boot screen, scroll reveals, counters, DrawSVG line work, 3D cards, scroll 3D
-  hero-scene.js         Three.js crystal in the hero (desktop only; loaded on demand by animations.js)
+  main.js               All behaviour: shutter, reveals, project pile, filters, lightbox, tickers, cursor, mobile menu
 images/
   profile/              Portrait photo
   clients/              Client and project logos used in the Work section
@@ -136,13 +129,15 @@ images/
   organizations/        Employer, school and team logos (Experience & Athletic)
 ```
 
-**Adding a project:** copy an existing `.project-card` inside `.project-grid` in `index.html` and put its logo in `images/clients/` (lowercase, hyphenated file name). The archive's project count updates automatically.
+**Reveal attributes:** add `data-r="lines"` (split on `<br>`), `rise`, `fade`, `line`, `plate` (with optional `data-from="up|right"`), `stagger` or `rows` to any element, plus an optional `style="--d:.2s"` delay.
 
-**Adding a poster:** export it to `images/graphics/` as `name.webp` (max 1800px) plus `name-thumb.webp` (720px wide), then copy a `.design-card` in the Graphic design section, set its `data-category` (events, campus, editorial, typography or dost) and update the counts on the filter buttons.
+**Adding a project to the archive:** copy an `.irow` inside `#irows` in `index.html` (use `<a>` when there is a live site, `<div>` when there isn't) and put its logo in `images/clients/`. The count and the "Show all" label update automatically.
+
+**Adding a poster:** export it to `images/graphics/` as `name.webp` (max 1800px) plus `name-thumb.webp` (720px wide), then copy a `.tile` in the Graphic design section and set its `data-category` (events, campus, editorial, typography or dost). Filter counts are calculated automatically.
 
 **Search engines:** the site is intentionally hidden from search through the `robots` meta tag in `index.html` and the `X-Robots-Tag` header in `vercel.json`. Remove both to allow indexing again.
 
-**Cache busting:** when you change `css/styles.css` or a file in `js/`, bump the `?v=` date on its `<link>`/`<script>` tag in `index.html`.
+**Cache busting:** when you change `css/styles.css` or `js/main.js`, bump the `?v=` date on its `<link>`/`<script>` tag in `index.html`.
 
 ---
 
@@ -184,6 +179,6 @@ I believe small details—from responsive spacing and animation timing to loadin
 
 Designed and developed by **Lance Dimandal**.
 
-Built using HTML, CSS, JavaScript, PHP concepts, GSAP, and modern front-end techniques.
+Built using HTML, CSS, vanilla JavaScript, and modern front-end techniques.
 
 © Lance Dimandal. All rights reserved.
