@@ -35,6 +35,9 @@
   const SPRING = hasLinear ? css.getPropertyValue('--spring').trim() : 'cubic-bezier(.2,.9,.25,1.02)';
   const BOUNCY = hasLinear ? css.getPropertyValue('--bouncy').trim() : 'cubic-bezier(.3,1.4,.5,1)';
   const main = $('#main');
+  // Lighter motion for iPhone/iPad and touch-first devices (set in the head script):
+  // effects there avoid transforming the whole page.
+  const lite = H.classList.contains('lite');
   const wait = (ms) => new Promise((r) => setTimeout(r, ms));
   const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
   const pad = (n) => String(n).padStart(2, '0');
@@ -234,17 +237,17 @@
       const t = focusIn(cTitle, 80);
       const bar = cBar.animate([{ transform: 'scaleX(0)' }, { transform: 'scaleX(1)' }], { duration: 900, delay: 150, easing: S, fill: 'forwards' });
       await bar.finished;
-      centre();
-      // The splash zooms through toward you while the page scales up into place.
+      // The splash zooms through toward you while the first screen (the hero — the only part
+      // visible) scales up into place. Animating just the hero instead of the whole page is
+      // far cheaper, which matters a lot on iPhone.
       const away = curtain.animate([{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'scale(1.12)' }], { duration: 650, easing: 'cubic-bezier(.4,0,.2,1)', fill: 'forwards' });
-      const pageIn = main.animate([{ opacity: 0, transform: 'scale(.9)' }, { opacity: 1, transform: 'none' }], { duration: 1300, easing: SPRING, fill: 'both' });
+      const pageIn = (hero || main).animate([{ opacity: 0, transform: 'scale(.92)' }, { opacity: 1, transform: 'none' }], { duration: 1300, easing: SPRING, fill: 'both' });
       const hdrIn = hdr.animate([{ opacity: 0, transform: 'translateY(-20px)' }, { opacity: 1, transform: 'none' }], { duration: 1100, delay: 200, easing: SPRING, fill: 'both' });
       H.classList.remove('booting');
       setTimeout(() => hero && hero.classList.add('in'), 120);
       setTimeout(observeAll, 300);
       await pageIn.finished;
       [t, bar, away, pageIn, hdrIn].forEach((a) => a.cancel());
-      main.style.transformOrigin = '';
       try { sessionStorage.setItem('ld-boot', '1'); } catch (e) { /* private mode */ }
     } else {
       H.classList.remove('booting');
@@ -273,11 +276,29 @@
       return;
     }
     busy = true;
+    if (lite) {
+      // iPhone/touch: a quick dip through black over a fixed overlay — no page transform.
+      try {
+        const dip = $('#dip');
+        const inA = dip.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 220, easing: 'ease-in', fill: 'forwards' });
+        await inA.finished;
+        scrollTo(0, targetY(el));
+        setHash(); layout(); onScroll();
+        const outA = dip.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 420, easing: 'cubic-bezier(.2,0,0,1)', fill: 'forwards' });
+        await outA.finished;
+        inA.cancel(); outA.cancel();
+      } catch (e) {
+        scrollTo(0, targetY(el));
+      } finally {
+        busy = false;
+      }
+      return;
+    }
     try {
       centre();
       const out = main.animate([{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'scale(.92)' }], { duration: 340, easing: 'cubic-bezier(.4,0,1,1)', fill: 'forwards' });
       await out.finished;
-      scrollTo({ top: targetY(el), behavior: 'instant' });
+      scrollTo({ top: targetY(el), behavior: 'auto' });
       setHash();
       layout();
       onScroll();
@@ -286,6 +307,10 @@
       out.cancel();
       await back.finished;
       main.style.transformOrigin = '';
+    } catch (e) {
+      // Never leave the page faded out if anything above fails.
+      main.getAnimations().forEach((a) => a.cancel());
+      scrollTo(0, targetY(el));
     } finally {
       busy = false;
     }
@@ -743,7 +768,7 @@
         [{ opacity: 0, transform: 'translateY(22px) scale(.96)', filter: 'blur(6px)' }, { opacity: 1, transform: 'none', filter: 'blur(0)' }],
         { duration: 900, delay: Math.min(i, 8) * 50, easing: SPRING, fill: 'backwards' }
       ));
-      if (anims.length) await anims.at(-1).finished;
+      if (anims.length) await anims[anims.length - 1].finished;
       tiles.forEach((t) => $$('.instant', t).forEach((p) => p.classList.remove('instant')));
     }
     $$('button', chips).forEach((b) => b.addEventListener('click', async () => {
@@ -1224,7 +1249,13 @@
   fitMark();
   layout();
   onScroll();
-  boot();
+  window.__ldReady = true;   // tells the head-script safety net that the page is in good hands
+  boot().catch(() => {
+    // If the intro fails for any reason, show the page immediately.
+    H.classList.remove('booting');
+    if (hero) hero.classList.add('in');
+    observeAll();
+  });
   addEventListener('load', () => { layout(); onScroll(); });
   if (document.fonts) document.fonts.ready.then(() => { fitMark(); layout(); onScroll(); });
 })();
