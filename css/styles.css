@@ -591,7 +591,7 @@ html.m-spec .plogo, html.hs-off .plogo { transform: none; }
   overflow-x: auto; overflow-y: hidden; scrollbar-width: none; -ms-overflow-style: none; scroll-snap-type: x proximity;
 }
 .chips::-webkit-scrollbar { display: none; }
-.chips button { position: relative; z-index: 1; flex: none; white-space: nowrap; scroll-snap-align: start; padding: 9px 16px; border-radius: 999px; color: var(--muted); transition: color .3s var(--ui), transform .6s var(--bouncy); display: inline-flex; align-items: baseline; gap: 6px; }
+.chips button { touch-action: manipulation; -webkit-tap-highlight-color: transparent; position: relative; z-index: 1; flex: none; white-space: nowrap; scroll-snap-align: start; padding: 9px 16px; border-radius: 999px; color: var(--muted); transition: color .3s var(--ui), transform .6s var(--bouncy); display: inline-flex; align-items: baseline; gap: 6px; }
 .chips button span { font: 400 10px/1 var(--mono); color: var(--gold); opacity: .8; transition: color .3s var(--ui); }
 .chips button:hover { color: var(--text); }
 .chips button.on { color: var(--ink); }
@@ -606,7 +606,8 @@ html.m-spec .plogo, html.hs-off .plogo { transform: none; }
 .tile-open { transition: transform .7s var(--bouncy); }
 .tile-open:active { transform: scale(.97); transition-duration: .15s; }
 .tile[hidden] { display: none !important; }
-.tile-open { display: block; width: 100%; cursor: zoom-in; text-align: left; }
+.tile-open { display: block; width: 100%; cursor: zoom-in; text-align: left; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+.tile { cursor: zoom-in; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
 .tile .ph-in { position: relative; inset: auto; }
 .tile .ph-img { position: relative; inset: auto; height: auto; }
 .tile .bar { display: flex; flex-direction: column; gap: 2px; padding: 14px 0 0; }
@@ -641,10 +642,14 @@ html.m-spec .plogo, html.hs-off .plogo { transform: none; }
 .lb-fig { display: flex; flex-direction: column; align-items: center; max-width: 100%; max-height: 100%; }
 html.m-spec .lightbox[open] .lb-fig { animation: lbFig .3s ease; }
 @keyframes lbFig { from { opacity: 0; transform: translateY(16px) scale(.98); } }
-/* The viewer image gets an explicit pixel size from JS (fitted to the screen from the poster's
-   aspect ratio) before anything animates, so swapping in the sharp full-size file never
-   changes its size mid-animation. */
-.lb-img { display: block; max-width: none; max-height: none; width: auto; height: auto; object-fit: cover; background: #151412; border-radius: 14px; transform-origin: 0 0; will-change: transform; cursor: grab; }
+/* The viewer: a frame (.lb-media) sized by JS from the poster's aspect ratio before anything
+   moves. Inside it the already-loaded thumbnail shows instantly, and the sharp file fades in on
+   a second layer once decoded — so opening never waits, flashes or resizes. All motion
+   (zoom in/out, swipe) transforms the frame. */
+.lb-media { position: relative; display: block; overflow: hidden; border-radius: 14px; background: #151412; transform-origin: 0 0; will-change: transform; cursor: grab; touch-action: none; }
+.lb-media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; -webkit-user-drag: none; user-select: none; }
+.lb-hi { opacity: 0; transition: opacity .3s ease; }
+.lb-hi.on { opacity: 1; }
 .lb-cap { margin-top: 18px; text-align: center; display: flex; flex-direction: column; gap: 2px; }
 .lb-cap .t { font: 500 10px/16px var(--f); letter-spacing: .12em; text-transform: uppercase; color: var(--gold); }
 .lb-cap strong { font-weight: 400; font-size: 18px; }

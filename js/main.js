@@ -775,52 +775,48 @@
       if (chipBusy) { queued = b; return; }
       if (b.classList.contains('on')) return;
       chipBusy = true;
-      let next = b;
-      let last = null;
-      while (next && next !== last) { await filter(next); last = next; next = queued; queued = null; }
-      chipBusy = false;
+      try {
+        let next = b;
+        let last = null;
+        while (next && next !== last) { await filter(next); last = next; next = queued; queued = null; }
+      } catch (e) {
+        /* never leave the filter stuck */
+      } finally {
+        chipBusy = false;
+        tiles.forEach((t) => $$('.instant', t).forEach((p) => p.classList.remove('instant')));
+      }
     }));
   }
 
-  /* Lightbox: posters zoom out of their thumbnail like Photos, swipe down to dismiss.
-     The dim + blur sit on their own layer (.lb-bg) so they fade in step with the
-     image instead of snapping off at the end, and they thin out as you drag.
-     The source thumbnail is hidden while the image is in flight, so there is
-     only ever one copy on screen. */
+  /* Lightbox: posters zoom out of their thumbnail like Photos; swipe down to dismiss.
+     Reliability rules:
+     · The whole tile opens it (image, caption — on phones the caption sits below the image).
+     · Opening never waits on the network: the thumbnail (already loaded) is decoded first
+       (capped at 120ms) and shown instantly; the sharp file fades in on a second layer.
+     · The frame gets its final size before any motion, so nothing jumps.
+     · Every open/close runs inside try/finally: no stuck "closing" state that would make
+       later clicks do nothing, and the source thumbnail is always restored.
+     · A stray second tap right after opening can't close it. */
   const lb = $('.lightbox');
   if (lb && typeof lb.showModal === 'function' && tiles.length) {
-    const img = $('.lb-img', lb);
+    const media = $('.lb-media', lb);
+    const lo = $('.lb-img', lb);
+    const hi = $('.lb-hi', lb);
     const fig = $('.lb-fig', lb);
     const cap = $('.lb-cap', lb);
     const count = $('.lb-count', lb);
     const bgEl = $('.lb-bg', lb);
     const chrome = $$('.lb-close, .lb-nav, .lb-count', lb).concat([cap]);
     const motion = () => full() && !reduce;
-    let cur = 0, curTile = null, closing = false, opening = null;
+    const ZOOM = 'cubic-bezier(.22,1,.36,1)';   // fast start, long smooth settle, no bounce
+    let cur = 0, curTile = null, state = 'closed', openedAt = 0, token = 0, pending = null;
     const visible = () => tiles.filter((t) => !t.hidden);
     const thumbOf = (t) => $('img', t);
+    const frameOf = (t) => $('.ph', t) || thumbOf(t);
     const hideSrc = (t, on) => { if (t) thumbOf(t).classList.toggle('lb-src', on); };
-    const fill = (tile) => {
-      const list = visible();
-      cur = Math.max(0, list.indexOf(tile));
-      hideSrc(curTile, false);
-      curTile = tile;
-      const th = thumbOf(tile);
-      img.src = th.currentSrc || th.src;             // instant: the thumbnail is already loaded
-      img.alt = th.alt;
-      const hiSrc = $('.tile-open', tile).dataset.full;
-      const hi = new Image();
-      hi.src = hiSrc;
-      // Swap to the sharp file once it is fully decoded; the box size is already fixed, so
-      // this only sharpens the picture and can't move or resize it.
-      (hi.decode ? hi.decode() : new Promise((r) => { hi.onload = r; })).then(() => { if (curTile === tile) img.src = hiSrc; }).catch(() => {});
-      cap.innerHTML = $('figcaption', tile).innerHTML;
-      count.textContent = `${pad(cur + 1)} / ${pad(list.length)}`;
-      lb.classList.toggle('is-single', list.length < 2);
-      fit();
-    };
-    /* Fit the poster into the space left for it (dialog padding and caption removed), from the
-       aspect ratio in its width/height attributes — known up front, never from the loaded file. */
+    const settleWithin = (p, ms) => Promise.race([p.catch(() => {}), wait(ms)]);
+
+    /* Size the frame from the aspect ratio in the thumbnail's width/height attributes. */
     const fit = () => {
       if (!curTile || !lb.open) return;
       const th = thumbOf(curTile);
@@ -830,93 +826,147 @@
       const capH = cap.offsetHeight + (parseFloat(getComputedStyle(cap).marginTop) || 0);
       const availH = lb.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom) - capH;
       const w = Math.max(80, Math.min(availW, availH * ar, 1400));
-      img.style.width = `${Math.round(w)}px`;
-      img.style.height = `${Math.round(w / ar)}px`;
+      media.style.width = `${Math.round(w)}px`;
+      media.style.height = `${Math.round(w / ar)}px`;
     };
-    addEventListener('resize', () => { if (lb.open && !closing) fit(); });
-    /* FLIP: the transform that lays the (untransformed) viewer image exactly over the
-       thumbnail's visible frame (.ph — not the <img>, which may be hover-zoomed inside it).
-       Also returns the radius that will *look* like the tile's 18px once scaled down. */
-    const frameOf = (t) => $('.ph', t) || thumbOf(t);
+    addEventListener('resize', () => { if (state === 'open') fit(); });
+
+    /* Point both layers at a tile: thumbnail now, sharp file when it has decoded. */
+    const load = (tile) => {
+      const my = ++token;
+      const list = visible();
+      cur = Math.max(0, list.indexOf(tile));
+      if (curTile && curTile !== tile) hideSrc(curTile, false);
+      curTile = tile;
+      const th = thumbOf(tile);
+      lo.src = th.currentSrc || th.src;
+      lo.alt = th.alt;
+      hi.classList.remove('on');
+      hi.removeAttribute('src');
+      const full = $('.tile-open', tile).dataset.full;
+      const pre = new Image();
+      pre.src = full;
+      (pre.decode ? pre.decode() : new Promise((r) => { pre.onload = r; })).then(() => {
+        if (my !== token) return;                     // user already moved on
+        hi.src = full;
+        requestAnimationFrame(() => { if (my === token) hi.classList.add('on'); });
+      }).catch(() => {});
+      cap.innerHTML = $('figcaption', tile).innerHTML;
+      count.textContent = `${pad(cur + 1)} / ${pad(list.length)}`;
+      lb.classList.toggle('is-single', list.length < 2);
+      return lo.decode ? settleWithin(lo.decode(), 120) : Promise.resolve();
+    };
+
+    /* FLIP: transform that lays the (untransformed) frame exactly over a tile's visible frame,
+       plus the radius that will *look* like the tile's 18px once scaled. */
     const toThumb = (tile) => {
       const a = frameOf(tile).getBoundingClientRect();
-      const b = img.getBoundingClientRect();
+      const b = media.getBoundingClientRect();
       if (!b.width || !a.width) return null;
       const sx = a.width / b.width, sy = a.height / b.height;
       return { t: `translate(${a.left - b.left}px, ${a.top - b.top}px) scale(${sx}, ${sy})`, r: `${(18 / ((sx + sy) / 2)).toFixed(1)}px` };
     };
-    const ZOOM = 'cubic-bezier(.22,1,.36,1)';   // fast start, long smooth settle, no bounce
     const onScreen = (tile) => {
       if (!tile || tile.hidden) return false;
       const a = frameOf(tile).getBoundingClientRect();
       return a.bottom > 0 && a.top < innerHeight && a.width > 0;
     };
-    const clearAnims = () => [img, bgEl, ...chrome].forEach((el) => el.getAnimations().forEach((x) => x.cancel()));
+    const cancelAll = () => [media, bgEl, fig, ...chrome].forEach((el) => el.getAnimations().forEach((x) => x.cancel()));
+    const resetInline = () => {
+      media.style.transform = ''; bgEl.style.opacity = '';
+      chrome.forEach((el) => (el.style.opacity = ''));
+    };
 
     async function open(tile) {
-      if (closing || lb.open) return;
-      SFX.open();
-      lb.showModal();                 // open first so the dialog has real dimensions…
-      H.classList.add('lb-open');
-      fill(tile);                     // …then fill + fit: the final size is set before any motion
-      if (!motion()) return;
-      const t = toThumb(tile);
-      hideSrc(tile, true);
-      bgEl.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 380, easing: 'cubic-bezier(.2,0,0,1)' });
-      chrome.forEach((el) => el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 320, delay: 260, fill: 'backwards' }));
-      if (t) {
-        opening = img.animate([{ transform: t.t, borderRadius: t.r }, { transform: 'none', borderRadius: '14px' }], { duration: 620, easing: ZOOM });
-        try { await opening.finished; } catch (e) { /* cancelled by a quick close */ }
-        opening = null;
+      // Tapped while the previous poster is still flying home: finish that instantly and
+      // open this one right after, instead of ignoring the tap.
+      if (state === 'closing') {
+        pending = tile;
+        [media, bgEl, ...chrome].forEach((el) => el.getAnimations().forEach((x) => x.finish()));
+        return;
       }
-      if (!closing) hideSrc(tile, false);
+      if (state !== 'closed') return;
+      state = 'opening';
+      try {
+        SFX.open();
+        await load(tile);                         // ≤120ms: thumbnail decoded → no blank first frame
+        lb.showModal();
+        H.classList.add('lb-open');
+        openedAt = performance.now();
+        fit();                                    // final size known before any motion
+        if (motion()) {
+          const t = toThumb(tile);
+          hideSrc(tile, true);
+          bgEl.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 360, easing: 'cubic-bezier(.2,0,0,1)' });
+          chrome.forEach((el) => el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 300, delay: 220, fill: 'backwards' }));
+          if (t) {
+            const a = media.animate([{ transform: t.t, borderRadius: t.r }, { transform: 'none', borderRadius: '14px' }], { duration: 560, easing: ZOOM });
+            state = 'open';                       // interactive straight away (close/swipe can interrupt)
+            await a.finished.catch(() => {});
+          }
+        }
+      } catch (e) {
+        /* fall through to a plain, usable open state */
+      } finally {
+        if (state === 'opening') state = 'open';
+        if (state === 'open' && !lb.open) { try { lb.showModal(); H.classList.add('lb-open'); fit(); } catch (e) { /* ignore */ } }
+        if (state === 'open') hideSrc(tile, false);
+      }
     }
 
     async function close() {
-      if (closing || !lb.open) return;
-      SFX.close();
-      if (!motion()) { lb.close(); return; }
-      closing = true;
+      if (!lb.open || state === 'closing') return;
       const tile = curTile;
-      // Where the image is right now (mid-open, mid-drag or at rest), as a transform.
-      const now = getComputedStyle(img).transform;
-      const bgNow = getComputedStyle(bgEl).opacity;
-      if (opening) { opening.cancel(); opening = null; }
-      img.style.transform = 'none';
-      bgEl.style.opacity = '';
-      const back = onScreen(tile) ? toThumb(tile) : null;   // {t, r} or null
-      const from = now && now !== 'none' ? now : 'none';
-      chrome.forEach((el) => { const op = el.style.opacity || getComputedStyle(el).opacity; el.style.opacity = ''; el.animate([{ opacity: op }, { opacity: 0 }], { duration: 160, fill: 'forwards' }); });
-      // Backdrop and image travel together: both finish in the same ~half second.
-      const bg = bgEl.animate([{ opacity: bgNow }, { opacity: 0 }], { duration: back ? 460 : 300, easing: 'cubic-bezier(.4,0,.2,1)', fill: 'forwards' });
-      let anim;
-      if (back) {
-        hideSrc(tile, true);
-        anim = img.animate([{ transform: from, borderRadius: '14px' }, { transform: back.t, borderRadius: back.r }], { duration: 560, easing: ZOOM, fill: 'forwards' });
-      } else {
-        anim = img.animate([{ transform: from, opacity: 1 }, { transform: `${from === 'none' ? '' : from} scale(.9)`, opacity: 0 }], { duration: 300, easing: 'ease-in', fill: 'forwards' });
+      state = 'closing';
+      SFX.close();
+      try {
+        if (!motion()) return;
+        // Start from wherever the frame is right now (mid-open, mid-swipe or at rest).
+        const from = getComputedStyle(media).transform;
+        const bgNow = getComputedStyle(bgEl).opacity;
+        const opNow = chrome.map((el) => el.style.opacity || getComputedStyle(el).opacity);
+        media.getAnimations().forEach((x) => x.cancel());
+        resetInline();
+        const back = onScreen(tile) ? toThumb(tile) : null;
+        const f = from && from !== 'none' ? from : 'none';
+        chrome.forEach((el, i) => el.animate([{ opacity: opNow[i] }, { opacity: 0 }], { duration: 160, fill: 'forwards' }));
+        const bg = bgEl.animate([{ opacity: bgNow }, { opacity: 0 }], { duration: back ? 420 : 280, easing: 'cubic-bezier(.4,0,.2,1)', fill: 'forwards' });
+        let a;
+        if (back) {
+          hideSrc(tile, true);
+          a = media.animate([{ transform: f, borderRadius: '14px' }, { transform: back.t, borderRadius: back.r }], { duration: 500, easing: ZOOM, fill: 'forwards' });
+        } else {
+          a = media.animate([{ transform: f, opacity: 1 }, { transform: `${f === 'none' ? '' : f} scale(.9)`, opacity: 0 }], { duration: 280, easing: 'ease-in', fill: 'forwards' });
+        }
+        await Promise.all([a.finished.catch(() => {}), bg.finished.catch(() => {})]);
+      } catch (e) {
+        /* whatever happened, finish closing below */
+      } finally {
+        hideSrc(tile, false);                    // the thumbnail is back exactly under the last frame
+        try { lb.close(); } catch (e) { /* already closed */ }
+        cancelAll();
+        resetInline();
+        state = 'closed';
+        if (pending) { const t = pending; pending = null; open(t); }
       }
-      await Promise.all([anim.finished, bg.finished]);
-      hideSrc(tile, false);            // thumbnail reappears exactly under the image's last frame
-      lb.close();
-      clearAnims();
-      img.style.transform = '';
-      closing = false;
     }
 
-    const step = (d) => {
+    const step = async (d) => {
       const list = visible();
-      if (list.length < 2) return;
+      if (list.length < 2 || state !== 'open') return;
       SFX.tick();
-      fill(list[(cur + d + list.length) % list.length]);
+      await load(list[(cur + d + list.length) % list.length]);
+      fit();
       if (motion()) {
         fig.animate(
           [{ opacity: 0, transform: `translateX(${d * 60}px) scale(.96)`, filter: 'blur(8px)' }, { opacity: 1, transform: 'none', filter: 'blur(0)' }],
-          { duration: 800, easing: SPRING }
+          { duration: 700, easing: SPRING }
         );
       }
     };
-    tiles.forEach((t) => $('.tile-open', t).addEventListener('click', () => open(t)));
+
+    // The whole tile opens the viewer (button for keyboard users bubbles here too).
+    tiles.forEach((t) => t.addEventListener('click', (e) => { e.preventDefault(); open(t); }));
     $('.lb-close', lb).addEventListener('click', close);
     $('.lb-prev', lb).addEventListener('click', () => step(-1));
     $('.lb-next', lb).addEventListener('click', () => step(1));
@@ -925,24 +975,43 @@
       if (e.key === 'ArrowLeft') step(-1);
       if (e.key === 'ArrowRight') step(1);
     });
-    lb.addEventListener('click', (e) => { if ((e.target === lb || e.target === bgEl) && !dragMoved) close(); });
-    lb.addEventListener('close', () => { img.removeAttribute('src'); H.classList.remove('lb-open'); hideSrc(curTile, false); });
-
-    /* Swipe to dismiss: the image follows the finger (a little sideways give, shrinking as it
-       goes down), the backdrop thins with the distance, and letting go past ~110px or with a
-       quick downward flick sends it home; otherwise it springs back. */
-    let sy = 0, sx = 0, dragging = false, dragMoved = false, dy = 0, dx = 0, lastY = 0, lastT = 0, vy = 0;
-    img.addEventListener('pointerdown', (e) => {
-      if (!motion() || closing) return;
-      if (opening) { opening.finish(); }
-      dragging = true; dragMoved = false; sy = lastY = e.clientY; sx = e.clientX; dy = dx = vy = 0; lastT = performance.now();
-      img.setPointerCapture(e.pointerId);
+    // Backdrop closes — but not a stray second tap in the first 400ms, and not the end of a swipe.
+    lb.addEventListener('click', (e) => {
+      // While a poster is flying home the viewer still covers the page, so a tap meant for
+      // another tile lands here: find the tile under the finger and open it.
+      if (state === 'closing') {
+        const t = tiles.find((x) => {
+          if (x.hidden) return false;
+          const r = x.getBoundingClientRect();
+          return e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom;
+        });
+        if (t) open(t);
+        return;
+      }
+      if ((e.target === lb || e.target === bgEl) && !dragMoved && performance.now() - openedAt > 400) close();
     });
-    img.addEventListener('pointermove', (e) => {
+    lb.addEventListener('close', () => {
+      H.classList.remove('lb-open');
+      hideSrc(curTile, false);
+      token++;
+      lo.removeAttribute('src'); hi.removeAttribute('src'); hi.classList.remove('on');
+      state = 'closed';
+    });
+
+    /* Swipe to dismiss: the frame follows the finger (sideways give, shrinking as it goes
+       down), the backdrop thins with distance; past ~110px or a quick flick sends it home. */
+    let sy = 0, sx = 0, dragging = false, dragMoved = false, dy = 0, dx = 0, lastY = 0, lastT = 0, vy = 0;
+    media.addEventListener('pointerdown', (e) => {
+      if (!motion() || state !== 'open') return;
+      media.getAnimations().forEach((x) => x.finish());
+      dragging = true; dragMoved = false; sy = lastY = e.clientY; sx = e.clientX; dy = dx = vy = 0; lastT = performance.now();
+      try { media.setPointerCapture(e.pointerId); } catch (err) { /* ignore */ }
+    });
+    media.addEventListener('pointermove', (e) => {
       if (!dragging) return;
       dy = e.clientY - sy; dx = e.clientX - sx;
       if (!dragMoved && Math.hypot(dx, dy) < 6) return;
-      if (!dragMoved) hideSrc(curTile, true);   // only one copy on screen while dragging
+      if (!dragMoved) hideSrc(curTile, true);
       dragMoved = true;
       const now = performance.now();
       vy = (e.clientY - lastY) / Math.max(1, now - lastT);
@@ -950,34 +1019,31 @@
       const down = Math.max(0, dy);
       const k = clamp(down / 900, 0, 0.35);
       const up = dy < 0 ? -Math.sqrt(-dy) * 3 : dy;   // rubber-band upward
-      // scale around the image centre (transform-origin is the top-left corner)
-      img.style.transform = `translate(${(dx * 0.7 + (img.offsetWidth * k) / 2).toFixed(1)}px, ${(up + (img.offsetHeight * k) / 2).toFixed(1)}px) scale(${(1 - k).toFixed(3)})`;
+      media.style.transform = `translate(${(dx * 0.7 + (media.offsetWidth * k) / 2).toFixed(1)}px, ${(up + (media.offsetHeight * k) / 2).toFixed(1)}px) scale(${(1 - k).toFixed(3)})`;
       bgEl.style.opacity = String((1 - clamp(down / 420, 0, 0.92)).toFixed(3));
       chrome.forEach((el) => (el.style.opacity = String(1 - clamp(Math.abs(dy) / 90))));
       const past = dy > 110;
-      if (past !== img._past) { img._past = past; if (past) SFX.snap(); }
+      if (past !== media._past) { media._past = past; if (past) SFX.snap(); }
     });
     const endDrag = () => {
       if (!dragging) return;
       dragging = false;
+      media._past = false;
       if (!dragMoved) return;
-      img._past = false;
       if (dy > 110 || vy > 0.7) close();
       else {
-        const from = img.style.transform;
+        const from = media.style.transform;
         const bgFrom = bgEl.style.opacity || '1';
-        img.style.transform = '';
-        bgEl.style.opacity = '';
-        chrome.forEach((el) => (el.style.opacity = ''));
-        img.animate([{ transform: from }, { transform: 'none' }], { duration: 650, easing: SPRING });
-        hideSrc(curTile, false);
+        resetInline();
+        media.animate([{ transform: from }, { transform: 'none' }], { duration: 600, easing: SPRING });
         bgEl.animate([{ opacity: bgFrom }, { opacity: 1 }], { duration: 300, easing: 'ease-out' });
+        hideSrc(curTile, false);
       }
       setTimeout(() => { dragMoved = false; }, 0);
     };
-    img.addEventListener('pointerup', endDrag);
-    img.addEventListener('pointercancel', endDrag);
-    img.addEventListener('dragstart', (e) => e.preventDefault());
+    media.addEventListener('pointerup', endDrag);
+    media.addEventListener('pointercancel', endDrag);
+    media.addEventListener('dragstart', (e) => e.preventDefault());
   }
 
   /* ── 10. Velocity ticker + skills drag ticker ── */
